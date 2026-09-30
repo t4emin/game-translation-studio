@@ -10,17 +10,27 @@ const isThai = (text: string) => /[\u0e00-\u0e7f]/.test(text);
 
 export function rasterizeGlyph(text: string): { pixels: Uint8Array; width: number } {
   if (!GlobalFonts.has("ThaiROM")) {
-    if (!GlobalFonts.registerFromPath(join(process.cwd(),"assets/fonts/NotoSansThai-Regular.ttf"),"ThaiROM")) throw new Error("Thai font is missing.");
+    if (!GlobalFonts.registerFromPath(join(process.cwd(),"assets/fonts/NotoSansThaiLooped-SemiBold.ttf"),"ThaiROM")) throw new Error("Thai font is missing.");
   }
-  const source = createCanvas(24,24);
+  const source = createCanvas(48,48);
   const ctx=source.getContext("2d");
-  ctx.font="13px ThaiROM"; ctx.fillStyle="#fff";
-  const measure=ctx.measureText(text);
-  const width=Math.min(15,Math.max(3,Math.ceil(measure.width)+1));
-  ctx.fillText(text,0,15);
+  ctx.font="15px ThaiROM"; ctx.fillStyle="#fff"; ctx.textBaseline="alphabetic";
+  ctx.fillText(text,4,24);
+  const sourceRgba=ctx.getImageData(0,0,48,48).data;
+  let minX=48,minY=48,maxX=-1,maxY=-1;
+  for(let y=0;y<48;y++) for(let x=0;x<48;x++) if(sourceRgba[(y*48+x)*4+3]>24) {
+    minX=Math.min(minX,x); minY=Math.min(minY,y); maxX=Math.max(maxX,x); maxY=Math.max(maxY,y);
+  }
+  if(maxX<0) return {pixels:new Uint8Array(64),width:4};
+  const glyphWidth=maxX-minX+1,glyphHeight=maxY-minY+1;
+  const scale=Math.min(1,15/glyphWidth,15/glyphHeight);
+  const drawWidth=Math.max(1,Math.ceil(glyphWidth*scale));
+  const drawHeight=Math.max(1,Math.ceil(glyphHeight*scale));
   const canvas=createCanvas(16,16);
   const out=canvas.getContext("2d");
-  out.drawImage(source,0,0,16,20,0,0,16,14);
+  out.imageSmoothingEnabled=false;
+  out.drawImage(source,minX,minY,glyphWidth,glyphHeight,0,Math.max(0,Math.floor((16-drawHeight)/2)),drawWidth,drawHeight);
+  const width=Math.min(15,Math.max(4,drawWidth+1));
   const rgba=out.getImageData(0,0,16,16).data;
   const pixels=new Uint8Array(64);
   // FireRed stores each 8-pixel row as big-endian 2bpp inside a little-endian u16.
