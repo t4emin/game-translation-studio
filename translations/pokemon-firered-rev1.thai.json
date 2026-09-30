@@ -10,43 +10,64 @@
       "id": "dialog-1c589d",
       "sourceHash": "247f50a026463e0708e103174eaba210eea8a13c7c46e18b5772ab1ad87d7420",
       "sourceText": "The various buttons will be explained in[NEW_LINE]the order of their importance.",
-      "translatedText": "ปุ่มต่างๆ ของเกม[NEW_LINE]เรียงตามความสำคัญ"
+      "translatedText": "อธิบายปุ่มต่างๆ[NEW_LINE]ตามลำดับสำคัญ",
+      "status": "translated",
+      "warnings": [],
+      "translationVersion": 5
     },
     {
       "id": "dialog-1c58e5",
       "sourceHash": "9c9354c383782f901ada6cd504aba000d9452c9d26f41815ec5e3b8f1e408000",
       "sourceText": "Moves the main character.[NEW_LINE]Also used to choose various data[NEW_LINE]headings.",
-      "translatedText": "ขยับตัวละครหลัก[NEW_LINE]และเลือกหัวข้อ[NEW_LINE]ต่างๆ"
+      "translatedText": "เดินตัวละคร[NEW_LINE]เลือกหัวข้อ[NEW_LINE]ต่างๆ",
+      "status": "translated",
+      "warnings": [],
+      "translationVersion": 5
     },
     {
       "id": "dialog-1c592a",
       "sourceHash": "c2828133ccdb2fce473de393d7ba804877e7ef8a1ec44cb4d6cb8c9b8ca0a141",
       "sourceText": "Used to confirm a choice, check[NEW_LINE]things, chat, and scroll text.",
-      "translatedText": "ยืนยัน ตรวจสอบ[NEW_LINE]พูดคุย และเลื่อนข้อความ"
+      "translatedText": "ยืนยัน / ตรวจสอบ[NEW_LINE]คุย / เลื่อนข้อความ",
+      "status": "translated",
+      "warnings": [],
+      "translationVersion": 5
     },
     {
       "id": "dialog-1c5969",
       "sourceHash": "2f0cf532892bb7fcd3c9b575921cdf62fcc37ff5d26d036bbf5590c20010a02c",
       "sourceText": "Used to exit, cancel a choice,[NEW_LINE]and cancel a mode.",
-      "translatedText": "ออกหรือยกเลิก[NEW_LINE]สิ่งที่เลือก"
+      "translatedText": "ออก / ยกเลิก[NEW_LINE]คำสั่งหรือโหมด",
+      "status": "translated",
+      "warnings": [],
+      "translationVersion": 5
     },
     {
       "id": "dialog-1c599b",
       "sourceHash": "d1aa3dbb037356c71d141371ff8f392ff36f6c9fd1e30056f1934cff290ab340",
       "sourceText": "Press this button to open the[NEW_LINE]MENU.",
-      "translatedText": "เปิด[NEW_LINE]MENU"
+      "translatedText": "เปิด[NEW_LINE]MENU",
+      "status": "translated",
+      "warnings": [],
+      "translationVersion": 5
     },
     {
       "id": "dialog-1c59bf",
       "sourceHash": "71bfe67e0f600265a2c1c1905e3c2f1a6dc1932971b3aefbc4837d5410fb710f",
       "sourceText": "Used to shift items and to use[NEW_LINE]a registered item.",
-      "translatedText": "ย้ายไอเทม หรือใช้[NEW_LINE]ไอเทมที่ลงทะเบียนไว้"
+      "translatedText": "ย้ายไอเทม[NEW_LINE]ใช้ไอเทมที่ตั้งไว้",
+      "status": "translated",
+      "warnings": [],
+      "translationVersion": 5
     },
     {
       "id": "dialog-1c59f1",
       "sourceHash": "8d826608c4dbe5e96f75c145a46114ab09d7a8694d2bfbdf561e566f98fa3990",
       "sourceText": "If you need help playing the[NEW_LINE]game, or on how to do things,[NEW_LINE]press the L or R Button.",
-      "translatedText": "ถ้าต้องการความช่วยเหลือ[NEW_LINE]ในการเล่นเกม[NEW_LINE]กดปุ่ม L หรือ R"
+      "translatedText": "ต้องการความช่วยเหลือ[NEW_LINE]ระหว่างเล่นเกม[NEW_LINE]กดปุ่ม L/R",
+      "status": "translated",
+      "warnings": [],
+      "translationVersion": 5
     },
     {
       "id": "dialog-1c5a45",

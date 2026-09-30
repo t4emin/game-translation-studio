@@ -135,7 +135,7 @@ test("bundled FireRed Thai translation file can satisfy entries offline", async 
 
   assert.equal(
     await findLocalTranslation(entry, "thai"),
-    "ปุ่มต่างๆ ของเกม[NEW_LINE]เรียงตามความสำคัญ"
+    "อธิบายปุ่มต่างๆ[NEW_LINE]ตามลำดับสำคัญ"
   );
 });
 

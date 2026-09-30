@@ -10,11 +10,11 @@ const isThai = (text: string) => /[\u0e00-\u0e7f]/.test(text);
 
 export function rasterizeGlyph(text: string): { pixels: Uint8Array; width: number } {
   if (!GlobalFonts.has("ThaiROM")) {
-    if (!GlobalFonts.registerFromPath(join(process.cwd(),"assets/fonts/NotoSansThaiLooped-SemiBold.ttf"),"ThaiROM")) throw new Error("Thai font is missing.");
+    if (!GlobalFonts.registerFromPath(join(process.cwd(),"assets/fonts/NotoSansThaiLooped-Regular.ttf"),"ThaiROM")) throw new Error("Thai font is missing.");
   }
   const source = createCanvas(48,48);
   const ctx=source.getContext("2d");
-  ctx.font="15px ThaiROM"; ctx.fillStyle="#fff"; ctx.textBaseline="alphabetic";
+  ctx.font="13px ThaiROM"; ctx.fillStyle="#fff"; ctx.textBaseline="alphabetic";
   ctx.fillText(text,4,24);
   const sourceRgba=ctx.getImageData(0,0,48,48).data;
   let minX=48,minY=48,maxX=-1,maxY=-1;
@@ -23,12 +23,12 @@ export function rasterizeGlyph(text: string): { pixels: Uint8Array; width: numbe
   }
   if(maxX<0) return {pixels:new Uint8Array(64),width:4};
   const glyphWidth=maxX-minX+1,glyphHeight=maxY-minY+1;
-  const scale=Math.min(1,15/glyphWidth,15/glyphHeight);
+  const scale=Math.min(1,14/glyphWidth,15/glyphHeight);
   const drawWidth=Math.max(1,Math.ceil(glyphWidth*scale));
   const drawHeight=Math.max(1,Math.ceil(glyphHeight*scale));
   const canvas=createCanvas(16,16);
   const out=canvas.getContext("2d");
-  out.imageSmoothingEnabled=false;
+  out.imageSmoothingEnabled=true;
   out.drawImage(source,minX,minY,glyphWidth,glyphHeight,0,Math.max(0,Math.floor((16-drawHeight)/2)),drawWidth,drawHeight);
   const width=Math.min(15,Math.max(4,drawWidth+1));
   const rgba=out.getImageData(0,0,16,16).data;
@@ -36,7 +36,7 @@ export function rasterizeGlyph(text: string): { pixels: Uint8Array; width: numbe
   // FireRed stores each 8-pixel row as big-endian 2bpp inside a little-endian u16.
   for(let y=0;y<16;y++) for(let tileX=0;tileX<2;tileX++) {
     let row=0;
-    for(let x=0;x<8;x++) row=(row<<2)|(rgba[(y*16+tileX*8+x)*4+3]>=95 ? 1 : 0);
+    for(let x=0;x<8;x++) row=(row<<2)|(rgba[(y*16+tileX*8+x)*4+3]>=80 ? 1 : 0);
     const offset=((y>>3)*2+tileX)*16+(y&7)*2;
     pixels[offset]=row&255; pixels[offset+1]=row>>8;
   }
