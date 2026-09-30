@@ -4,7 +4,6 @@ out
 .env
 .env.local
 .env.*
-!.env.example
 .DS_Store
 *.gba
 *.gb

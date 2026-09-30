@@ -89,17 +89,6 @@ export interface CapabilityReport {
   validation: "full" | "partial" | "none";
 }
 
-export interface AiAdapterAnalysis {
-  likelyGame: string;
-  likelyEngine: string;
-  confidence: number;
-  extractionHypothesis: string;
-  adapterReuse: string[];
-  blockers: string[];
-  nextSteps: string[];
-  buildSafety: "blocked" | "experimental" | "full-not-recommended";
-}
-
 export interface GameContext {
   file: GameFile;
   metadata: PlatformMetadata;
@@ -188,6 +177,5 @@ export interface AnalysisReport {
   compatibility: "full" | "experimental" | "unsupported";
   capabilities: CapabilityReport;
   genericScan?: GbaGenericScan;
-  aiAnalysis?: AiAdapterAnalysis;
   issues: ValidationIssue[];
 }

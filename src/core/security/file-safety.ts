@@ -4,8 +4,7 @@ const DEFAULT_MAX_BYTES = 32 * 1024 * 1024;
 const allowedExtensions = new Set([".gba"]);
 
 export function maxUploadBytes(): number {
-  const configured = Number(process.env.GTS_MAX_UPLOAD_BYTES);
-  return Number.isFinite(configured) && configured > 0 ? configured : DEFAULT_MAX_BYTES;
+  return DEFAULT_MAX_BYTES;
 }
 
 export function validateGameFile(file: GameFile): ValidationIssue[] {
@@ -44,10 +43,4 @@ export function validateGameFile(file: GameFile): ValidationIssue[] {
   }
 
   return issues;
-}
-
-export function redactSecret(value: string): string {
-  if (!value) return "";
-  if (value.length <= 8) return "[redacted]";
-  return `${value.slice(0, 4)}...[redacted]...${value.slice(-4)}`;
 }

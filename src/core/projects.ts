@@ -1,17 +1,13 @@
 import { mkdir, readFile, writeFile, rename } from "node:fs/promises";
 import { join } from "node:path";
-import { randomUUID, createHash } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { getGameAdapter, findGameAdapter } from "./adapters/registry.ts";
 import { detectPlatform } from "./platforms/index.ts";
-import { validateTranslation, protectedNames } from "./platforms/gba/firered-rom.ts";
-import { emeraldProtectedNames } from "./adapters/gba/pokemon-emerald.ts";
-import { protectedPokemonNames } from "./platforms/gba/pokemon-gen3-resources.ts";
-import { OpenAITranslationProvider } from "./providers/openai/provider.ts";
+import { validateTranslation } from "./platforms/gba/firered-rom.ts";
 import { findLocalTranslation } from "./storage/local-translation-file.ts";
 import type { GameAdapterMetadata, GameContext, TargetLanguage, TranslationEntry } from "./types.ts";
 
 const root=join(process.cwd(),".local","projects");
-const cacheRoot=join(process.cwd(),".local","translations");
 function path(id:string) {
   if(!/^[0-9a-f-]{36}$/.test(id)) throw new Error("Invalid project ID");
   return join(root,id);
@@ -42,7 +38,7 @@ export async function createProject(name:string,bytes:Uint8Array,target:TargetLa
   const file={name,size:bytes.byteLength,extension:name.slice(name.lastIndexOf(".")).toLowerCase(),bytes};
   const metadata=await detectPlatform(file,"gba");
   const matched=await findGameAdapter(metadata);
-  if(!matched.adapter || !matched.metadata) throw new Error("This ROM does not have a project adapter yet. Use Analyze / AI adapter analysis first.");
+  if(!matched.adapter || !matched.metadata) throw new Error("This ROM does not have a project adapter yet. Create a local adapter from ROM analysis first.");
   if(!matched.metadata.capabilities.extraction) throw new Error(`Adapter ${matched.metadata.name} cannot extract text yet.`);
   const context:GameContext={file,metadata,adapterId:matched.metadata.id};
   const extraction=await matched.adapter.extract(context);
@@ -67,10 +63,7 @@ export async function translateProjectBatch(id:string):Promise<Project> {
     }
     const original=await readFile(join(path(id),"original.gba"));
     const context=await projectContext(project,new Uint8Array(original));
-    const names=protectedNamesForProject(project,new Uint8Array(original));
-    const glossary=(entries:TranslationEntry[])=>names.filter(name=>entries.some(e=>e.sourceText.includes(name))).map(name=>({source:name,target:name,exact:true}));
     const batch=project.entries.filter(e=>e.status!=="translated").slice(0,64);
-    await mkdir(cacheRoot,{recursive:true,mode:0o700});
     const verify=async(entry:TranslationEntry,text:string)=>{
       validateTranslation(entry.sourceText,text);
       if(project.target==="thai" && !/[\u0e00-\u0e7f]/.test(text)) throw new Error("The response did not contain a Thai translation.");
@@ -89,49 +82,10 @@ export async function translateProjectBatch(id:string):Promise<Project> {
         entry.translatedText=local; entry.status="error"; entry.warnings=[error instanceof Error?error.message:"Invalid local translation"];
       }
     }
-    let pending=batch.filter(e=>e.status!=="translated");
-    const provider=new OpenAITranslationProvider();
-    if(pending.length && !provider.isConfigured()) {
-      project.error=`Local-first mode stopped: ${localMissing.toLocaleString()} missing and ${localInvalid.toLocaleString()} invalid local translation(s) in this batch. Add/fix a local translation file, or set OPENAI_API_KEY to auto-translate only the missing/invalid messages.`;
-      await save(project);
-      return project;
-    }
-    const key=(entry:TranslationEntry)=>join(cacheRoot,createHash("sha256").update(JSON.stringify([project.adapterId,provider.model,project.target,entry.sourceText,entry.context])).digest("hex")+".json");
-    const apiPending:TranslationEntry[]=[];
-    for(const entry of batch.filter(e=>e.status!=="translated")) {
-      try {
-        const cached=JSON.parse(await readFile(key(entry),"utf8")); await verify(entry,cached.text);
-        entry.translatedText=cached.text; entry.status="translated"; entry.translationVersion=3; entry.warnings=[];
-      } catch {apiPending.push(entry);}
-    }
-    pending=apiPending;
-    project.error=undefined;
-    if(pending.length) {
-      let translations:Map<string,string>;
-      try {
-        const chunks:TranslationEntry[][]=[];
-        for(let i=0;i<pending.length;i+=8) chunks.push(pending.slice(i,i+8));
-        const results=await Promise.allSettled(chunks.map(entries=>provider.translateBatch({sourceLanguage:"english",targetLanguage:project.target,style:"concise",glossary:glossary(entries),entries})));
-        translations=new Map(results.flatMap(result=>result.status==="fulfilled"?[...result.value]:[]));
-        const failure=results.find(result=>result.status==="rejected");
-        if(failure?.status==="rejected") project.error=failure.reason instanceof Error?failure.reason.message:"Some translation requests failed. Saved successful results; retry to continue.";
-      }
-      catch(error) {project.error=error instanceof Error?error.message:"Translation request failed";await save(project);throw error;}
-      for(const entry of pending) {
-        let translated=translations.get(entry.id);
-        if(translated===undefined) continue;
-        try {
-          try {await verify(entry,translated);} catch {
-            const retry=await provider.translateBatch({sourceLanguage:"english",targetLanguage:project.target,style:"concise",glossary:glossary([entry]),entries:[{...entry,context:`${entry.context}. Previous answer failed validation. Make each fragment much shorter. Maximum 15 Thai characters per fragment.`}]});
-            translated=retry.get(entry.id)!;await verify(entry,translated);
-          }
-          entry.translatedText=translated;entry.status="translated";entry.translationVersion=3;entry.warnings=[];
-          await writeFile(key(entry),JSON.stringify({text:translated}),{mode:0o600});
-        } catch(error) {
-          entry.translatedText=translated;entry.status="error";entry.warnings=[error instanceof Error?error.message:"Invalid translation"];
-        }
-      }
-    }
+    const pending=batch.filter(e=>e.status!=="translated");
+    project.error=pending.length
+      ? `Local-only mode stopped: ${localMissing.toLocaleString()} missing and ${localInvalid.toLocaleString()} invalid local translation(s) in this batch. Add or fix local translation JSON files; no external API fallback is configured.`
+      : undefined;
     if(batch.some(e=>e.status==="error")) project.error="Some messages need a shorter translation or restored control tokens. Review the failed messages, or retry.";
     await save(project);
     return project;
@@ -201,12 +155,6 @@ async function projectContext(project:Project, bytes:Uint8Array):Promise<GameCon
 
 function canExport(capabilities:StoredMetadata["capabilities"],target:TargetLanguage) {
   return capabilities.safeInjection && capabilities.rebuild && (target==="thai" ? capabilities.thaiBuild : capabilities.englishBuild);
-}
-
-function protectedNamesForProject(project:Project, bytes:Uint8Array):string[] {
-  if(project.adapterId.includes("firered")) return protectedNames(bytes);
-  if(project.adapterId.includes("emerald")) return emeraldProtectedNames(bytes);
-  return protectedPokemonNames(bytes);
 }
 
 function hydrateProject(project:Project):Project {
