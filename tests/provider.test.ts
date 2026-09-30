@@ -54,7 +54,7 @@ test("adapter analysis sends only compact scan context to OpenAI",async()=>{
       title:"POKEMON EMER",
       gameId:"BPEE",
       revision:"1",
-      details:{makerCode:"01",headerChecksum:153}
+      details:{makerCode:"01",headerChecksum:"valid:99"}
     },
     adapterStatus:"unsupported",
     compatibility:"unsupported",
@@ -76,6 +76,7 @@ test("adapter analysis sends only compact scan context to OpenAI",async()=>{
     assert.equal(payload.metadata.checksum,undefined);
     assert.equal(payload.metadata.fileName,"Pokemon Emerald.gba");
     assert.equal(payload.metadata.title,"POKEMON EMER");
+    assert.equal(payload.metadata.headerChecksumStatus,"valid");
     assert.equal(payload.genericScan.ascii.examples[0].text,"OPTIONS");
     assert.deepEqual(payload.issueCodes,["NO_FULL_ADAPTER"]);
     return Response.json({output_text:JSON.stringify({

@@ -42,7 +42,7 @@ export class OpenAIAdapterAnalysisProvider {
           {
             role: "system",
             content:
-              "You help develop safe GBA ROM translation adapters. Analyze only the provided deterministic scan summary. Do not claim a playable build is possible without a verified adapter. Never invent binary patches, offsets to overwrite, or ROM bytes. Keep the answer concise and actionable for an engineer. If the game appears to be Pokemon Emerald, say that it likely needs a separate exact Emerald adapter/manifest and cannot reuse FireRed offsets directly."
+              "You help develop safe GBA ROM translation adapters. Analyze only the provided deterministic scan summary. Do not claim a playable build is possible without a verified adapter. Never invent binary patches, offsets to overwrite, or ROM bytes. Keep the answer concise and actionable for an engineer. Treat build blockers as deterministic facts only. Do not mention an invalid header checksum unless metadata.headerChecksumStatus is exactly invalid. If the game appears to be Pokemon Emerald, say that it likely needs a separate exact Emerald adapter/manifest and cannot reuse FireRed offsets directly."
           },
           {
             role: "user",
@@ -81,6 +81,12 @@ export class OpenAIAdapterAnalysisProvider {
 }
 
 function compactReport(report: AnalysisReport) {
+  const headerChecksum = String(report.metadata.details.headerChecksum ?? "unknown");
+  const headerChecksumStatus = headerChecksum.startsWith("valid:")
+    ? "valid"
+    : headerChecksum.startsWith("invalid:")
+      ? "invalid"
+      : "unknown";
   return {
     metadata: {
       fileName: report.metadata.fileName,
@@ -90,7 +96,8 @@ function compactReport(report: AnalysisReport) {
       size: report.metadata.fileSize,
       checksumPrefix: report.metadata.checksum.slice(0, 16),
       makerCode: report.metadata.details.makerCode,
-      headerChecksum: report.metadata.details.headerChecksum
+      headerChecksumStatus,
+      headerChecksum
     },
     compatibility: report.compatibility,
     capabilities: report.capabilities,
