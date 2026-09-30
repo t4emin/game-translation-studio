@@ -214,6 +214,27 @@ test("bundled FireRed Thai translation file can satisfy entries offline", async 
   );
 });
 
+test("adapter-specific local translation files fall back safely", async () => {
+  const entry: TranslationEntry = {
+    id: "dialog-1c589d",
+    sourceText: "The various buttons will be explained in[NEW_LINE]the order of their importance.",
+    translatedText: "",
+    sourceLanguage: "english",
+    targetLanguage: "thai",
+    category: "dialog",
+    resource: {},
+    constraints: {},
+    protectedTokens: ["[NEW_LINE]"],
+    status: "untranslated",
+    warnings: []
+  };
+
+  assert.equal(
+    await findLocalTranslation(entry, "thai", "gba-pokemon-emerald-bpee-v0"),
+    "อธิบายปุ่มต่างๆ[NEW_LINE]ตามลำดับสำคัญ"
+  );
+});
+
 test("GBA adapter detects synthetic header metadata", async () => {
   const bytes = new Uint8Array(0xc0);
   Buffer.from("TESTGAME    ", "ascii").copy(bytes, 0xa0);

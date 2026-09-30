@@ -73,8 +73,13 @@ export async function translateProjectBatch(id:string):Promise<Project> {
     };
     let localMissing=0,localInvalid=0;
     for(const entry of batch) {
-      const local=await findLocalTranslation(entry,project.target);
-      if(local===undefined) {localMissing++;continue;}
+      const local=await findLocalTranslation(entry,project.target,project.adapterId);
+      if(local===undefined) {
+        localMissing++;
+        entry.status="error";
+        entry.warnings=[`Missing local translation. Add this entry to translations/${project.adapterId}.${project.target}.json or edit it here.`];
+        continue;
+      }
       try {
         await verify(entry,local);
         entry.translatedText=local; entry.status="translated"; entry.translationVersion=4; entry.warnings=[];
