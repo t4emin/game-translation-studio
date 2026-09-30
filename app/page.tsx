@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Upload, Languages, Download, Pause, RotateCw, Check, Terminal } from "lucide-react";
 
 type Project = {
-  id:string; name:string; target:string; total:number; done:number; complete:boolean; error:string|null;
+  id:string; name:string; target:string; total:number; done:number; complete:boolean; error:string|null; adapterName?:string; exportBlocked?:boolean;
   samples:{id:string;source:string;translation:string}[];
   failed:{id:string;source:string;translation:string;error:string}[];
 };
@@ -73,7 +73,7 @@ export default function Home() {
       const analysisForm=new FormData();analysisForm.set("file",file);analysisForm.set("platform","gba");
       const report=await responseJson<Analysis>(await fetch("/api/analyze",{method:"POST",body:analysisForm}));
       setAnalysis(report);
-      if(report.compatibility!=="full") {
+      if(report.compatibility!=="full" && !report.adapter?.capabilities.extraction) {
         setProject(null);
         setStatus("Generic analysis mode: ตรวจพบข้อมูลบางส่วน แต่ยัง Export ROM ไม่ได้");
         setError("เกมนี้ยังไม่มี adapter แบบ FULL จึงดู candidate ได้เท่านั้น ระบบจะไม่แก้ ROM จนกว่าจะรู้โครงสร้างเกมพอ");
@@ -81,7 +81,8 @@ export default function Home() {
       }
       const form=new FormData();form.set("file",file);form.set("target",target);
       const p=await responseJson<Project>(await fetch("/api/projects",{method:"POST",body:form}));
-      setProject(p);localStorage.setItem("gts-project",p.id);setStatus("พร้อมแปล");
+      setProject(p);localStorage.setItem("gts-project",p.id);setStatus(p.exportBlocked?"พร้อมแปล/ตรวจคำแปล แต่ Export ยังถูก block":"พร้อมแปล");
+      if(p.exportBlocked) setError(`${p.adapterName??"Adapter นี้"} ยังไม่มี safe injection/rebuild จึงแปลเพื่อตรวจงานได้ แต่ export ROM ยังไม่ได้`);
     }catch(e){setError(e instanceof Error?e.message:"Upload failed");setStatus("อัปโหลดไม่สำเร็จ");}
     finally{setBusy(null);}
   }
@@ -152,7 +153,7 @@ export default function Home() {
       <div className="step"><span className="stepNumber">01</span><div className="stepBody"><h2>Upload ROM</h2><input aria-label="Upload ROM" type="file" accept=".gba" disabled={!!busy} onChange={e=>{const f=e.target.files?.[0];if(f)void upload(f);}}/><p className="fileName">{currentFileName}</p></div><Upload className="stepIcon" size={20}/></div>
       <div className="step"><span className="stepNumber">02</span><div className="stepBody"><h2>แปลภาษา</h2><fieldset disabled={!!busy||!!project?.done}><legend>ภาษาปลายทาง</legend><label><input type="radio" name="target" checked={target==="thai"} onChange={()=>void selectTarget("thai")}/>ไทย</label><label><input type="radio" name="target" checked={target==="english"} onChange={()=>void selectTarget("english")}/>English</label></fieldset>
       <div className="actions"><button disabled={!project||!!busy||project.complete} onClick={()=>void translate()}>{project?.complete?<Check size={17}/>:project?.done?<RotateCw size={17}/>:<Languages size={17}/>} {project?.complete?"แปลเสร็จแล้ว":project?.done?"แปลต่อ":"แปล"}</button>{busy==="translate"&&<button className="secondary" disabled={stopping} onClick={()=>{stop.current=true;setStopping(true);setStatus("กำลังบันทึกชุดปัจจุบัน...");}}><Pause size={17}/>{stopping?"กำลังพัก...":"พัก"}</button>}</div></div><Languages className="stepIcon" size={20}/></div>
-      <div className="step"><span className="stepNumber">03</span><div className="stepBody"><h2>Export</h2><button className="secondary" disabled={!project?.complete||!!busy} onClick={()=>void download()}><Download size={17}/>Export .gba</button></div><Download className="stepIcon" size={20}/></div>
+      <div className="step"><span className="stepNumber">03</span><div className="stepBody"><h2>Export</h2><button className="secondary" disabled={!project?.complete||project.exportBlocked||!!busy} onClick={()=>void download()}><Download size={17}/>Export .gba</button>{project?.exportBlocked&&<p className="fileName">Export blocked: adapter นี้ยังไม่มี safe injection/rebuild</p>}</div><Download className="stepIcon" size={20}/></div>
     </section>
     <section className="progressArea" aria-live="polite"><div className="statusLine"><span className="prompt">&gt;</span><span>{status}</span>{project?.complete&&<Check size={17}/>}</div>{project&&<><progress max={project.total} value={project.done} aria-label="ข้อความที่แปลแล้ว"/><div className="progressLabel"><span>{project.done.toLocaleString()} / {project.total.toLocaleString()} ข้อความ</span><span>{percent}%</span></div></>}{error&&<p className="errorText" role="alert">{error}</p>}</section>
     {analysis&&<section className="analysisPanel" aria-label="GBA analysis">

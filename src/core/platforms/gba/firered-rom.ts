@@ -1,25 +1,16 @@
-import { createHash } from "node:crypto";
 import manifest from "../../adapters/gba/data/firered-rev1.json" with { type: "json" };
-import { decodePokemonText, decodeMap, placeholders, controlLengths, readGbaPointer } from "./pokemon-gen3-text.ts";
+import { decodePokemonText, decodeMap, placeholders, controlLengths } from "./pokemon-gen3-text.ts";
+import { digest, protectedPokemonNames } from "./pokemon-gen3-resources.ts";
 import type { TranslationEntry } from "../../types.ts";
 
 export { manifest };
-export const digest = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
+export { digest };
 export function verifyRom(bytes: Uint8Array) {
   if (digest(bytes) !== manifest.checksum) throw new Error("This file is not the original FireRed USA/Europe Rev 1 ROM.");
 }
 
 export function protectedNames(bytes:Uint8Array):string[] {
-  const names=new Set([...manifest.preservedNames,"POKéMON","OAK","BILL","BROCK","MISTY","LT. SURGE","ERIKA","KOGA","SABRINA","BLAINE","GIOVANNI","LORELEI","BRUNO","AGATHA","LANCE"]);
-  for(const [pointer,count,stride,length] of [[0x144,412,11,11],[0x148,355,13,13],[0x1c0,78,13,13],[0x1c8,374,44,13]]) {
-    const base=readGbaPointer(bytes,pointer);
-    if(base===undefined) continue;
-    for(let i=0;i<count;i++) {
-      const decoded=decodePokemonText(bytes,base+i*stride,length);
-      if(!decoded.unknownBytes.length && /^[A-Za-zé][A-Za-zé0-9 .'-]{2,}$/.test(decoded.text)) names.add(decoded.text);
-    }
-  }
-  return [...names];
+  return protectedPokemonNames(bytes,[...manifest.preservedNames,"OAK","BILL","BROCK","MISTY","LT. SURGE","ERIKA","KOGA","SABRINA","BLAINE","GIOVANNI","LORELEI","BRUNO","AGATHA","LANCE"]);
 }
 
 export function extractDialogs(bytes: Uint8Array): TranslationEntry[] {

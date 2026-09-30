@@ -5,8 +5,10 @@ import { TranslationMemory } from "../src/core/storage/translation-memory.ts";
 import { findLocalTranslation } from "../src/core/storage/local-translation-file.ts";
 import { gbaPlatformAdapter } from "../src/core/platforms/gba/adapter.ts";
 import { scanGbaResources } from "../src/core/platforms/gba/generic-scanner.ts";
+import { pokemonEmeraldAdapter, pokemonEmeraldChecksum } from "../src/core/adapters/gba/pokemon-emerald.ts";
 import { pokemonFireRedRev1Adapter, pokemonFireRedRev1Checksum } from "../src/core/adapters/gba/pokemon-firered-rev1.ts";
 import { decodePokemonText } from "../src/core/platforms/gba/pokemon-gen3-text.ts";
+import { latinByte } from "../src/core/platforms/gba/firered-rom.ts";
 import { analyzeGame } from "../src/core/analysis.ts";
 import { validateGameFile } from "../src/core/security/file-safety.ts";
 import type { GameFile, TranslationEntry } from "../src/core/types.ts";
@@ -61,6 +63,43 @@ test("Pokemon FireRed adapter only matches the exact Rev 1 checksum identity", a
     }),
     false
   );
+});
+
+test("Pokemon Emerald adapter matches exact v0 identity and extracts pointer text candidates", async () => {
+  assert.equal(
+    await pokemonEmeraldAdapter.matches({
+      platform: "gba",
+      fileName: "Pokemon - Emerald Version (USA, Europe).gba",
+      fileSize: 16777216,
+      checksum: pokemonEmeraldChecksum,
+      title: "POKEMON EMER",
+      gameId: "BPEE",
+      revision: "v0",
+      details: {}
+    }),
+    true
+  );
+
+  const bytes = new Uint8Array(0x1000).fill(0xff);
+  Buffer.from(bytes.buffer).writeUInt32LE(0x08000300, 0x200);
+  const text = [..."The BATTLE starts now."].map(latinByte);
+  bytes.set([...text, 0xff], 0x300);
+  const extraction = await pokemonEmeraldAdapter.extract({
+    file: { name: "emerald.gba", size: bytes.byteLength, extension: ".gba", bytes },
+    metadata: {
+      platform: "gba",
+      fileName: "emerald.gba",
+      fileSize: bytes.byteLength,
+      checksum: pokemonEmeraldChecksum,
+      title: "POKEMON EMER",
+      gameId: "BPEE",
+      revision: "v0",
+      details: {}
+    }
+  });
+
+  assert.ok(extraction.entries.some((entry) => entry.sourceText === "The BATTLE starts now."));
+  assert.equal(extraction.issues[0].code, "emerald-experimental-extraction");
 });
 
 test("Pokemon Gen III text decoder preserves control tokens", () => {

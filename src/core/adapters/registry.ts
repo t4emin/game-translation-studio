@@ -1,9 +1,10 @@
 import type { GameAdapter } from "../contracts.ts";
 import type { GameAdapterMetadata, PlatformMetadata } from "../types.ts";
+import { pokemonEmeraldAdapter, pokemonEmeraldMetadata } from "./gba/pokemon-emerald.ts";
 import { pokemonFireRedRev1Adapter, pokemonFireRedRev1Metadata } from "./gba/pokemon-firered-rev1.ts";
 
-const adapterMetadata: GameAdapterMetadata[] = [pokemonFireRedRev1Metadata];
-const gameAdapters: GameAdapter[] = [pokemonFireRedRev1Adapter];
+const adapterMetadata: GameAdapterMetadata[] = [pokemonFireRedRev1Metadata, pokemonEmeraldMetadata];
+const gameAdapters: GameAdapter[] = [pokemonFireRedRev1Adapter, pokemonEmeraldAdapter];
 
 export function supportedGames(): GameAdapterMetadata[] {
   return adapterMetadata;
@@ -20,6 +21,12 @@ export async function findGameAdapter(metadata: PlatformMetadata): Promise<{ met
   }
 
   return {};
+}
+
+export function getGameAdapter(id: string): { metadata: GameAdapterMetadata; adapter: GameAdapter } | undefined {
+  const adapter = gameAdapters.find((item) => item.id === id);
+  const metadata = adapterMetadata.find((item) => item.id === id);
+  return adapter && metadata ? { adapter, metadata } : undefined;
 }
 
 export function adapterCount(): number {
