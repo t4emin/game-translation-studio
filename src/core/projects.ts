@@ -153,6 +153,6 @@ export async function exportProject(id:string) {
   const original=await readFile(join(path(id),"original.gba"));
   const result=buildTranslatedRom(original,project.entries);
   await writeFile(join(path(id),`translated-${project.target}.gba`),result.bytes,{mode:0o600});
-  await writeFile(join(path(id),"build.json"),JSON.stringify({checksum:result.checksum,translated:result.translated,glyphs:result.glyphs,scope:projectView(project).scope},null,2));
+  await writeFile(join(path(id),"build.json"),JSON.stringify({checksum:result.checksum,translated:result.translated,glyphs:result.glyphs,thaiFont:result.thaiFont,scope:projectView(project).scope},null,2));
   return {...result,name:`FireRed-Rev1-${project.target}.gba`};
 }

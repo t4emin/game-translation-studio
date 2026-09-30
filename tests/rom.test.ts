@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
 import { decodePokemonText } from "../src/core/platforms/gba/pokemon-gen3-text.ts";
 import { manifest, extractDialogs, validateTranslation, digest, relocateDialogs } from "../src/core/platforms/gba/firered-rom.ts";
-import { buildTranslatedRom, createThaiAtlas, encodeDialog, rasterizeGlyph } from "../src/core/platforms/gba/thai-font.ts";
+import { buildTranslatedRom, createThaiAtlas, encodeDialog, rasterizeGlyph, analyzeThaiFontBuild } from "../src/core/platforms/gba/thai-font.ts";
+import { analyzeThaiCluster, normalizeThaiText, splitTextClusters } from "../src/core/platforms/gba/thai-font-pipeline.ts";
 
 test("control parameters are decoded atomically, including 0xff parameters",()=>{
   const bytes=Uint8Array.from([0xfc,4,1,0,2,0xfd,1,0xf9,0x10,0xff]);
@@ -20,9 +21,20 @@ test("translations must preserve repeated controls and their order",()=>{
 test("Thai clusters include tone marks and render nonempty glyphs",()=>{
   const atlas=createThaiAtlas(["กิ้ กุ้ง น้ำ"]);
   assert.ok(atlas.has("กิ้"));
+  assert.deepEqual(analyzeThaiCluster("กิ้").classes,["base","upper-mark","tone-mark"]);
   assert.ok(rasterizeGlyph("กิ้").pixels.some(v=>v!==0));
   assert.ok(rasterizeGlyph("กิ้").width<=16);
   assert.equal(new Set([...atlas.values()].map(g=>`${g.bank}:${g.code}`)).size,atlas.size);
+});
+test("Thai font pipeline normalizes text and reports precomposed capacity",()=>{
+  const text="กา\u0e4d[NEW_LINE]กิ้ {PLAYER}";
+  assert.equal(normalizeThaiText(text),"กำ[NEW_LINE]กิ้ {PLAYER}");
+  assert.deepEqual(splitTextClusters(text).filter(part=>/[\u0e00-\u0e7f]/.test(part)),["กำ","กิ้"]);
+  const report=analyzeThaiFontBuild([text]);
+  assert.equal(report.strategy,"precomposed-glyphs");
+  assert.equal(report.encoding,"fire-red-extended-font-banks");
+  assert.equal(report.availableGlyphSlots,768);
+  assert.equal(report.generatedGlyphs,2);
 });
 
 const romPath=process.env.TEST_ROM_PATH;

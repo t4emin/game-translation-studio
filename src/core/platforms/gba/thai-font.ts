@@ -1,12 +1,11 @@
 import { createCanvas, GlobalFonts } from "@napi-rs/canvas";
 import { join } from "node:path";
 import { manifest, latinByte, tokenBytes, validateTranslation, digest, relocateDialogs, verifyRom, extractDialogs } from "./firered-rom.ts";
+import { createThaiFontPlan, isThaiCluster, normalizeThaiText, splitTextClusters, type ThaiFontBuildReport } from "./thai-font-pipeline.ts";
 import type { TranslationEntry } from "../../types.ts";
 
-const segmenter = new Intl.Segmenter("th", { granularity: "grapheme" });
-export const splitText = (text: string) => text.split(/(\[[^\]]+\])/g).filter(Boolean).flatMap(part => part.startsWith("[") ? [part] : [...segmenter.segment(part)].map(s=>s.segment));
+export const splitText = splitTextClusters;
 type Glyph = { bank: number; code: number; width: number; pixels: Uint8Array };
-const isThai = (text: string) => /[\u0e00-\u0e7f]/.test(text);
 
 export function rasterizeGlyph(text: string): { pixels: Uint8Array; width: number } {
   if (!GlobalFonts.has("ThaiROM")) {
@@ -44,13 +43,15 @@ export function rasterizeGlyph(text: string): { pixels: Uint8Array; width: numbe
 }
 
 export function createThaiAtlas(texts: string[]): Map<string,Glyph> {
-  const counts=new Map<string,number>();
-  for(const cluster of texts.flatMap(splitText).filter(isThai)) counts.set(cluster,(counts.get(cluster)??0)+1);
-  const clusters=[...counts.keys()].sort((a,b)=>counts.get(b)!-counts.get(a)!||a.localeCompare(b));
   const banks=[2,1,4,5];
   const slots=192;
-  if(clusters.length>slots*manifest.fonts.length) throw new Error(`Thai font needs ${clusters.length} glyphs; the current renderer supports ${slots*manifest.fonts.length}.`);
+  const {clusters}=createThaiFontPlan(texts,slots*manifest.fonts.length);
   return new Map(clusters.map((cluster,index)=>[cluster,{bank:banks[Math.floor(index/slots)],code:0x120+index%slots,...rasterizeGlyph(cluster)}]));
+}
+
+export function analyzeThaiFontBuild(texts:string[]): ThaiFontBuildReport {
+  const slots=192;
+  return createThaiFontPlan(texts,slots*manifest.fonts.length).report;
 }
 
 export function patchThaiFonts(original: Uint8Array, atlas: Map<string,Glyph>): Uint8Array {
@@ -71,6 +72,7 @@ export function dialogLayout(entry:TranslationEntry) {
 }
 
 export function encodeDialog(text: string, rom: Uint8Array, atlas: Map<string,Glyph>, options: { scroll?: boolean; maxWidth?: number; maxLines?:number } = {}): Uint8Array {
+  text=normalizeThaiText(text);
   const result:number[]=[];
   let bank=2, x=0, line=0;
   const maxWidth=options.maxWidth??204;
@@ -106,6 +108,7 @@ export function encodeDialog(text: string, rom: Uint8Array, atlas: Map<string,Gl
       if(x>0 && wordWidth<=maxWidth && x+wordWidth>maxWidth) newline();
     }
     if(x+width>maxWidth) newline();
+    if(isThaiCluster(part) && !glyph) throw new Error(`Thai cluster is missing from the generated font atlas: ${part}`);
     if(glyph){font(glyph.bank);result.push(0xf9,glyph.code&255);}
     else {font(2);result.push(byte!);}
     x+=width;
@@ -126,12 +129,14 @@ export function buildTranslatedRom(original: Uint8Array, entries: TranslationEnt
     if(!source || source.sourceText!==entry.sourceText) throw new Error(`Source text mismatch: ${entry.id}`);
     validateTranslation(source.sourceText,entry.translatedText);
   }
-  const atlas=createThaiAtlas(translated.map(e=>e.translatedText));
+  const translatedTexts=translated.map(e=>e.translatedText);
+  const thaiFont=analyzeThaiFontBuild(translatedTexts);
+  const atlas=createThaiAtlas(translatedTexts);
   const fonts=patchThaiFonts(original,atlas);
   const encoded=translated.map(e=>{
     try{return {id:e.id,bytes:encodeDialog(e.translatedText,original,atlas,dialogLayout(sources.get(e.id)!))};}
     catch(error){throw new Error(`${e.id}: ${error instanceof Error?error.message:"Encoding failed"}`);}
   });
   const bytes=relocateDialogs(original,encoded,fonts);
-  return {bytes,glyphs:atlas.size,translated:translated.length,checksum:digest(bytes)};
+  return {bytes,glyphs:atlas.size,translated:translated.length,checksum:digest(bytes),thaiFont};
 }
