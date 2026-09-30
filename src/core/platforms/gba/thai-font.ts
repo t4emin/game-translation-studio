@@ -25,10 +25,12 @@ export function rasterizeGlyph(text: string): { pixels: Uint8Array; width: numbe
   const scale=Math.min(1,14/glyphWidth,15/glyphHeight);
   const drawWidth=Math.max(1,Math.ceil(glyphWidth*scale));
   const drawHeight=Math.max(1,Math.ceil(glyphHeight*scale));
+  const sourceBaseline=24,destBaseline=13;
+  const drawY=Math.max(0,Math.min(16-drawHeight,Math.round(destBaseline-(sourceBaseline-minY)*scale)));
   const canvas=createCanvas(16,16);
   const out=canvas.getContext("2d");
   out.imageSmoothingEnabled=true;
-  out.drawImage(source,minX,minY,glyphWidth,glyphHeight,0,Math.max(0,Math.floor((16-drawHeight)/2)),drawWidth,drawHeight);
+  out.drawImage(source,minX,minY,glyphWidth,glyphHeight,0,drawY,drawWidth,drawHeight);
   const width=Math.min(15,Math.max(4,drawWidth+1));
   const rgba=out.getImageData(0,0,16,16).data;
   const pixels=new Uint8Array(64);
