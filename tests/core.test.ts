@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { detectProtectedTokens, validateProtectedTokens } from "../src/core/validation/protected-tokens.ts";
 import { TranslationMemory } from "../src/core/storage/translation-memory.ts";
+import { findLocalTranslation } from "../src/core/storage/local-translation-file.ts";
 import { gbaPlatformAdapter } from "../src/core/platforms/gba/adapter.ts";
 import { pokemonFireRedRev1Adapter, pokemonFireRedRev1Checksum } from "../src/core/adapters/gba/pokemon-firered-rev1.ts";
 import { decodePokemonText } from "../src/core/platforms/gba/pokemon-gen3-text.ts";
@@ -115,6 +116,27 @@ test("translation memory reuses matching source language target language and con
 
   assert.equal(memory.find("Potion", "english", "thai", "item")?.translatedText, "ยา");
   assert.equal(memory.find("Potion", "english", "english", "item"), undefined);
+});
+
+test("bundled FireRed Thai translation file can satisfy entries offline", async () => {
+  const entry: TranslationEntry = {
+    id: "dialog-1c589d",
+    sourceText: "The various buttons will be explained in[NEW_LINE]the order of their importance.",
+    translatedText: "",
+    sourceLanguage: "english",
+    targetLanguage: "thai",
+    category: "dialog",
+    resource: {},
+    constraints: {},
+    protectedTokens: ["[NEW_LINE]"],
+    status: "untranslated",
+    warnings: []
+  };
+
+  assert.equal(
+    await findLocalTranslation(entry, "thai"),
+    "ปุ่มต่างๆ ของเกม[NEW_LINE]เรียงตามความสำคัญ"
+  );
 });
 
 test("GBA adapter detects synthetic header metadata", async () => {

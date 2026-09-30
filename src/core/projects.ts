@@ -4,6 +4,7 @@ import { randomUUID, createHash } from "node:crypto";
 import { extractDialogs, verifyRom, validateTranslation, protectedNames } from "./platforms/gba/firered-rom.ts";
 import { createThaiAtlas, encodeDialog, buildTranslatedRom, dialogLayout } from "./platforms/gba/thai-font.ts";
 import { OpenAITranslationProvider } from "./providers/openai/provider.ts";
+import { findLocalTranslation } from "./storage/local-translation-file.ts";
 import type { TargetLanguage, TranslationEntry } from "./types.ts";
 
 const root=join(process.cwd(),".local","projects");
@@ -52,25 +53,43 @@ export async function translateProjectBatch(id:string):Promise<Project> {
       project.error=undefined;await save(project);return project;
     }
     const original=await readFile(join(path(id),"original.gba"));
-    const provider=new OpenAITranslationProvider();
     const names=protectedNames(original);
     const glossary=(entries:TranslationEntry[])=>names.filter(name=>entries.some(e=>e.sourceText.includes(name))).map(name=>({source:name,target:name,exact:true}));
-    if(!provider.isConfigured()) throw new Error("Set OPENAI_API_KEY in .env, then restart the server.");
     const batch=project.entries.filter(e=>e.status!=="translated").slice(0,64);
     await mkdir(cacheRoot,{recursive:true,mode:0o700});
-    const key=(entry:TranslationEntry)=>join(cacheRoot,createHash("sha256").update(JSON.stringify(["firered-v3",provider.model,project.target,entry.sourceText,entry.context])).digest("hex")+".json");
     const verify=(entry:TranslationEntry,text:string)=>{
       validateTranslation(entry.sourceText,text);
       if(project.target==="thai" && !/[\u0e00-\u0e7f]/.test(text)) throw new Error("The response did not contain a Thai translation.");
       encodeDialog(text,original,createThaiAtlas([text]),dialogLayout(entry));
     };
-    const pending:TranslationEntry[]=[];
+    let localMissing=0,localInvalid=0;
     for(const entry of batch) {
+      const local=await findLocalTranslation(entry,project.target);
+      if(local===undefined) {localMissing++;continue;}
+      try {
+        verify(entry,local);
+        entry.translatedText=local; entry.status="translated"; entry.translationVersion=4; entry.warnings=[];
+      } catch(error) {
+        localInvalid++;
+        entry.translatedText=local; entry.status="error"; entry.warnings=[error instanceof Error?error.message:"Invalid local translation"];
+      }
+    }
+    let pending=batch.filter(e=>e.status!=="translated");
+    const provider=new OpenAITranslationProvider();
+    if(pending.length && !provider.isConfigured()) {
+      project.error=`Local-first mode stopped: ${localMissing.toLocaleString()} missing and ${localInvalid.toLocaleString()} invalid local translation(s) in this batch. Add/fix translations/pokemon-firered-rev1.thai.json, or set OPENAI_API_KEY to auto-translate only the missing/invalid messages.`;
+      await save(project);
+      return project;
+    }
+    const key=(entry:TranslationEntry)=>join(cacheRoot,createHash("sha256").update(JSON.stringify(["firered-v3",provider.model,project.target,entry.sourceText,entry.context])).digest("hex")+".json");
+    const apiPending:TranslationEntry[]=[];
+    for(const entry of batch.filter(e=>e.status!=="translated")) {
       try {
         const cached=JSON.parse(await readFile(key(entry),"utf8")); verify(entry,cached.text);
         entry.translatedText=cached.text; entry.status="translated"; entry.translationVersion=3; entry.warnings=[];
-      } catch {pending.push(entry);}
+      } catch {apiPending.push(entry);}
     }
+    pending=apiPending;
     project.error=undefined;
     if(pending.length) {
       let translations:Map<string,string>;

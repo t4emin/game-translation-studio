@@ -9,10 +9,14 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. Configure OPENAI_API_KEY in .env for Thai translation.
-Only extracted text/context is sent to OpenAI; the ROM stays on this machine.
-API usage is billable. Translation progress and cached results are stored under
-.local/ and survive page reloads. The source ROM is never overwritten.
+Open http://localhost:3000. Thai FireRed translation runs local-first from
+`translations/pokemon-firered-rev1.thai.json`, so an OPENAI_API_KEY is not
+required for the currently supported text set. If the local file is missing or
+has invalid entries and OPENAI_API_KEY is configured, the app automatically uses
+OpenAI only for those missing/invalid messages. Only extracted text/context is
+sent to OpenAI; the ROM stays on this machine. API usage is billable. Translation
+progress and cached results are stored under .local/ and survive page reloads.
+The source ROM is never overwritten.
 
 ## Supported Input
 

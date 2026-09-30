@@ -1,6 +1,7 @@
+@font-face{font-family:"GTS Thai";src:url("/fonts/NotoSansThai-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap;unicode-range:U+0E00-0E7F}
 :root{color-scheme:dark;--ink:#e4e7e5;--muted:#929994;--line:#272c29;--accent:#6ee790;--danger:#ff8d92}
 *{box-sizing:border-box;letter-spacing:0}
-body{margin:0;background:#000;color:var(--ink);font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:14px;line-height:1.6}
+body{margin:0;background:#000;color:var(--ink);font-family:"GTS Thai","SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:14px;line-height:1.6}
 button,input,textarea{font:inherit}
 .shell{max-width:980px;margin:0 auto;padding:40px 28px 60px}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-bottom:30px;border-bottom:1px solid var(--line);color:var(--muted)}
