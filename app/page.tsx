@@ -19,7 +19,7 @@ type AiAdapterAnalysis = {
 };
 type Analysis = {
   compatibility:"full"|"experimental"|"unsupported";
-  metadata:{title?:string;gameId?:string;revision?:string;fileSize:number;checksum:string;details:Record<string,string|number|boolean|null>};
+  metadata:{fileName:string;title?:string;gameId?:string;revision?:string;fileSize:number;checksum:string;details:Record<string,string|number|boolean|null>};
   adapter?:{name:string;region:string;revision:string;capabilities:Record<string,boolean>};
   capabilities:Record<string,string>;
   genericScan?:{
@@ -145,10 +145,11 @@ export default function Home() {
     }finally{setAiBusy(false);}
   }
   const percent=project?Math.round(project.done/project.total*100):0;
+  const currentFileName=project?.name??analysis?.metadata.fileName??"ยังไม่ได้เลือกไฟล์ ROM";
   return <main className="shell">
     <header className="topbar"><div className="brand"><img src="/logo.png" className="brandLogo" alt=""/><div><p className="eyebrow">GBA WORKBENCH / LOCAL-FIRST</p><h1>Game Translation Studio</h1></div></div><Terminal size={22} aria-hidden="true"/></header>
     <section className="flow" aria-label="Translation">
-      <div className="step"><span className="stepNumber">01</span><div className="stepBody"><h2>Upload ROM</h2><input aria-label="Upload ROM" type="file" accept=".gba" disabled={!!busy} onChange={e=>{const f=e.target.files?.[0];if(f)void upload(f);}}/><p className="fileName">{project?.name??"Pokemon FireRed / USA・Europe / Rev 1"}</p></div><Upload className="stepIcon" size={20}/></div>
+      <div className="step"><span className="stepNumber">01</span><div className="stepBody"><h2>Upload ROM</h2><input aria-label="Upload ROM" type="file" accept=".gba" disabled={!!busy} onChange={e=>{const f=e.target.files?.[0];if(f)void upload(f);}}/><p className="fileName">{currentFileName}</p></div><Upload className="stepIcon" size={20}/></div>
       <div className="step"><span className="stepNumber">02</span><div className="stepBody"><h2>แปลภาษา</h2><fieldset disabled={!!busy||!!project?.done}><legend>ภาษาปลายทาง</legend><label><input type="radio" name="target" checked={target==="thai"} onChange={()=>void selectTarget("thai")}/>ไทย</label><label><input type="radio" name="target" checked={target==="english"} onChange={()=>void selectTarget("english")}/>English</label></fieldset>
       <div className="actions"><button disabled={!project||!!busy||project.complete} onClick={()=>void translate()}>{project?.complete?<Check size={17}/>:project?.done?<RotateCw size={17}/>:<Languages size={17}/>} {project?.complete?"แปลเสร็จแล้ว":project?.done?"แปลต่อ":"แปล"}</button>{busy==="translate"&&<button className="secondary" disabled={stopping} onClick={()=>{stop.current=true;setStopping(true);setStatus("กำลังบันทึกชุดปัจจุบัน...");}}><Pause size={17}/>{stopping?"กำลังพัก...":"พัก"}</button>}</div></div><Languages className="stepIcon" size={20}/></div>
       <div className="step"><span className="stepNumber">03</span><div className="stepBody"><h2>Export</h2><button className="secondary" disabled={!project?.complete||!!busy} onClick={()=>void download()}><Download size={17}/>Export .gba</button></div><Download className="stepIcon" size={20}/></div>
@@ -158,6 +159,7 @@ export default function Home() {
       <div className="analysisHeader"><span className={`badge ${analysis.compatibility}`}>{analysis.compatibility.toUpperCase()}</span><span>{analysis.adapter?.name??"Generic GBA Analysis"}</span></div>
       <div className="analysisGrid">
         <span>Title</span><strong>{analysis.metadata.title||"Unknown"}</strong>
+        <span>File</span><strong>{analysis.metadata.fileName}</strong>
         <span>Game Code</span><strong>{analysis.metadata.gameId||"Unknown"}</strong>
         <span>Revision</span><strong>{analysis.metadata.revision||"Unknown"}</strong>
         <span>SHA-256</span><strong className="hash">{analysis.metadata.checksum}</strong>

@@ -74,6 +74,7 @@ test("adapter analysis sends only compact scan context to OpenAI",async()=>{
     const payload=JSON.parse(body.input[1].content);
     assert.equal(payload.metadata.checksumPrefix,"0123456789abcdef");
     assert.equal(payload.metadata.checksum,undefined);
+    assert.equal(payload.metadata.fileName,"Pokemon Emerald.gba");
     assert.equal(payload.metadata.title,"POKEMON EMER");
     assert.equal(payload.genericScan.ascii.examples[0].text,"OPTIONS");
     assert.deepEqual(payload.issueCodes,["NO_FULL_ADAPTER"]);

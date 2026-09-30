@@ -83,6 +83,7 @@ export class OpenAIAdapterAnalysisProvider {
 function compactReport(report: AnalysisReport) {
   return {
     metadata: {
+      fileName: report.metadata.fileName,
       title: report.metadata.title,
       gameId: report.metadata.gameId,
       revision: report.metadata.revision,
