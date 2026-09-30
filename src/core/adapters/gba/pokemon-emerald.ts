@@ -1,6 +1,7 @@
 import type { GameAdapter } from "../../contracts.ts";
 import { digest, protectedPokemonNames, extractPointerTextCandidates } from "../../platforms/gba/pokemon-gen3-resources.ts";
 import { latinByte, tokenBytes, validateTranslation } from "../../platforms/gba/firered-rom.ts";
+import { createThaiAtlasForFonts, encodeDialogWithFonts, patchThaiFontsForFonts, type GbaFontSpec } from "../../platforms/gba/thai-font.ts";
 import type {
   BuildResult,
   BuildValidation,
@@ -19,12 +20,10 @@ import type {
 
 export const pokemonEmeraldChecksum = "a9dec84dfe7f62ab2220bafaef7479da0929d066ece16a6885f6226db19085af";
 
-const thaiExportBlocked: ValidationIssue = {
-  level: "error",
-  code: "emerald-thai-font-not-ready",
-  message:
-    "Pokemon Emerald safe injection/rebuild is available for Gen 3 encoded English text, but Thai export is blocked until an Emerald-specific font patch is verified."
-};
+const emeraldFonts: GbaFontSpec[] = [
+  { id: 2, pixels: 0x6440e4, widths: 0x64c0e4, length: 32768, hash: "d3de13b611cdc84929a2eb1057ecc662e2cc065a78634c498e098991c9d9ad26" },
+  { id: 3, pixels: 0x64c2e4, widths: 0x6542e4, length: 32768, hash: "9df725adb5e41ab40cde0bddc88e00f5014157aad2d8030662b934ad155f287d" }
+];
 
 export const pokemonEmeraldMetadata: GameAdapterMetadata = {
   id: "gba-pokemon-emerald-bpee-v0",
@@ -39,7 +38,7 @@ export const pokemonEmeraldMetadata: GameAdapterMetadata = {
   capabilities: {
     extraction: true,
     fontAnalysis: true,
-    thaiBuild: false,
+    thaiBuild: true,
     englishBuild: true,
     safeInjection: true,
     rebuild: true,
@@ -48,7 +47,7 @@ export const pokemonEmeraldMetadata: GameAdapterMetadata = {
   notes: [
     "Exact ROM identity is recognized from GBA header and SHA-256.",
     "Extraction uses Pokemon Gen 3 text decoding plus pointer references to create high-confidence dialogue/description candidates.",
-    "English rebuild relocates extracted pointer text candidates and patches verified pointer references. Thai export remains disabled until Emerald-specific font patching is implemented.",
+    "Rebuild relocates extracted pointer text candidates and patches verified pointer references. Thai build uses verified Emerald short font banks with precomposed glyphs.",
     "No ROM bytes are bundled in this project."
   ]
 };
@@ -72,31 +71,39 @@ export const pokemonEmeraldAdapter: GameAdapter = {
     return {
       entries,
       issues: entries.length
-        ? [{ level: "warning", code: "emerald-experimental-extraction", message: "Emerald candidate extraction is available. English export can rebuild these candidates; Thai export is still blocked until font patching is mapped." }]
+        ? [{ level: "warning", code: "emerald-experimental-extraction", message: "Emerald candidate extraction is available. Rebuild patches verified pointer references and generated Thai glyphs into Emerald short font banks." }]
         : [{ level: "error", code: "emerald-no-candidates", message: "No high-confidence Emerald text candidates were found." }]
     };
   },
 
   async analyzeFont(): Promise<FontAnalysis> {
     return {
-      canRenderThai: false,
+      canRenderThai: true,
       canRenderEnglish: true,
-      notes: ["Emerald can rebuild Gen 3 encoded English text candidates."],
-      blockers: ["Needs Emerald-specific font banks, widths and tile hashes."]
+      notes: ["Emerald short font banks are mapped for generated Thai glyphs."],
+      blockers: []
     };
   },
 
   async prepareTargetLanguage(_context: GameContext, language: TargetLanguage): Promise<LanguagePreparationResult> {
-    return language === "english" ? { ok: true, issues: [] } : { ok: false, issues: [thaiExportBlocked] };
+    return language === "english" || language === "thai" ? { ok: true, issues: [] } : { ok: false, issues: [{ level: "error", code: "emerald-target-unsupported", message: "Unsupported Emerald target language." }] };
   },
 
   async validateTranslations(context: GameContext, entries: TranslationEntry[]): Promise<ValidationResult> {
     const issues: ValidationIssue[] = [];
     const sources = candidateMap(context.file.bytes);
+    let atlas: ReturnType<typeof createThaiAtlasForFonts> | undefined;
+    let fontRom: Uint8Array = context.file.bytes;
+    try {
+      atlas = createThaiAtlasForFonts(entries.map((entry) => entry.translatedText), emeraldFonts);
+      if (atlas.size) fontRom = patchThaiFontsForFonts(context.file.bytes, atlas, emeraldFonts);
+    } catch (error) {
+      return { ok: false, issues: [{ level: "error", code: "emerald-font-validation", message: error instanceof Error ? error.message : "Emerald font validation failed" }] };
+    }
     for (const entry of entries) {
       try {
         validateTranslation(entry.sourceText, entry.translatedText);
-        if (entry.translatedText) encodeEmeraldText(entry.translatedText);
+        if (entry.translatedText) encodeEmeraldText(entry.translatedText, fontRom, atlas);
         const source = sources.get(entry.id);
         if (!source || source.sourceText !== entry.sourceText) throw new Error(`Source text mismatch: ${entry.id}`);
       }
@@ -137,7 +144,11 @@ function candidateMap(bytes: Uint8Array): Map<string, TranslationEntry> {
   return new Map(extractPointerTextCandidates(bytes, { adapterId: "emerald", limit: 600 }).map((entry) => [entry.id, entry]));
 }
 
-function encodeEmeraldText(text: string): Uint8Array {
+function encodeEmeraldText(text: string, rom?: Uint8Array, atlas?: ReturnType<typeof createThaiAtlasForFonts>): Uint8Array {
+  if (/[\u0e00-\u0e7f]/.test(text)) {
+    if (!rom || !atlas) throw new Error("Thai text requires a prepared Emerald font atlas.");
+    return encodeDialogWithFonts(text, rom, atlas, emeraldFonts);
+  }
   const bytes: number[] = [];
   for (const part of text.split(/(\[[^\]]+\])/g).filter(Boolean)) {
     if (part.startsWith("[")) {
@@ -156,16 +167,18 @@ function buildEmeraldRom(original: Uint8Array, entries: TranslationEntry[]): Buf
   const translated = entries.filter((entry) => entry.translatedText && entry.translatedText !== entry.sourceText);
   if (!translated.length) return Buffer.from(original);
   const sources = candidateMap(original);
+  const atlas = createThaiAtlasForFonts(translated.map((entry) => entry.translatedText), emeraldFonts);
+  const baseRom = atlas.size ? patchThaiFontsForFonts(original, atlas, emeraldFonts) : original;
   const encoded = translated.map((entry) => {
     const source = sources.get(entry.id);
     if (!source || source.sourceText !== entry.sourceText) throw new Error(`Source text mismatch: ${entry.id}`);
     validateTranslation(source.sourceText, entry.translatedText);
-    return { source, bytes: encodeEmeraldText(entry.translatedText) };
+    return { source, bytes: /[\u0e00-\u0e7f]/.test(entry.translatedText) ? encodeDialogWithFonts(entry.translatedText, baseRom, atlas, emeraldFonts) : encodeEmeraldText(entry.translatedText) };
   });
   const total = encoded.reduce((sum, item) => sum + item.bytes.length + 3, 0);
   if (original.length + total > 0x2000000) throw new Error("Translated ROM exceeds the GBA 32 MiB limit.");
   const output = Buffer.alloc(Math.ceil((original.length + total) / 0x100000) * 0x100000, 0xff);
-  output.set(original);
+  output.set(baseRom);
   let cursor = original.length;
   const seen = new Set<string>();
   for (const item of encoded) {

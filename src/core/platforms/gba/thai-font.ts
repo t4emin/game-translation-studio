@@ -6,6 +6,8 @@ import type { TranslationEntry } from "../../types.ts";
 
 export const splitText = splitTextClusters;
 type Glyph = { bank: number; code: number; width: number; pixels: Uint8Array };
+export type GbaFontSpec = { id: number; pixels: number; widths: number; length: number; hash: string };
+const fireRedFontOrder: GbaFontSpec[] = [2,1,4,5].map(id=>manifest.fonts.find(font=>font.id===id)!);
 
 export function rasterizeGlyph(text: string): { pixels: Uint8Array; width: number } {
   if (!GlobalFonts.has("ThaiROM")) {
@@ -45,9 +47,13 @@ export function rasterizeGlyph(text: string): { pixels: Uint8Array; width: numbe
 }
 
 export function createThaiAtlas(texts: string[]): Map<string,Glyph> {
-  const banks=[2,1,4,5];
+  return createThaiAtlasForFonts(texts,fireRedFontOrder);
+}
+
+export function createThaiAtlasForFonts(texts: string[], fonts: GbaFontSpec[]): Map<string,Glyph> {
+  const banks=fonts.map(font=>font.id);
   const slots=192;
-  const {clusters}=createThaiFontPlan(texts,slots*manifest.fonts.length);
+  const {clusters}=createThaiFontPlan(texts,slots*fonts.length);
   return new Map(clusters.map((cluster,index)=>[cluster,{bank:banks[Math.floor(index/slots)],code:0x120+index%slots,...rasterizeGlyph(cluster)}]));
 }
 
@@ -57,10 +63,14 @@ export function analyzeThaiFontBuild(texts:string[]): ThaiFontBuildReport {
 }
 
 export function patchThaiFonts(original: Uint8Array, atlas: Map<string,Glyph>): Uint8Array {
+  return patchThaiFontsForFonts(original,atlas,fireRedFontOrder);
+}
+
+export function patchThaiFontsForFonts(original: Uint8Array, atlas: Map<string,Glyph>, fonts: GbaFontSpec[]): Uint8Array {
   const patched=Uint8Array.from(original);
-  for(const font of manifest.fonts) if(digest(original.slice(font.pixels,font.pixels+font.length))!==font.hash) throw new Error("Original font does not match this ROM revision.");
+  for(const font of fonts) if(digest(original.slice(font.pixels,font.pixels+font.length))!==font.hash) throw new Error("Original font does not match this ROM revision.");
   for(const glyph of atlas.values()) {
-    const font=manifest.fonts.find(f=>f.id===glyph.bank)!;
+    const font=fonts.find(f=>f.id===glyph.bank)!;
     patched.set(glyph.pixels,font.pixels+glyph.code*64);
     patched[font.widths+glyph.code]=glyph.width;
   }
@@ -74,14 +84,18 @@ export function dialogLayout(entry:TranslationEntry) {
 }
 
 export function encodeDialog(text: string, rom: Uint8Array, atlas: Map<string,Glyph>, options: { scroll?: boolean; maxWidth?: number; maxLines?:number } = {}): Uint8Array {
+  return encodeDialogWithFonts(text,rom,atlas,fireRedFontOrder,options);
+}
+
+export function encodeDialogWithFonts(text: string, rom: Uint8Array, atlas: Map<string,Glyph>, fonts: GbaFontSpec[], options: { scroll?: boolean; maxWidth?: number; maxLines?:number } = {}): Uint8Array {
   text=normalizeThaiText(text);
   const result:number[]=[];
-  let bank=2, x=0, line=0;
+  let bank=fonts[0]?.id??2, x=0, line=0;
   const maxWidth=options.maxWidth??204;
-  const widths=manifest.fonts.find(f=>f.id===2)!.widths;
+  const widths=fonts[0]!.widths;
   const font=(next:number)=>{if(next!==bank){result.push(0xfc,0x06,next);bank=next;}};
   // Start and finish in a known font; only appended text uses the new glyph banks.
-  result.push(0xfc,0x06,2);
+  result.push(0xfc,0x06,bank);
   const newline=()=>{
     if(options.maxLines && line+1>=options.maxLines) throw new Error(`Text exceeds this screen's ${options.maxLines}-line limit. Shorten the translation.`);
     result.push(options.scroll!==false && line>=1 ? 0xfa : 0xfe);x=0;line++;
@@ -93,7 +107,7 @@ export function encodeDialog(text: string, rom: Uint8Array, atlas: Map<string,Gl
     if(part.startsWith("[")) {
       if(part==="[NEW_LINE]"){newline();continue;}
       if(part==="[PROMPT_CLEAR]" || part==="[PROMPT_SCROLL]") {result.push(...tokenBytes(part));x=0;line=part==="[PROMPT_CLEAR]"?0:1;continue;}
-      font(2);
+      font(fonts[0]?.id??2);
       if(part.startsWith("[VAR:")) {
         const reserved=part==="[VAR:PLAYER]"||part==="[VAR:RIVAL]"?48:78;
         if(x+reserved>maxWidth) newline();
@@ -112,10 +126,10 @@ export function encodeDialog(text: string, rom: Uint8Array, atlas: Map<string,Gl
     if(x+width>maxWidth) newline();
     if(isThaiCluster(part) && !glyph) throw new Error(`Thai cluster is missing from the generated font atlas: ${part}`);
     if(glyph){font(glyph.bank);result.push(0xf9,glyph.code&255);}
-    else {font(2);result.push(byte!);}
+    else {font(fonts[0]?.id??2);result.push(byte!);}
     x+=width;
   }
-  font(2);result.push(0xff);
+  font(fonts[0]?.id??2);result.push(0xff);
   if(result.length>900) throw new Error(`Translated message is ${result.length} bytes; shorten it to fit the 900-byte message limit.`);
   return Uint8Array.from(result);
 }

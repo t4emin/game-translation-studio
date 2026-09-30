@@ -36,9 +36,9 @@ screen.
 
 Pokemon Emerald Version (USA/Europe), BPEE, is supported as an experimental
 project. It extracts high-confidence Gen 3 text candidates and can export
-English/Gen 3 encoded rebuilds by relocating changed text and patching verified
-pointer references. Thai export is still blocked until an Emerald-specific font
-patch is verified.
+rebuilt ROMs by relocating changed text, patching verified pointer references
+and generating Thai glyphs into verified Emerald short font banks. Emulator
+verification is still pending.
 
 Other `.gba` files can be analyzed in Generic / Experimental mode, but safe
 injection and export are blocked unless a FULL adapter exists. PSP, PS2, ISO,

@@ -166,8 +166,7 @@ function blockedReason(capabilities:StoredMetadata["capabilities"],target:Target
 }
 
 function hydrateProject(project:Project):Project {
-  if(project.adapterId && project.adapterCapabilities) return project;
-  const fireRed=getGameAdapter("gba-pokemon-firered-bpre-rev1");
-  if(!fireRed) return project;
-  return {...project,adapterId:fireRed.metadata.id,adapterName:fireRed.metadata.name,adapterCapabilities:fireRed.metadata.capabilities};
+  const adapter=getGameAdapter(project.adapterId || "gba-pokemon-firered-bpre-rev1");
+  if(!adapter) return project;
+  return {...project,adapterId:adapter.metadata.id,adapterName:adapter.metadata.name,adapterCapabilities:adapter.metadata.capabilities};
 }
