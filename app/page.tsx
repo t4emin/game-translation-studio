@@ -70,12 +70,15 @@ export default function Home() {
   }
   async function download() {
     if(!project) return;
-    setBusy("export");setError("");setStatus("กำลังสร้าง ROM...");
+    setBusy("export");setError("");setStatus("กำลังดาวน์โหลด ROM...");
     try {
-      const response=await fetch(`/api/projects/${project.id}/export`);
-      if(!response.ok) throw new Error((await response.json()).error);
-      const blob=await response.blob(),url=URL.createObjectURL(blob),a=document.createElement("a");
-      a.href=url;a.download=`FireRed-Rev1-${project.target}.gba`;a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);setStatus("Export สำเร็จ");
+      const a=document.createElement("a");
+      a.href=`/api/projects/${project.id}/export`;
+      a.download=`FireRed-Rev1-${project.target}.gba`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setStatus("Export สำเร็จ");
     }catch(e){setError(e instanceof Error?e.message:"Export failed");setStatus("Export ไม่สำเร็จ");}
     finally{setBusy(null);}
   }
