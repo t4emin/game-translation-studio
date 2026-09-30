@@ -19,6 +19,14 @@ sent to OpenAI; the ROM stays on this machine. API usage is billable. Translatio
 progress and cached results are stored under .local/ and survive page reloads.
 The source ROM is never overwritten.
 
+## Deployment Note
+
+The full ROM workflow uploads a 16 MiB `.gba` and exports a 17 MiB patched
+`.gba`. Vercel Functions reject payloads around 4.5 MiB, so the hosted Vercel
+version can show the UI but cannot run the upload/export pipeline as-is. Run the
+app locally, or deploy it to a persistent Node server that allows 16-17 MiB
+request/response bodies and writable project storage.
+
 ## Supported Input
 
 Pokemon FireRed Version (USA/Europe), Rev 1, BPRE.

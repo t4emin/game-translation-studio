@@ -20,12 +20,19 @@ type Analysis = {
   };
   issues:{level:string;code:string;message:string}[];
 };
-async function responseJson(response:Response) {
-  const data=await response.json();
-  if(!response.ok) throw new Error(data.error??"Request failed");
-  return data;
+async function responseJson<T>(response:Response):Promise<T> {
+  const text=await response.text();
+  let data: unknown;
+  try { data=text ? JSON.parse(text) : {}; }
+  catch {
+    if(!response.ok) throw new Error(text || `Request failed with HTTP ${response.status}`);
+    throw new Error("Server returned a non-JSON response.");
+  }
+  if(!response.ok) throw new Error(typeof data==="object" && data && "error" in data ? String(data.error) : "Request failed");
+  return data as T;
 }
 const readable=(text:string)=>text.replace(/\[NEW_LINE\]/g,"\n").replace(/\[PROMPT_(CLEAR|SCROLL)\]/g,"\n\n");
+const vercelFunctionPayloadLimit=4.5*1024*1024;
 
 export default function Home() {
   const [project,setProject]=useState<Project|null>(null);
@@ -39,7 +46,7 @@ export default function Home() {
   useEffect(()=>{
     const requested=new URLSearchParams(window.location.search).get("project");
     const id=requested&&/^[0-9a-f-]{36}$/.test(requested)?requested:localStorage.getItem("gts-project");
-    if(id) fetch(`/api/projects/${id}`).then(responseJson).then((p:Project)=>{
+    if(id) fetch(`/api/projects/${id}`).then(response=>responseJson<Project>(response)).then((p:Project)=>{
       localStorage.setItem("gts-project",p.id);
       setProject(p);setTarget(p.target);setStatus(p.complete?"แปลเสร็จแล้ว พร้อม Export":"โหลดงานเดิมแล้ว");
     }).catch(()=>localStorage.removeItem("gts-project"));
@@ -48,8 +55,11 @@ export default function Home() {
   async function upload(file:File) {
     setBusy("upload");setError("");setAnalysis(null);setStatus("กำลังวิเคราะห์ GBA ROM...");
     try {
+      if(location.hostname.endsWith(".vercel.app") && file.size>vercelFunctionPayloadLimit) {
+        throw new Error("Vercel Functions รับ request/response ได้สูงสุดประมาณ 4.5MB แต่ GBA ROM นี้ใหญ่กว่า ต้องรัน local หรือ deploy บน Node server ที่รับไฟล์ 16-17MB ได้");
+      }
       const analysisForm=new FormData();analysisForm.set("file",file);analysisForm.set("platform","gba");
-      const report:Analysis=await responseJson(await fetch("/api/analyze",{method:"POST",body:analysisForm}));
+      const report=await responseJson<Analysis>(await fetch("/api/analyze",{method:"POST",body:analysisForm}));
       setAnalysis(report);
       if(report.compatibility!=="full") {
         setProject(null);
@@ -58,7 +68,7 @@ export default function Home() {
         return;
       }
       const form=new FormData();form.set("file",file);form.set("target",target);
-      const p:Project=await responseJson(await fetch("/api/projects",{method:"POST",body:form}));
+      const p=await responseJson<Project>(await fetch("/api/projects",{method:"POST",body:form}));
       setProject(p);localStorage.setItem("gts-project",p.id);setStatus("พร้อมแปล");
     }catch(e){setError(e instanceof Error?e.message:"Upload failed");setStatus("อัปโหลดไม่สำเร็จ");}
     finally{setBusy(null);}
@@ -69,7 +79,7 @@ export default function Home() {
     try {
       let previous=project.done,stalled=0;
       while(!stop.current) {
-        const p:Project=await responseJson(await fetch(`/api/projects/${project.id}/translate`,{method:"POST"}));
+        const p=await responseJson<Project>(await fetch(`/api/projects/${project.id}/translate`,{method:"POST"}));
         setProject(p);
         stalled=p.done===previous?stalled+1:0;previous=p.done;
         if(p.error&&stalled>=3) throw new Error(p.error);
@@ -79,14 +89,14 @@ export default function Home() {
       }
       if(stop.current) setStatus("พักการแปลแล้ว บันทึกความคืบหน้าไว้แล้ว");
     }catch(e){setError(e instanceof Error?e.message:"Translation failed");setStatus("การแปลหยุดชั่วคราว");
-      try{setProject(await responseJson(await fetch(`/api/projects/${project.id}`)));}catch{}
+      try{setProject(await responseJson<Project>(await fetch(`/api/projects/${project.id}`)));}catch{}
     }finally{setBusy(null);setStopping(false);}
   }
   async function selectTarget(next:string) {
     if(!project){setTarget(next);return;}
     setBusy("upload");setError("");
     try {
-      const p:Project=await responseJson(await fetch(`/api/projects/${project.id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({target:next})}));
+      const p=await responseJson<Project>(await fetch(`/api/projects/${project.id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({target:next})}));
       setProject(p);setTarget(p.target);
     }catch(e){setError(e instanceof Error?e.message:"Language change failed");}
     finally{setBusy(null);}
@@ -107,7 +117,7 @@ export default function Home() {
   }
   async function save(entryId:string,text:string) {
     setError("");
-    try{setProject(await responseJson(await fetch(`/api/projects/${project!.id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({entryId,text})})));}
+    try{setProject(await responseJson<Project>(await fetch(`/api/projects/${project!.id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({entryId,text})})));}
     catch(e){setError(e instanceof Error?e.message:"Save failed");}
   }
   const percent=project?Math.round(project.done/project.total*100):0;
