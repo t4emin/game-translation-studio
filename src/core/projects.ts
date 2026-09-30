@@ -28,11 +28,12 @@ export interface ProjectExport { bytes:Buffer; checksum:string; name:string; tra
 export function projectView(project:Project) {
   const done=project.entries.filter(e=>e.status==="translated");
   const exportBlocked=!canExport(project.adapterCapabilities,project.target);
+  const exportBlockReason=exportBlocked?blockedReason(project.adapterCapabilities,project.target):null;
   return {id:project.id,name:project.name,target:project.target,total:project.entries.length,done:done.length,
-    complete:done.length===project.entries.length, error:project.error??null, adapterId:project.adapterId, adapterName:project.adapterName, exportBlocked,
+    complete:done.length===project.entries.length, error:project.error??null, adapterId:project.adapterId, adapterName:project.adapterName, exportBlocked, exportBlockReason,
     samples:done.slice(-5).map(e=>({id:e.id,source:e.sourceText,translation:e.translatedText})),
     failed:project.entries.filter(e=>e.status==="error").map(e=>({id:e.id,source:e.sourceText,translation:e.translatedText,error:e.warnings.join(" ")})),
-    scope:exportBlocked?"Review/translation project only. Export is disabled until this adapter has safe injection and rebuild.":"Map dialogue, story events and the opening scene. Names, battle UI, menus and help screens remain original."};
+    scope:exportBlocked?`Review/translation project only. Export is disabled: ${exportBlockReason}`:"Map dialogue, story events and the opening scene. Names, battle UI, menus and help screens remain original."};
 }
 export async function createProject(name:string,bytes:Uint8Array,target:TargetLanguage):Promise<Project> {
   const file={name,size:bytes.byteLength,extension:name.slice(name.lastIndexOf(".")).toLowerCase(),bytes};
@@ -155,6 +156,13 @@ async function projectContext(project:Project, bytes:Uint8Array):Promise<GameCon
 
 function canExport(capabilities:StoredMetadata["capabilities"],target:TargetLanguage) {
   return capabilities.safeInjection && capabilities.rebuild && (target==="thai" ? capabilities.thaiBuild : capabilities.englishBuild);
+}
+
+function blockedReason(capabilities:StoredMetadata["capabilities"],target:TargetLanguage) {
+  if(!capabilities.safeInjection || !capabilities.rebuild) return "adapter ยังไม่มี safe injection/rebuild";
+  if(target==="thai" && !capabilities.thaiBuild) return "adapter ยังไม่มี Thai font build";
+  if(target==="english" && !capabilities.englishBuild) return "adapter ยังไม่มี English build";
+  return "adapter ยัง export target นี้ไม่ได้";
 }
 
 function hydrateProject(project:Project):Project {

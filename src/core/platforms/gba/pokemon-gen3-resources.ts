@@ -65,7 +65,8 @@ export function extractPointerTextCandidates(bytes: Uint8Array, options: { adapt
       resource: {
         offset,
         pointer: 0x08000000 + offset,
-        index
+        index,
+        references: candidate.references
       },
       constraints: {
         maxBytes: 900,

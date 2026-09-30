@@ -110,6 +110,7 @@ export interface TranslationEntry {
     offset?: number;
     pointer?: number;
     index?: number;
+    references?: number[];
   };
   constraints: {
     maxBytes?: number;
