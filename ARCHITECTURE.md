@@ -3,21 +3,21 @@
 The required flow is:
 
 ```text
-Translation Core -> Platform Adapter -> Game Adapter
+GBA Analyzer -> Generic Scanner -> Translation Workspace -> GBA Adapter -> Rebuild
 ```
 
 ## Platform Adapter
 
-Platform adapters detect and inspect a platform. They may expose shared helpers such as GBA header parsing, checksums, binary readers and platform-specific filesystem helpers.
+V1 is GBA-only. The platform layer detects and inspects `.gba` files, then reports honest compatibility:
+
+- FULL: exact adapter can extract, translate, inject, rebuild and validate.
+- EXPERIMENTAL: generic analysis/candidates are available, but build is blocked.
+- UNSUPPORTED: the file is not a supported GBA input.
 
 Implemented:
 
-- `src/core/platforms/gba/adapter.ts`: partial GBA header inspection.
-
-Reserved:
-
-- `src/core/platforms/psp/adapter.ts`
-- `src/core/platforms/ps2/adapter.ts`
+- `src/core/platforms/gba/adapter.ts`: GBA header, game code, revision and hash inspection.
+- `src/core/platforms/gba/generic-scanner.ts`: read-only ASCII, Shift-JIS, pointer and compression candidates.
 
 ## Game Adapter
 
@@ -32,7 +32,7 @@ Game adapters own exact title/revision behavior:
 - rebuild
 - validation
 
-No game adapter is registered yet. Unsupported files stop safely after metadata inspection.
+Pokemon FireRed Rev 1 is the first FULL adapter. Unknown GBA games enter generic analysis mode; injection/export remains blocked until an adapter or known parser proves the format.
 
 ## Registry
 

@@ -31,7 +31,7 @@ export const pokemonFireRedRev1Metadata: GameAdapterMetadata = {
   id: "gba-pokemon-firered-bpre-rev1",
   name: "Pokemon FireRed Version (USA/Europe) Rev 1",
   platform: "gba",
-  status: "experimental",
+  status: "supported",
   gameId: "BPRE",
   region: "USA/Europe",
   revision: "v1",

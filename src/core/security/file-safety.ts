@@ -1,7 +1,7 @@
 import type { GameFile, ValidationIssue } from "../types.ts";
 
 const DEFAULT_MAX_BYTES = 32 * 1024 * 1024;
-const allowedExtensions = new Set([".gba", ".iso", ".cso"]);
+const allowedExtensions = new Set([".gba"]);
 
 export function maxUploadBytes(): number {
   const configured = Number(process.env.GTS_MAX_UPLOAD_BYTES);
@@ -15,7 +15,7 @@ export function validateGameFile(file: GameFile): ValidationIssue[] {
     issues.push({
       level: "error",
       code: "unsupported-extension",
-      message: "Only .gba, .iso and .cso files are accepted by the ingestion layer."
+      message: "Game Translation Studio V1 accepts only .gba files."
     });
   }
 

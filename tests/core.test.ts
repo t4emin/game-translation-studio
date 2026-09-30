@@ -4,8 +4,11 @@ import { detectProtectedTokens, validateProtectedTokens } from "../src/core/vali
 import { TranslationMemory } from "../src/core/storage/translation-memory.ts";
 import { findLocalTranslation } from "../src/core/storage/local-translation-file.ts";
 import { gbaPlatformAdapter } from "../src/core/platforms/gba/adapter.ts";
+import { scanGbaResources } from "../src/core/platforms/gba/generic-scanner.ts";
 import { pokemonFireRedRev1Adapter, pokemonFireRedRev1Checksum } from "../src/core/adapters/gba/pokemon-firered-rev1.ts";
 import { decodePokemonText } from "../src/core/platforms/gba/pokemon-gen3-text.ts";
+import { analyzeGame } from "../src/core/analysis.ts";
+import { validateGameFile } from "../src/core/security/file-safety.ts";
 import type { GameFile, TranslationEntry } from "../src/core/types.ts";
 
 test("detects and validates protected tokens", () => {
@@ -165,4 +168,37 @@ test("GBA adapter detects synthetic header metadata", async () => {
   assert.equal(metadata.gameId, "TGME");
   assert.equal(metadata.revision, "v1");
   assert.equal(metadata.details.headerChecksum, `valid:${checksum.toString(16).padStart(2, "0")}`);
+});
+
+test("GBA generic scanner reports read-only text and pointer candidates", () => {
+  const bytes = new Uint8Array(0x200).fill(0);
+  Buffer.from("HELLO GBA WORLD", "ascii").copy(bytes, 0x40);
+  Buffer.from(bytes.buffer).writeUInt32LE(0x08000040, 0x100);
+  bytes[0x120] = 0x10;
+  bytes[0x121] = 0x80;
+
+  const scan = scanGbaResources(bytes);
+  assert.ok(scan.ascii.count >= 1);
+  assert.ok(scan.ascii.examples.some((item) => item.text.includes("HELLO")));
+  assert.ok(scan.pointers.count >= 1);
+  assert.ok(scan.compression.count >= 1);
+});
+
+test("GBA-only V1 rejects non-GBA uploads and analyzes unknown GBA read-only", async () => {
+  assert.equal(validateGameFile({ name: "game.iso", extension: ".iso", size: 4, bytes: new Uint8Array(4) })[0].code, "unsupported-extension");
+
+  const bytes = new Uint8Array(0xc0).fill(0);
+  Buffer.from("UNKNOWN     ", "ascii").copy(bytes, 0xa0);
+  Buffer.from("UNKN", "ascii").copy(bytes, 0xac);
+  Buffer.from("01", "ascii").copy(bytes, 0xb0);
+  bytes[0xb2] = 0x96;
+  let checksum = 0;
+  for (let i = 0xa0; i <= 0xbc; i += 1) checksum = (checksum - bytes[i] - 1) & 0xff;
+  bytes[0xbd] = checksum;
+
+  const report = await analyzeGame({ name: "unknown.gba", extension: ".gba", size: bytes.length, bytes }, "gba");
+  assert.equal(report.metadata.platform, "gba");
+  assert.equal(report.compatibility, "experimental");
+  assert.equal(report.capabilities.rebuild, "blocked");
+  assert.ok(report.genericScan);
 });

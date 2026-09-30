@@ -7,6 +7,19 @@ type Project = {
   samples:{id:string;source:string;translation:string}[];
   failed:{id:string;source:string;translation:string;error:string}[];
 };
+type Analysis = {
+  compatibility:"full"|"experimental"|"unsupported";
+  metadata:{title?:string;gameId?:string;revision?:string;fileSize:number;checksum:string;details:Record<string,string|number|boolean|null>};
+  adapter?:{name:string;region:string;revision:string;capabilities:Record<string,boolean>};
+  capabilities:Record<string,string>;
+  genericScan?:{
+    ascii:{count:number};
+    shiftJis:{count:number};
+    pointers:{count:number;uniqueTargets:number};
+    compression:{count:number};
+  };
+  issues:{level:string;code:string;message:string}[];
+};
 async function responseJson(response:Response) {
   const data=await response.json();
   if(!response.ok) throw new Error(data.error??"Request failed");
@@ -20,6 +33,7 @@ export default function Home() {
   const [busy,setBusy]=useState<"upload"|"translate"|"export"|null>(null);
   const [error,setError]=useState("");
   const [status,setStatus]=useState("รอไฟล์ ROM");
+  const [analysis,setAnalysis]=useState<Analysis|null>(null);
   const [stopping,setStopping]=useState(false);
   const stop=useRef(false);
   useEffect(()=>{
@@ -32,8 +46,17 @@ export default function Home() {
     return ()=>{stop.current=true;};
   },[]);
   async function upload(file:File) {
-    setBusy("upload");setError("");setStatus("กำลังอ่านข้อความจาก ROM...");
+    setBusy("upload");setError("");setAnalysis(null);setStatus("กำลังวิเคราะห์ GBA ROM...");
     try {
+      const analysisForm=new FormData();analysisForm.set("file",file);analysisForm.set("platform","gba");
+      const report:Analysis=await responseJson(await fetch("/api/analyze",{method:"POST",body:analysisForm}));
+      setAnalysis(report);
+      if(report.compatibility!=="full") {
+        setProject(null);
+        setStatus("Generic analysis mode: ตรวจพบข้อมูลบางส่วน แต่ยัง Export ROM ไม่ได้");
+        setError("เกมนี้ยังไม่มี adapter แบบ FULL จึงดู candidate ได้เท่านั้น ระบบจะไม่แก้ ROM จนกว่าจะรู้โครงสร้างเกมพอ");
+        return;
+      }
       const form=new FormData();form.set("file",file);form.set("target",target);
       const p:Project=await responseJson(await fetch("/api/projects",{method:"POST",body:form}));
       setProject(p);localStorage.setItem("gts-project",p.id);setStatus("พร้อมแปล");
@@ -89,7 +112,7 @@ export default function Home() {
   }
   const percent=project?Math.round(project.done/project.total*100):0;
   return <main className="shell">
-    <header className="topbar"><div className="brand"><img src="/logo.png" className="brandLogo" alt=""/><div><p className="eyebrow">LOCAL / FIRE RED REV 1</p><h1>Game Translation Studio</h1></div></div><Terminal size={22} aria-hidden="true"/></header>
+    <header className="topbar"><div className="brand"><img src="/logo.png" className="brandLogo" alt=""/><div><p className="eyebrow">GBA WORKBENCH / LOCAL-FIRST</p><h1>Game Translation Studio</h1></div></div><Terminal size={22} aria-hidden="true"/></header>
     <section className="flow" aria-label="Translation">
       <div className="step"><span className="stepNumber">01</span><div className="stepBody"><h2>Upload ROM</h2><input aria-label="Upload ROM" type="file" accept=".gba" disabled={!!busy} onChange={e=>{const f=e.target.files?.[0];if(f)void upload(f);}}/><p className="fileName">{project?.name??"Pokemon FireRed / USA・Europe / Rev 1"}</p></div><Upload className="stepIcon" size={20}/></div>
       <div className="step"><span className="stepNumber">02</span><div className="stepBody"><h2>แปลภาษา</h2><fieldset disabled={!!busy||!!project?.done}><legend>ภาษาปลายทาง</legend><label><input type="radio" name="target" checked={target==="thai"} onChange={()=>void selectTarget("thai")}/>ไทย</label><label><input type="radio" name="target" checked={target==="english"} onChange={()=>void selectTarget("english")}/>English</label></fieldset>
@@ -97,7 +120,22 @@ export default function Home() {
       <div className="step"><span className="stepNumber">03</span><div className="stepBody"><h2>Export</h2><button className="secondary" disabled={!project?.complete||!!busy} onClick={()=>void download()}><Download size={17}/>Export .gba</button></div><Download className="stepIcon" size={20}/></div>
     </section>
     <section className="progressArea" aria-live="polite"><div className="statusLine"><span className="prompt">&gt;</span><span>{status}</span>{project?.complete&&<Check size={17}/>}</div>{project&&<><progress max={project.total} value={project.done} aria-label="ข้อความที่แปลแล้ว"/><div className="progressLabel"><span>{project.done.toLocaleString()} / {project.total.toLocaleString()} ข้อความ</span><span>{percent}%</span></div></>}{error&&<p className="errorText" role="alert">{error}</p>}</section>
-    <p className="scope">ขอบเขต: บทสนทนาและเนื้อเรื่อง · คงชื่อเดิม · เมนู หน้าต่อสู้ และคู่มือยังเป็นต้นฉบับ</p>
+    {analysis&&<section className="analysisPanel" aria-label="GBA analysis">
+      <div className="analysisHeader"><span className={`badge ${analysis.compatibility}`}>{analysis.compatibility.toUpperCase()}</span><span>{analysis.adapter?.name??"Generic GBA Analysis"}</span></div>
+      <div className="analysisGrid">
+        <span>Title</span><strong>{analysis.metadata.title||"Unknown"}</strong>
+        <span>Game Code</span><strong>{analysis.metadata.gameId||"Unknown"}</strong>
+        <span>Revision</span><strong>{analysis.metadata.revision||"Unknown"}</strong>
+        <span>SHA-256</span><strong className="hash">{analysis.metadata.checksum}</strong>
+        <span>ASCII</span><strong>{analysis.genericScan?.ascii.count.toLocaleString()??"0"} candidates</strong>
+        <span>Shift-JIS</span><strong>{analysis.genericScan?.shiftJis.count.toLocaleString()??"0"} candidates</strong>
+        <span>Pointers</span><strong>{analysis.genericScan?.pointers.count.toLocaleString()??"0"} / {analysis.genericScan?.pointers.uniqueTargets.toLocaleString()??"0"} targets</strong>
+        <span>LZ77</span><strong>{analysis.genericScan?.compression.count.toLocaleString()??"0"} candidates</strong>
+      </div>
+      <div className="capabilities">{Object.entries(analysis.capabilities).map(([key,value])=><span key={key}>{key}: {value}</span>)}</div>
+      {analysis.issues.map(issue=><p key={issue.code} className={issue.level==="error"?"errorText":"muted"}>{issue.message}</p>)}
+    </section>}
+    <p className="scope">V1 รองรับเฉพาะ .gba · Unknown games เข้าโหมดวิเคราะห์ได้ · Export ROM เปิดเฉพาะ adapter ที่ FULL เท่านั้น · FireRed Rev 1 คือเกมแรกที่ผ่าน pipeline</p>
     {project&&<details className="details"><summary>คำแปล {project.failed.length>0&&`/ ต้องตรวจ ${project.failed.length} ข้อความ`}</summary>
       {project.failed.map(entry=><form className="translationRow" key={entry.id} onSubmit={event=>{event.preventDefault();void save(entry.id,String(new FormData(event.currentTarget).get("text")));}}><p>{readable(entry.source)}</p><textarea aria-label={`แก้คำแปล ${entry.id}`} name="text" defaultValue={entry.translation}/><p className="errorText">{entry.error}</p><button disabled={!!busy} type="submit"><Check size={16}/>บันทึก</button></form>)}
       {project.samples.map(entry=><div className="translationRow" key={entry.id}><p className="muted">{readable(entry.source)}</p><p>{readable(entry.translation)}</p></div>)}

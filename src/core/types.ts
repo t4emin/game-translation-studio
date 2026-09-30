@@ -56,6 +56,39 @@ export interface GameAdapterMetadata {
   notes: string[];
 }
 
+export interface TextCandidateSummary {
+  count: number;
+  examples: { offset: number; length: number; text: string; confidence: number }[];
+}
+
+export interface PointerCandidateSummary {
+  count: number;
+  uniqueTargets: number;
+  examples: { offset: number; target: number; confidence: number }[];
+}
+
+export interface CompressionCandidateSummary {
+  count: number;
+  examples: { offset: number; type: string; confidence: number }[];
+}
+
+export interface GbaGenericScan {
+  ascii: TextCandidateSummary;
+  shiftJis: TextCandidateSummary;
+  pointers: PointerCandidateSummary;
+  compression: CompressionCandidateSummary;
+}
+
+export interface CapabilityReport {
+  detection: "full" | "partial" | "none";
+  extraction: "full" | "partial" | "none";
+  translation: "available" | "manual" | "none";
+  thaiFont: "full" | "unknown" | "none";
+  injection: "full" | "blocked";
+  rebuild: "full" | "blocked";
+  validation: "full" | "partial" | "none";
+}
+
 export interface GameContext {
   file: GameFile;
   metadata: PlatformMetadata;
@@ -141,5 +174,8 @@ export interface AnalysisReport {
   metadata: PlatformMetadata;
   adapterStatus: AdapterStatus;
   adapter?: GameAdapterMetadata;
+  compatibility: "full" | "experimental" | "unsupported";
+  capabilities: CapabilityReport;
+  genericScan?: GbaGenericScan;
   issues: ValidationIssue[];
 }
