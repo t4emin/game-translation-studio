@@ -2,9 +2,10 @@ import type { GameAdapter } from "../contracts.ts";
 import type { GameAdapterMetadata, PlatformMetadata } from "../types.ts";
 import { pokemonEmeraldAdapter, pokemonEmeraldMetadata } from "./gba/pokemon-emerald.ts";
 import { pokemonFireRedRev1Adapter, pokemonFireRedRev1Metadata } from "./gba/pokemon-firered-rev1.ts";
+import { zeldaMinishCapAdapter, zeldaMinishCapMetadata } from "./gba/zelda-minish-cap.ts";
 
-const adapterMetadata: GameAdapterMetadata[] = [pokemonFireRedRev1Metadata, pokemonEmeraldMetadata];
-const gameAdapters: GameAdapter[] = [pokemonFireRedRev1Adapter, pokemonEmeraldAdapter];
+const adapterMetadata: GameAdapterMetadata[] = [pokemonFireRedRev1Metadata, pokemonEmeraldMetadata, zeldaMinishCapMetadata];
+const gameAdapters: GameAdapter[] = [pokemonFireRedRev1Adapter, pokemonEmeraldAdapter, zeldaMinishCapAdapter];
 
 export function supportedGames(): GameAdapterMetadata[] {
   return adapterMetadata;

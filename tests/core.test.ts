@@ -7,6 +7,7 @@ import { gbaPlatformAdapter } from "../src/core/platforms/gba/adapter.ts";
 import { scanGbaResources } from "../src/core/platforms/gba/generic-scanner.ts";
 import { pokemonEmeraldAdapter, pokemonEmeraldChecksum } from "../src/core/adapters/gba/pokemon-emerald.ts";
 import { pokemonFireRedRev1Adapter, pokemonFireRedRev1Checksum } from "../src/core/adapters/gba/pokemon-firered-rev1.ts";
+import { zeldaMinishCapAdapter, zeldaMinishCapChecksum } from "../src/core/adapters/gba/zelda-minish-cap.ts";
 import { decodePokemonText } from "../src/core/platforms/gba/pokemon-gen3-text.ts";
 import { latinByte } from "../src/core/platforms/gba/firered-rom.ts";
 import { analyzeGame } from "../src/core/analysis.ts";
@@ -100,6 +101,38 @@ test("Pokemon Emerald adapter matches exact v0 identity and extracts pointer tex
 
   assert.ok(extraction.entries.some((entry) => entry.sourceText === "The BATTLE starts now."));
   assert.equal(extraction.issues[0].code, "emerald-experimental-extraction");
+});
+
+test("Zelda Minish Cap adapter matches exact USA identity but keeps build blocked", async () => {
+  assert.equal(
+    await zeldaMinishCapAdapter.matches({
+      platform: "gba",
+      fileName: "Legend of Zelda, The - The Minish Cap (USA).gba",
+      fileSize: 16777216,
+      checksum: zeldaMinishCapChecksum,
+      title: "GBAZELDA MC",
+      gameId: "BZME",
+      revision: "v0",
+      details: {}
+    }),
+    true
+  );
+
+  const extraction = await zeldaMinishCapAdapter.extract({
+    file: { name: "minish.gba", size: 0, extension: ".gba", bytes: new Uint8Array() },
+    metadata: {
+      platform: "gba",
+      fileName: "minish.gba",
+      fileSize: 0,
+      checksum: zeldaMinishCapChecksum,
+      title: "GBAZELDA MC",
+      gameId: "BZME",
+      revision: "v0",
+      details: {}
+    }
+  });
+  assert.equal(extraction.entries.length, 0);
+  assert.equal(extraction.issues[0].code, "minish-cap-adapter-not-mapped");
 });
 
 test("Pokemon Gen III text decoder preserves control tokens", () => {

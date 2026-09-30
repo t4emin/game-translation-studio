@@ -49,7 +49,9 @@ function adapterCapabilityIssues(adapter: GameAdapterMetadata | undefined) {
     {
       level: "warning" as const,
       code: "adapter-build-not-ready",
-      message: `Exact adapter matched (${adapter.name}). Extraction/review can continue, but build/export is disabled until these capabilities are implemented: ${missing.join(", ")}.`
+      message: adapter.capabilities.extraction
+        ? `Exact adapter matched (${adapter.name}). Extraction/review can continue, but build/export is disabled until these capabilities are implemented: ${missing.join(", ")}.`
+        : `Exact adapter matched (${adapter.name}), but extraction/build/export are disabled until these capabilities are implemented: ${missing.join(", ")}.`
     }
   ];
 }
