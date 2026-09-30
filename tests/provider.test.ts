@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { OpenAIAdapterAnalysisProvider } from "../src/core/providers/openai/analysis.ts";
 import { OpenAITranslationProvider } from "../src/core/providers/openai/provider.ts";
-import type { TranslationEntry } from "../src/core/types.ts";
+import type { AnalysisReport, TranslationEntry } from "../src/core/types.ts";
 
 test("AI translates prose fragments while names and game controls stay local",async()=>{
   const originalFetch=globalThis.fetch;
@@ -39,5 +40,57 @@ test("name-only fragments stay local and only invalid name responses are retried
     const result=await new OpenAITranslationProvider("test-key").translateBatch({sourceLanguage:"english",targetLanguage:"thai",style:"concise",entries:[entry],glossary:["OAK","BILL"].map(name=>({source:name,target:name,exact:true}))});
     assert.deepEqual(calls,[["retry/part-0","retry/part-2"],["retry/part-2"]]);
     assert.equal(result.get("retry"),"สวัสดี OAK[NEW_LINE]สวัสดี BILL[NEW_LINE]OAK!");
+  }finally{globalThis.fetch=originalFetch;}
+});
+
+test("adapter analysis sends only compact scan context to OpenAI",async()=>{
+  const originalFetch=globalThis.fetch;
+  const report:AnalysisReport={
+    metadata:{
+      platform:"gba",
+      fileName:"Pokemon Emerald.gba",
+      fileSize:16777216,
+      checksum:"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      title:"POKEMON EMER",
+      gameId:"BPEE",
+      revision:"1",
+      details:{makerCode:"01",headerChecksum:153}
+    },
+    adapterStatus:"unsupported",
+    compatibility:"unsupported",
+    capabilities:{detection:"partial",extraction:"partial",translation:"manual",thaiFont:"unknown",injection:"blocked",rebuild:"blocked",validation:"partial"},
+    genericScan:{
+      ascii:{count:2,examples:[{offset:100,length:8,text:"OPTIONS",confidence:.8}]},
+      shiftJis:{count:0,examples:[]},
+      pointers:{count:1,uniqueTargets:1,examples:[{offset:200,target:300,confidence:.7}]},
+      compression:{count:1,examples:[{offset:400,type:"lz77",confidence:.9}]}
+    },
+    issues:[{level:"error",code:"NO_FULL_ADAPTER",message:"No full adapter"}]
+  };
+  globalThis.fetch=async(_url,init)=>{
+    const body=JSON.parse(String(init?.body));
+    assert.equal(body.store,false);
+    assert.equal(body.text.format.strict,true);
+    const payload=JSON.parse(body.input[1].content);
+    assert.equal(payload.metadata.checksumPrefix,"0123456789abcdef");
+    assert.equal(payload.metadata.checksum,undefined);
+    assert.equal(payload.metadata.title,"POKEMON EMER");
+    assert.equal(payload.genericScan.ascii.examples[0].text,"OPTIONS");
+    assert.deepEqual(payload.issueCodes,["NO_FULL_ADAPTER"]);
+    return Response.json({output_text:JSON.stringify({
+      likelyGame:"Pokemon Emerald",
+      likelyEngine:"Pokemon Gen 3 GBA",
+      confidence:.9,
+      extractionHypothesis:"Use Emerald-specific tables and pointer ranges.",
+      adapterReuse:["Reuse generic GBA scanner"],
+      blockers:["Needs exact Emerald adapter"],
+      nextSteps:["Create manifest from known Emerald revision"],
+      buildSafety:"blocked"
+    })});
+  };
+  try {
+    const result=await new OpenAIAdapterAnalysisProvider("test-key","test-model").analyze(report);
+    assert.equal(result.likelyGame,"Pokemon Emerald");
+    assert.equal(result.buildSafety,"blocked");
   }finally{globalThis.fetch=originalFetch;}
 });

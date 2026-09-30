@@ -7,6 +7,16 @@ type Project = {
   samples:{id:string;source:string;translation:string}[];
   failed:{id:string;source:string;translation:string;error:string}[];
 };
+type AiAdapterAnalysis = {
+  likelyGame:string;
+  likelyEngine:string;
+  confidence:number;
+  extractionHypothesis:string;
+  adapterReuse:string[];
+  blockers:string[];
+  nextSteps:string[];
+  buildSafety:"blocked"|"experimental"|"full-not-recommended";
+};
 type Analysis = {
   compatibility:"full"|"experimental"|"unsupported";
   metadata:{title?:string;gameId?:string;revision?:string;fileSize:number;checksum:string;details:Record<string,string|number|boolean|null>};
@@ -18,6 +28,7 @@ type Analysis = {
     pointers:{count:number;uniqueTargets:number};
     compression:{count:number};
   };
+  aiAnalysis?:AiAdapterAnalysis;
   issues:{level:string;code:string;message:string}[];
 };
 async function responseJson<T>(response:Response):Promise<T> {
@@ -41,6 +52,7 @@ export default function Home() {
   const [error,setError]=useState("");
   const [status,setStatus]=useState("รอไฟล์ ROM");
   const [analysis,setAnalysis]=useState<Analysis|null>(null);
+  const [aiBusy,setAiBusy]=useState(false);
   const [stopping,setStopping]=useState(false);
   const stop=useRef(false);
   useEffect(()=>{
@@ -53,7 +65,7 @@ export default function Home() {
     return ()=>{stop.current=true;};
   },[]);
   async function upload(file:File) {
-    setBusy("upload");setError("");setAnalysis(null);setStatus("กำลังวิเคราะห์ GBA ROM...");
+    setBusy("upload");setError("");setAnalysis(null);setAiBusy(false);setStatus("กำลังวิเคราะห์ GBA ROM...");
     try {
       if(location.hostname.endsWith(".vercel.app") && file.size>vercelFunctionPayloadLimit) {
         throw new Error("Vercel Functions รับ request/response ได้สูงสุดประมาณ 4.5MB แต่ GBA ROM นี้ใหญ่กว่า ต้องรัน local หรือ deploy บน Node server ที่รับไฟล์ 16-17MB ได้");
@@ -120,6 +132,18 @@ export default function Home() {
     try{setProject(await responseJson<Project>(await fetch(`/api/projects/${project!.id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({entryId,text})})));}
     catch(e){setError(e instanceof Error?e.message:"Save failed");}
   }
+  async function analyzeWithAi() {
+    if(!analysis) return;
+    setAiBusy(true);setError("");setStatus("AI กำลังช่วยวิเคราะห์ adapter...");
+    try {
+      const aiAnalysis=await responseJson<AiAdapterAnalysis>(await fetch("/api/analyze/ai",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(analysis)}));
+      setAnalysis({...analysis,aiAnalysis});
+      setStatus("AI วิเคราะห์ adapter เสร็จแล้ว");
+    }catch(e){
+      setError(e instanceof Error?e.message:"AI analysis failed");
+      setStatus("AI วิเคราะห์ไม่สำเร็จ");
+    }finally{setAiBusy(false);}
+  }
   const percent=project?Math.round(project.done/project.total*100):0;
   return <main className="shell">
     <header className="topbar"><div className="brand"><img src="/logo.png" className="brandLogo" alt=""/><div><p className="eyebrow">GBA WORKBENCH / LOCAL-FIRST</p><h1>Game Translation Studio</h1></div></div><Terminal size={22} aria-hidden="true"/></header>
@@ -143,6 +167,19 @@ export default function Home() {
         <span>LZ77</span><strong>{analysis.genericScan?.compression.count.toLocaleString()??"0"} candidates</strong>
       </div>
       <div className="capabilities">{Object.entries(analysis.capabilities).map(([key,value])=><span key={key}>{key}: {value}</span>)}</div>
+      {analysis.compatibility!=="full"&&<div className="aiActions"><button className="secondary" disabled={!!busy||aiBusy} onClick={()=>void analyzeWithAi()}><Terminal size={17}/>{aiBusy?"AI กำลังวิเคราะห์...":"AI วิเคราะห์ adapter"}</button><span>ส่งเฉพาะผล scan ไม่ส่ง ROM bytes</span></div>}
+      {analysis.aiAnalysis&&<div className="aiReport">
+        <div className="analysisHeader"><span className={`badge ${analysis.aiAnalysis.buildSafety==="blocked"?"unsupported":"experimental"}`}>{analysis.aiAnalysis.buildSafety}</span><span>{analysis.aiAnalysis.likelyGame} · {Math.round(analysis.aiAnalysis.confidence*100)}%</span></div>
+        <div className="analysisGrid">
+          <span>Engine</span><strong>{analysis.aiAnalysis.likelyEngine}</strong>
+          <span>Hypothesis</span><strong>{analysis.aiAnalysis.extractionHypothesis}</strong>
+        </div>
+        <div className="aiColumns">
+          <div><h3>Reuse</h3>{analysis.aiAnalysis.adapterReuse.map(item=><p key={item} className="muted">{item}</p>)}</div>
+          <div><h3>Blockers</h3>{analysis.aiAnalysis.blockers.map(item=><p key={item} className="errorText">{item}</p>)}</div>
+          <div><h3>Next</h3>{analysis.aiAnalysis.nextSteps.map(item=><p key={item} className="muted">{item}</p>)}</div>
+        </div>
+      </div>}
       {analysis.issues.map(issue=><p key={issue.code} className={issue.level==="error"?"errorText":"muted"}>{issue.message}</p>)}
     </section>}
     <p className="scope">V1 รองรับเฉพาะ .gba · Unknown games เข้าโหมดวิเคราะห์ได้ · Export ROM เปิดเฉพาะ adapter ที่ FULL เท่านั้น · FireRed Rev 1 คือเกมแรกที่ผ่าน pipeline</p>
