@@ -61,9 +61,28 @@ export function tokenBytes(token: string): number[] {
 
 export function validateTranslation(source: string, translated: string) {
   if (!translated.trim()) throw new Error("Empty translation");
-  const tokens = (text: string) => text.match(/\[[^\]]+\]/g) ?? [];
-  if (JSON.stringify(tokens(source)) !== JSON.stringify(tokens(translated))) throw new Error("Translation changed the order or number of game control tokens.");
+  if (JSON.stringify(controlTokens(source)) !== JSON.stringify(controlTokens(translated))) throw new Error("Translation changed the order or number of game control tokens.");
   if (translated.length > 5000) throw new Error("Translation is too long");
+}
+
+export function controlTokens(text: string): string[] {
+  return text.match(/\[[^\]]+\]/g) ?? [];
+}
+
+export function restoreTrailingControlTokens(source: string, translated: string): string {
+  const sourceTokens = controlTokens(source);
+  const translatedTokens = controlTokens(translated);
+  if (sourceTokens.length === translatedTokens.length) return translated;
+  if (translatedTokens.length > sourceTokens.length) return translated;
+  if (!translatedTokens.every((token, index) => token === sourceTokens[index])) return translated;
+  const missing = sourceTokens.slice(translatedTokens.length);
+  const suffixPattern = new RegExp(`${missing.map(escapeRegExp).join("\\s*")}\\s*$`);
+  if (!suffixPattern.test(source)) return translated;
+  return `${translated.trimEnd()}${missing.join("")}`;
+}
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 export interface EncodedEntry { id: string; bytes: Uint8Array }

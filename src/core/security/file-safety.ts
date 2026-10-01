@@ -1,10 +1,11 @@
 import type { GameFile, ValidationIssue } from "../types.ts";
 
-const DEFAULT_MAX_BYTES = 32 * 1024 * 1024;
-const allowedExtensions = new Set([".gba"]);
+const GBA_MAX_BYTES = 32 * 1024 * 1024;
+const ISO_MAX_BYTES = 9 * 1024 * 1024 * 1024;
+const allowedExtensions = new Set([".gba", ".iso"]);
 
-export function maxUploadBytes(): number {
-  return DEFAULT_MAX_BYTES;
+export function maxUploadBytes(file?: Pick<GameFile, "extension">): number {
+  return file?.extension === ".iso" ? ISO_MAX_BYTES : GBA_MAX_BYTES;
 }
 
 export function validateGameFile(file: GameFile): ValidationIssue[] {
@@ -14,7 +15,7 @@ export function validateGameFile(file: GameFile): ValidationIssue[] {
     issues.push({
       level: "error",
       code: "unsupported-extension",
-      message: "Game Translation Studio V1 accepts only .gba files."
+      message: "Game Translation Studio accepts .gba for GBA and .iso for PS2 analysis."
     });
   }
 
@@ -26,11 +27,12 @@ export function validateGameFile(file: GameFile): ValidationIssue[] {
     });
   }
 
-  if (file.size > maxUploadBytes()) {
+  const maxBytes = maxUploadBytes(file);
+  if (file.size > maxBytes) {
     issues.push({
       level: "error",
       code: "file-too-large",
-      message: `File exceeds the configured ${maxUploadBytes()} byte safety limit.`
+      message: `File exceeds the configured ${maxBytes} byte safety limit.`
     });
   }
 

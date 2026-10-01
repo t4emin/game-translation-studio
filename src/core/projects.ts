@@ -3,9 +3,9 @@ import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { getGameAdapter, findGameAdapter } from "./adapters/registry.ts";
 import { detectPlatform } from "./platforms/index.ts";
-import { validateTranslation } from "./platforms/gba/firered-rom.ts";
+import { restoreTrailingControlTokens, validateTranslation } from "./platforms/gba/firered-rom.ts";
 import { findLocalTranslation } from "./storage/local-translation-file.ts";
-import type { GameAdapterMetadata, GameContext, TargetLanguage, TranslationEntry } from "./types.ts";
+import type { GameAdapterMetadata, GameContext, PlatformId, TargetLanguage, TranslationEntry } from "./types.ts";
 
 const root=join(process.cwd(),".local","projects");
 function path(id:string) {
@@ -35,9 +35,9 @@ export function projectView(project:Project) {
     failed:project.entries.filter(e=>e.status==="error").map(e=>({id:e.id,source:e.sourceText,translation:e.translatedText,error:e.warnings.join(" ")})),
     scope:exportBlocked?`Review/translation project only. Export is disabled: ${exportBlockReason}`:"Map dialogue, story events and the opening scene. Names, battle UI, menus and help screens remain original."};
 }
-export async function createProject(name:string,bytes:Uint8Array,target:TargetLanguage):Promise<Project> {
+export async function createProject(name:string,bytes:Uint8Array,target:TargetLanguage,platform:PlatformId="gba"):Promise<Project> {
   const file={name,size:bytes.byteLength,extension:name.slice(name.lastIndexOf(".")).toLowerCase(),bytes};
-  const metadata=await detectPlatform(file,"gba");
+  const metadata=await detectPlatform(file,platform);
   const matched=await findGameAdapter(metadata);
   if(!matched.adapter || !matched.metadata) throw new Error("This ROM does not have a project adapter yet. Create a local adapter from ROM analysis first.");
   if(!matched.metadata.capabilities.extraction) throw new Error(`Adapter ${matched.metadata.name} cannot extract text yet.`);
@@ -81,18 +81,20 @@ export async function translateProjectBatch(id:string):Promise<Project> {
         continue;
       }
       try {
-        await verify(entry,local);
-        entry.translatedText=local; entry.status="translated"; entry.translationVersion=4; entry.warnings=[];
+        const prepared=restoreTrailingControlTokens(entry.sourceText,local);
+        await verify(entry,prepared);
+        entry.translatedText=prepared; entry.status="translated"; entry.translationVersion=4; entry.warnings=[];
       } catch(error) {
         localInvalid++;
         entry.translatedText=local; entry.status="error"; entry.warnings=[error instanceof Error?error.message:"Invalid local translation"];
       }
     }
     const pending=batch.filter(e=>e.status!=="translated");
+    const controlOrLengthErrors=batch.some(e=>e.status==="error" && e.warnings.some(w=>/control tokens|too long|shorten|message limit/i.test(w)));
     project.error=pending.length
       ? `Local-only mode stopped: ${localMissing.toLocaleString()} missing and ${localInvalid.toLocaleString()} invalid local translation(s) in this batch. Add or fix local translation JSON files; no external API fallback is configured.`
       : undefined;
-    if(batch.some(e=>e.status==="error")) project.error="Some messages need a shorter translation or restored control tokens. Review the failed messages, or retry.";
+    if(controlOrLengthErrors) project.error="Some messages need a shorter translation or restored control tokens. Review the failed messages below, then save each fixed message.";
     await save(project);
     return project;
   } finally {locks.delete(id);}
@@ -103,12 +105,16 @@ export async function editTranslation(id:string,entryId:string,text:string):Prom
   try {
     const project=await loadProject(id),entry=project.entries.find(e=>e.id===entryId);
     if(!entry) throw new Error("Message not found");
-    validateTranslation(entry.sourceText,text);
+    const prepared=restoreTrailingControlTokens(entry.sourceText,text);
+    validateTranslation(entry.sourceText,prepared);
     const original=await readFile(join(path(id),"original.gba"));
     const context=await projectContext(project,new Uint8Array(original));
-    const result=await projectAdapter(project).adapter.validateTranslations(context,[{...entry,translatedText:text,status:"translated"}]);
+    const result=await projectAdapter(project).adapter.validateTranslations(context,[{...entry,translatedText:prepared,status:"translated"}]);
     if(!result.ok) throw new Error(result.issues.map(issue=>issue.message).join(" "));
-    entry.translatedText=text;entry.status="translated";entry.warnings=[];project.error=undefined;
+    entry.translatedText=prepared;entry.status="translated";entry.warnings=[];
+    project.error=project.entries.some(e=>e.status==="error")
+      ? "Some messages still need review before export."
+      : undefined;
     await save(project);return project;
   }finally{locks.delete(id);}
 }

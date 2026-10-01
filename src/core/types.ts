@@ -79,6 +79,30 @@ export interface GbaGenericScan {
   compression: CompressionCandidateSummary;
 }
 
+export interface TextPreviewEntry {
+  id: string;
+  sourceText: string;
+  category: TranslationEntry["category"] | "candidate";
+  context?: string;
+  offset?: number;
+  length?: number;
+  confidence?: number;
+}
+
+export interface Ps2IsoScan {
+  valid: boolean;
+  volumeId?: string;
+  systemId?: string;
+  bootFile?: string;
+  fileCount: number;
+  directoryCount: number;
+  totalBytes: number;
+  largestFiles: { path: string; lba: number; size: number; directory: boolean; reason: string; stringCount?: number; sample?: string; samples?: string[] }[];
+  candidates: { path: string; lba: number; size: number; directory: boolean; reason: string; stringCount?: number; sample?: string; samples?: string[] }[];
+  strings: { path: string; offset: number; encoding: "ascii" | "utf16le" | "shift-jis"; text: string; confidence: number }[];
+  issues: string[];
+}
+
 export interface CapabilityReport {
   detection: "full" | "partial" | "none";
   extraction: "full" | "partial" | "none";
@@ -178,5 +202,11 @@ export interface AnalysisReport {
   compatibility: "full" | "experimental" | "unsupported";
   capabilities: CapabilityReport;
   genericScan?: GbaGenericScan;
+  textPreview?: {
+    source: "adapter" | "generic";
+    total: number;
+    entries: TextPreviewEntry[];
+  };
+  isoScan?: Ps2IsoScan;
   issues: ValidationIssue[];
 }

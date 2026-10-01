@@ -1,8 +1,9 @@
 import type { PlatformAdapter } from "../contracts.ts";
 import type { GameFile, PlatformMetadata } from "../types.ts";
 import { gbaPlatformAdapter } from "./gba/adapter.ts";
+import { ps2PlatformAdapter } from "./ps2/adapter.ts";
 
-const platformAdapters: PlatformAdapter[] = [gbaPlatformAdapter];
+const platformAdapters: PlatformAdapter[] = [gbaPlatformAdapter, ps2PlatformAdapter];
 
 export function getPlatformAdapters(): PlatformAdapter[] {
   return platformAdapters;

@@ -5,6 +5,7 @@ import { TranslationMemory } from "../src/core/storage/translation-memory.ts";
 import { findLocalTranslation } from "../src/core/storage/local-translation-file.ts";
 import { gbaPlatformAdapter } from "../src/core/platforms/gba/adapter.ts";
 import { scanGbaResources } from "../src/core/platforms/gba/generic-scanner.ts";
+import { scanPs2Iso } from "../src/core/platforms/ps2/iso9660.ts";
 import { pokemonEmeraldAdapter, pokemonEmeraldChecksum } from "../src/core/adapters/gba/pokemon-emerald.ts";
 import { pokemonFireRedRev1Adapter, pokemonFireRedRev1Checksum } from "../src/core/adapters/gba/pokemon-firered-rev1.ts";
 import { zeldaMinishCapAdapter, zeldaMinishCapChecksum } from "../src/core/adapters/gba/zelda-minish-cap.ts";
@@ -103,7 +104,7 @@ test("Pokemon Emerald adapter matches exact v0 identity and extracts pointer tex
   assert.equal(extraction.issues[0].code, "emerald-experimental-extraction");
 });
 
-test("Zelda Minish Cap adapter matches exact USA identity but keeps build blocked", async () => {
+test("Zelda Minish Cap adapter matches exact USA identity and extracts text candidates", async () => {
   assert.equal(
     await zeldaMinishCapAdapter.matches({
       platform: "gba",
@@ -118,8 +119,10 @@ test("Zelda Minish Cap adapter matches exact USA identity but keeps build blocke
     true
   );
 
+  const bytes = new Uint8Array(0x400).fill(0);
+  Buffer.from("The legend of Zelda continues in Hyrule.", "ascii").copy(bytes, 0x200);
   const extraction = await zeldaMinishCapAdapter.extract({
-    file: { name: "minish.gba", size: 0, extension: ".gba", bytes: new Uint8Array() },
+    file: { name: "minish.gba", size: bytes.length, extension: ".gba", bytes },
     metadata: {
       platform: "gba",
       fileName: "minish.gba",
@@ -131,8 +134,8 @@ test("Zelda Minish Cap adapter matches exact USA identity but keeps build blocke
       details: {}
     }
   });
-  assert.equal(extraction.entries.length, 0);
-  assert.equal(extraction.issues[0].code, "minish-cap-adapter-not-mapped");
+  assert.ok(extraction.entries.some((entry) => entry.sourceText.includes("Zelda")));
+  assert.equal(extraction.issues[0].code, "minish-cap-candidate-extraction");
 });
 
 test("Pokemon Gen III text decoder preserves control tokens", () => {
@@ -277,10 +280,13 @@ test("GBA generic scanner reports read-only text and pointer candidates", () => 
   assert.ok(scan.compression.count >= 1);
 });
 
-test("GBA-only V1 rejects non-GBA uploads and analyzes unknown GBA read-only", async () => {
-  assert.equal(validateGameFile({ name: "game.iso", extension: ".iso", size: 4, bytes: new Uint8Array(4) })[0].code, "unsupported-extension");
+test("file safety accepts GBA and PS2 containers but rejects unrelated uploads", async () => {
+  assert.equal(validateGameFile({ name: "game.iso", extension: ".iso", size: 4, bytes: new Uint8Array(4) }).some((issue) => issue.code === "unsupported-extension"), false);
+  assert.equal(validateGameFile({ name: "game.nds", extension: ".nds", size: 4, bytes: new Uint8Array(4) })[0].code, "unsupported-extension");
+});
 
-  const bytes = new Uint8Array(0xc0).fill(0);
+test("GBA-only build path analyzes unknown GBA read-only", async () => {
+  const bytes = new Uint8Array(0x200).fill(0);
   Buffer.from("UNKNOWN     ", "ascii").copy(bytes, 0xa0);
   Buffer.from("UNKN", "ascii").copy(bytes, 0xac);
   Buffer.from("01", "ascii").copy(bytes, 0xb0);
@@ -288,10 +294,97 @@ test("GBA-only V1 rejects non-GBA uploads and analyzes unknown GBA read-only", a
   let checksum = 0;
   for (let i = 0xa0; i <= 0xbc; i += 1) checksum = (checksum - bytes[i] - 1) & 0xff;
   bytes[0xbd] = checksum;
+  Buffer.from("This UNKNOWN game has a hidden message for you in the forest.", "ascii").copy(bytes, 0x100);
 
   const report = await analyzeGame({ name: "unknown.gba", extension: ".gba", size: bytes.length, bytes }, "gba");
   assert.equal(report.metadata.platform, "gba");
   assert.equal(report.compatibility, "experimental");
   assert.equal(report.capabilities.rebuild, "blocked");
   assert.ok(report.genericScan);
+  assert.equal(report.textPreview?.source, "generic");
+  assert.ok(report.textPreview?.entries.some((entry) => entry.sourceText.includes("UNKNOWN")));
 });
+
+test("PS2 ISO selection reaches platform analysis but remains build blocked", async () => {
+  const bytes = makeIsoFixture();
+  const report = await analyzeGame({ name: "game.iso", extension: ".iso", size: bytes.length, bytes }, "ps2");
+  assert.equal(report.metadata.platform, "ps2");
+  assert.equal(report.compatibility, "experimental");
+  assert.equal(report.capabilities.rebuild, "blocked");
+  assert.equal(report.issues.some((issue) => issue.code === "unsupported-extension"), false);
+  assert.equal(report.issues.some((issue) => issue.level === "error"), false);
+  assert.equal(report.isoScan?.valid, true);
+  assert.equal(report.isoScan?.bootFile, "SLUS_123.45");
+  assert.ok(report.isoScan?.candidates.some((entry) => entry.path === "/SCRIPT/MESSAGE.MSG"));
+  assert.ok(report.isoScan?.strings.some((entry) => entry.text.includes("Hello from script")));
+});
+
+test("PS2 ISO scanner reads ISO9660 directories and ranks likely text files", () => {
+  const scan = scanPs2Iso(makeIsoFixture());
+  assert.equal(scan.valid, true);
+  assert.equal(scan.volumeId, "TEST_PS2");
+  assert.equal(scan.fileCount, 3);
+  assert.equal(scan.directoryCount, 1);
+  assert.equal(scan.bootFile, "SLUS_123.45");
+  assert.ok(scan.candidates.some((entry) => entry.path === "/SCRIPT/MESSAGE.MSG" && entry.sample?.includes("Hello from script")));
+  assert.ok(scan.strings.some((entry) => entry.path === "/SCRIPT/MESSAGE.MSG" && entry.encoding === "ascii"));
+});
+
+function makeIsoFixture(): Uint8Array {
+  const bytes = new Uint8Array(25 * 2048);
+  writePvd(bytes);
+  writeDirectory(bytes, 20, [
+    dirRecord(20, 2048, 2, new Uint8Array([0])),
+    dirRecord(20, 2048, 2, new Uint8Array([1])),
+    dirRecord(21, 64, 0, Buffer.from("SYSTEM.CNF;1", "ascii")),
+    dirRecord(22, 128, 0, Buffer.from("SLUS_123.45;1", "ascii")),
+    dirRecord(23, 2048, 2, Buffer.from("SCRIPT;1", "ascii"))
+  ]);
+  writeDirectory(bytes, 23, [
+    dirRecord(23, 2048, 2, new Uint8Array([0])),
+    dirRecord(20, 2048, 2, new Uint8Array([1])),
+    dirRecord(24, 128, 0, Buffer.from("MESSAGE.MSG;1", "ascii"))
+  ]);
+  Buffer.from("BOOT2 = cdrom0:\\SLUS_123.45;1\r\n", "ascii").copy(bytes, 21 * 2048);
+  Buffer.from("ELF fixture", "ascii").copy(bytes, 22 * 2048);
+  Buffer.from("Hello from script. This should look like dialogue text.", "ascii").copy(bytes, 24 * 2048);
+  return bytes;
+}
+
+function writePvd(bytes: Uint8Array) {
+  const pvd = 16 * 2048;
+  bytes[pvd] = 1;
+  Buffer.from("CD001", "ascii").copy(bytes, pvd + 1);
+  bytes[pvd + 6] = 1;
+  Buffer.from("PLAYSTATION", "ascii").copy(bytes, pvd + 8);
+  Buffer.from("TEST_PS2", "ascii").copy(bytes, pvd + 40);
+  bytes.set(dirRecord(20, 2048, 2, new Uint8Array([0])), pvd + 156);
+}
+
+function writeDirectory(bytes: Uint8Array, lba: number, records: Uint8Array[]) {
+  let cursor = lba * 2048;
+  for (const record of records) {
+    bytes.set(record, cursor);
+    cursor += record.length;
+  }
+}
+
+function dirRecord(lba: number, size: number, flags: number, name: Uint8Array): Uint8Array {
+  const length = 33 + name.length + ((name.length + 1) % 2);
+  const record = new Uint8Array(length);
+  record[0] = length;
+  writeU32(record, 2, lba);
+  writeU32(record, 10, size);
+  record[25] = flags;
+  record[28] = 1;
+  record[32] = name.length;
+  record.set(name, 33);
+  return record;
+}
+
+function writeU32(bytes: Uint8Array, offset: number, value: number) {
+  bytes[offset] = value & 0xff;
+  bytes[offset + 1] = (value >>> 8) & 0xff;
+  bytes[offset + 2] = (value >>> 16) & 0xff;
+  bytes[offset + 3] = (value >>> 24) & 0xff;
+}

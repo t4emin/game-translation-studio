@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
 import { decodePokemonText } from "../src/core/platforms/gba/pokemon-gen3-text.ts";
-import { manifest, extractDialogs, validateTranslation, digest, relocateDialogs } from "../src/core/platforms/gba/firered-rom.ts";
+import { manifest, extractDialogs, validateTranslation, digest, relocateDialogs, restoreTrailingControlTokens } from "../src/core/platforms/gba/firered-rom.ts";
 import { buildTranslatedRom, createThaiAtlas, encodeDialog, rasterizeGlyph, analyzeThaiFontBuild } from "../src/core/platforms/gba/thai-font.ts";
 import { analyzeThaiCluster, normalizeThaiText, splitTextClusters } from "../src/core/platforms/gba/thai-font-pipeline.ts";
 
@@ -17,6 +17,10 @@ test("translations must preserve repeated controls and their order",()=>{
   assert.throws(()=>validateTranslation(source,"ก[NEW_LINE][VAR:PLAYER]"));
   assert.throws(()=>validateTranslation(source,"ก[VAR:PLAYER][NEW_LINE][NEW_LINE]"));
   assert.doesNotThrow(()=>validateTranslation(source,"ก[NEW_LINE]ข[NEW_LINE][VAR:PLAYER]"));
+});
+test("safe restore only appends missing trailing controls",()=>{
+  assert.equal(restoreTrailingControlTokens("Hello[PROMPT_CLEAR]","สวัสดี"),"สวัสดี[PROMPT_CLEAR]");
+  assert.equal(restoreTrailingControlTokens("A[NEW_LINE]B","ก"),"ก");
 });
 test("Thai clusters include tone marks and render nonempty glyphs",()=>{
   const atlas=createThaiAtlas(["กิ้ กุ้ง น้ำ"]);

@@ -1,6 +1,6 @@
 import type { GbaGenericScan } from "../../types.ts";
 
-const previewLimit = 8;
+const previewLimit = 200;
 
 export function scanGbaResources(bytes: Uint8Array): GbaGenericScan {
   return {
@@ -20,13 +20,13 @@ function scanAscii(bytes: Uint8Array): GbaGenericScan["ascii"] {
     const length = offset - start;
     if (length >= 6) {
       count++;
-      if (examples.length < previewLimit) {
-        examples.push({ offset: start, length, text: decodeAscii(bytes.slice(start, offset)), confidence: Math.min(0.95, 0.55 + length / 80) });
-      }
+      const text = decodeAscii(bytes.slice(start, offset), 500);
+      const confidence = asciiTextConfidence(text, length);
+      if (confidence >= 0.58) examples.push({ offset: start, length, text, confidence });
     }
     offset = Math.max(offset + 1, start + 1);
   }
-  return { count, examples };
+  return { count, examples: topTextExamples(examples) };
 }
 
 function scanShiftJis(bytes: Uint8Array): GbaGenericScan["shiftJis"] {
@@ -89,12 +89,50 @@ function isAsciiTextByte(byte: number): boolean {
   return byte === 0x09 || byte === 0x0a || byte === 0x0d || (byte >= 0x20 && byte <= 0x7e);
 }
 
-function decodeAscii(bytes: Uint8Array): string {
-  return new TextDecoder("ascii").decode(bytes).replace(/\s+/g, " ").slice(0, 80);
+function decodeAscii(bytes: Uint8Array, limit = 80): string {
+  return new TextDecoder("ascii").decode(bytes).replace(/\s+/g, " ").trim().slice(0, limit);
 }
 
 function isShiftJisPair(first: number, second: number): boolean {
   const lead = (first >= 0x81 && first <= 0x9f) || (first >= 0xe0 && first <= 0xfc);
   const trail = (second >= 0x40 && second <= 0x7e) || (second >= 0x80 && second <= 0xfc);
   return lead && trail;
+}
+
+function topTextExamples(examples: GbaGenericScan["ascii"]["examples"]): GbaGenericScan["ascii"]["examples"] {
+  const seen = new Set<string>();
+  return examples
+    .sort((a, b) => b.confidence - a.confidence || b.length - a.length)
+    .filter((entry) => {
+      const key = entry.text.slice(0, 80);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, previewLimit);
+}
+
+function asciiTextConfidence(text: string, length: number): number {
+  if (!/[A-Za-z]{3}/.test(text)) return 0;
+  const letters = (text.match(/[A-Za-z]/g) ?? []).length;
+  const spaces = (text.match(/\s/g) ?? []).length;
+  const vowels = (text.match(/[AEIOUaeiou]/g) ?? []).length;
+  const punctuation = (text.match(/[.!?,'":;-]/g) ?? []).length;
+  const symbols = (text.match(/[^A-Za-z0-9\s.!?,'":;\-()]/g) ?? []).length;
+  const words = text.split(/\s+/).filter((word) => /^[A-Za-z][A-Za-z'.-]{1,}$/.test(word));
+  const common = (text.match(/\b(the|you|and|to|of|in|is|it|that|this|for|with|your|have|get|not|are|will|was|on|from)\b/gi) ?? []).length;
+  const repeated = /(.)\1{5,}/.test(text) ? 0.18 : 0;
+  const letterRatio = letters / Math.max(1, text.length);
+  const symbolRatio = symbols / Math.max(1, text.length);
+  const wordRatio = words.join("").length / Math.max(1, letters);
+  let score = 0.28;
+  score += Math.min(0.22, length / 260);
+  score += Math.min(0.18, common * 0.035);
+  score += Math.min(0.12, spaces * 0.008);
+  score += Math.min(0.1, punctuation * 0.012);
+  score += letterRatio > 0.45 && letterRatio < 0.9 ? 0.14 : -0.12;
+  score += vowels / Math.max(1, letters) > 0.22 ? 0.08 : -0.08;
+  score += wordRatio > 0.65 ? 0.08 : -0.04;
+  score -= Math.min(0.25, symbolRatio * 1.5) + repeated;
+  return Math.max(0, Math.min(0.98, score));
 }
