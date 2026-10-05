@@ -1,11 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Upload, Languages, Download, Pause, RotateCw, Check, Terminal, ArrowUp } from "lucide-react";
+import { Upload, Languages, Download, Pause, RotateCw, Check, Terminal, ArrowUp, X } from "lucide-react";
 
 type Project = {
-  id:string; name:string; target:string; total:number; done:number; complete:boolean; error:string|null; adapterName?:string; exportBlocked?:boolean; exportBlockReason?:string|null;
+  id:string; name:string; target:string; total:number; done:number; skipped:number; processed:number; complete:boolean; error:string|null; adapterName?:string; exportBlocked?:boolean; exportBlockReason?:string|null;
   samples:{id:string;source:string;translation:string}[];
   failed:{id:string;source:string;translation:string;error:string}[];
+  untranslated:{id:string;source:string}[];
 };
 type PlatformChoice = "gba" | "ps2";
 type Analysis = {
@@ -62,8 +63,11 @@ export default function Home() {
   const [status,setStatus]=useState("รอไฟล์ ROM");
   const [analysis,setAnalysis]=useState<Analysis|null>(null);
   const [stopping,setStopping]=useState(false);
+  const [rowError,setRowError]=useState<{id:string;message:string}|null>(null);
   const [showTop,setShowTop]=useState(false);
   const stop=useRef(false);
+  const fileInput=useRef<HTMLInputElement>(null);
+  const generation=useRef(0);
   useEffect(()=>{
     const requested=new URLSearchParams(window.location.search).get("project");
     const id=requested&&/^[0-9a-f-]{36}$/.test(requested)?requested:localStorage.getItem("gts-project");
@@ -103,15 +107,27 @@ export default function Home() {
     }catch(e){setError(e instanceof Error?e.message:"Upload failed");setStatus("อัปโหลดไม่สำเร็จ");}
     finally{setBusy(null);}
   }
+  // Clears the chosen file and the current project view so a new ROM (or the same one) can be picked.
+  // The project itself stays saved on disk and is not deleted.
+  function resetFile() {
+    stop.current=true;generation.current++;
+    setProject(null);setAnalysis(null);setError("");setRowError(null);setStopping(false);setBusy(null);
+    setStatus("รอไฟล์ ROM");
+    if(fileInput.current) fileInput.current.value="";
+    try{localStorage.removeItem("gts-project");}catch{}
+    if(new URLSearchParams(window.location.search).has("project")) window.history.replaceState(null,"",window.location.pathname);
+  }
   async function translate() {
     if(!project) return;
     setBusy("translate");setError("");setStopping(false);stop.current=false;setStatus("กำลังแปล...");
+    const started=generation.current;
     try {
-      let previous=project.done,stalled=0;
+      let previous=project.processed,stalled=0;
       while(!stop.current) {
         const p=await responseJson<Project>(await fetch(`/api/projects/${project.id}/translate`,{method:"POST"}));
+        if(generation.current!==started) return;
         setProject(p);
-        stalled=p.done===previous?stalled+1:0;previous=p.done;
+        stalled=p.processed===previous?stalled+1:0;previous=p.processed;
         if(p.error&&stalled>=3) throw new Error(p.error);
         if(stalled>=3) throw new Error("ยังแปลชุดนี้ไม่สำเร็จ บันทึกความคืบหน้าไว้แล้ว กรุณาลองอีกครั้ง");
         setStatus(p.error?"บันทึกแล้ว กำลังลองข้อความที่เหลือใหม่...":"กำลังแปล...");
@@ -141,22 +157,31 @@ export default function Home() {
   }
   async function download() {
     if(!project) return;
-    setBusy("export");setError("");setStatus("กำลังดาวน์โหลด ROM...");
+    setBusy("export");setError("");setStatus("กำลังสร้าง ROM...");
     try {
+      // Fetch first so a failed export shows its message instead of a broken browser download.
+      const response=await fetch(`/api/projects/${project.id}/export`);
+      if(!response.ok) {
+        let message="Export ไม่สำเร็จ";
+        try{message=(await response.json()).error||message;}catch{}
+        throw new Error(message);
+      }
+      const name=/filename="([^"]+)"/.exec(response.headers.get("Content-Disposition")??"")?.[1]??`${project.name.replace(/\.[^.]+$/,"")}-${project.target}.gba`;
+      const url=URL.createObjectURL(await response.blob());
       const a=document.createElement("a");
-      a.href=`/api/projects/${project.id}/export`;
-      a.download=`FireRed-Rev1-${project.target}.gba`;
+      a.href=url;a.download=name;
       document.body.appendChild(a);
       a.click();
       a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
       setStatus("Export สำเร็จ");
     }catch(e){setError(e instanceof Error?e.message:"Export failed");setStatus("Export ไม่สำเร็จ");}
     finally{setBusy(null);}
   }
   async function save(entryId:string,text:string) {
-    setError("");
+    setError("");setRowError(null);
     try{setProject(await responseJson<Project>(await fetch(`/api/projects/${project!.id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({entryId,text})})));}
-    catch(e){setError(e instanceof Error?e.message:"Save failed");}
+    catch(e){setRowError({id:entryId,message:e instanceof Error?e.message:"Save failed"});}
   }
   const percent=project?Math.round(project.done/project.total*100):0;
   const currentFileName=project?.name??analysis?.metadata.fileName??(platform==="ps2"?"ยังไม่ได้เลือกไฟล์ PS2 .iso":"ยังไม่ได้เลือกไฟล์ ROM");
@@ -166,12 +191,25 @@ export default function Home() {
   return <main className="shell">
     <header className="topbar"><div className="brand"><img src="/logo.png" className="brandLogo" alt=""/><div><p className="eyebrow">GBA WORKBENCH / LOCAL-FIRST</p><h1>Game Translation Studio</h1></div></div><Terminal size={22} aria-hidden="true"/></header>
     <section className="flow" aria-label="Translation">
-      <div className="step"><span className="stepNumber">01</span><div className="stepBody"><h2>Upload ROM</h2><fieldset disabled={!!busy}><legend>Platform</legend><label><input type="radio" name="platform" checked={platform==="gba"} onChange={()=>selectPlatform("gba")}/>GBA .gba</label><label><input type="radio" name="platform" checked={platform==="ps2"} onChange={()=>selectPlatform("ps2")}/>PS2 .iso</label></fieldset><input aria-label="Upload ROM" type="file" accept={platform==="ps2"?".iso":".gba"} disabled={!!busy} onChange={e=>{const f=e.target.files?.[0];if(f)void upload(f);}}/><p className="fileName">{currentFileName}</p></div><Upload className="stepIcon" size={20}/></div>
+      <div className="step"><span className="stepNumber">01</span><div className="stepBody"><h2>Upload ROM</h2><fieldset disabled={!!busy}><legend>Platform</legend><label><input type="radio" name="platform" checked={platform==="gba"} onChange={()=>selectPlatform("gba")}/>GBA .gba</label><label><input type="radio" name="platform" checked={platform==="ps2"} onChange={()=>selectPlatform("ps2")}/>PS2 .iso</label></fieldset><input ref={fileInput} aria-label="Upload ROM" type="file" accept={platform==="ps2"?".iso":".gba"} disabled={!!busy} onChange={e=>{const f=e.target.files?.[0];if(f)void upload(f);e.target.value="";}}/><p className="fileName">{currentFileName}</p><button className="secondary" type="button" onClick={resetFile} disabled={!project&&!analysis&&!busy&&!error}><X size={16}/>Reset ไฟล์</button></div><Upload className="stepIcon" size={20}/></div>
       <div className="step"><span className="stepNumber">02</span><div className="stepBody"><h2>แปลภาษา</h2><fieldset disabled={!!busy||!!project?.done}><legend>ภาษาปลายทาง</legend><label><input type="radio" name="target" checked={target==="thai"} onChange={()=>void selectTarget("thai")}/>ไทย</label><label><input type="radio" name="target" checked={target==="english"} onChange={()=>void selectTarget("english")}/>English</label></fieldset>
       <div className="actions"><button disabled={!project||!!busy||project.complete} onClick={()=>void translate()}>{project?.complete?<Check size={17}/>:project?.done?<RotateCw size={17}/>:<Languages size={17}/>} {project?.complete?"แปลเสร็จแล้ว":project?.done?"แปลต่อ":"แปล"}</button>{busy==="translate"&&<button className="secondary" disabled={stopping} onClick={()=>{stop.current=true;setStopping(true);setStatus("กำลังบันทึกชุดปัจจุบัน...");}}><Pause size={17}/>{stopping?"กำลังพัก...":"พัก"}</button>}</div></div><Languages className="stepIcon" size={20}/></div>
       <div className="step"><span className="stepNumber">03</span><div className="stepBody"><h2>Export</h2><button className="secondary" disabled={!project?.complete||project.exportBlocked||!!busy} onClick={()=>void download()}><Download size={17}/>Export .gba</button>{project?.exportBlocked&&<p className="fileName">Export pending: {project.exportBlockReason??"adapter ยังไม่พร้อมสำหรับ target นี้"}</p>}</div><Download className="stepIcon" size={20}/></div>
     </section>
-    <section className="progressArea" aria-live="polite"><div className="statusLine"><span className="prompt">&gt;</span><span>{status}</span>{project?.complete&&<Check size={17}/>}</div>{project&&<><progress max={project.total} value={project.done} aria-label="ข้อความที่แปลแล้ว"/><div className="progressLabel"><span>{project.done.toLocaleString()} / {project.total.toLocaleString()} ข้อความ</span><span>{percent}%</span></div></>}{error&&<p className="errorText" role="alert">{error}</p>}</section>
+    <section className="progressArea" aria-live="polite"><div className="statusLine"><span className="prompt">&gt;</span><span>{status}</span>{project?.complete&&<Check size={17}/>}</div>{project&&<><progress max={project.total} value={project.done} aria-label="ข้อความที่แปลแล้ว"/><div className="progressLabel"><span>{project.done.toLocaleString()} / {project.total.toLocaleString()} ข้อความ{project.skipped>0&&` · คงต้นฉบับ ${project.skipped.toLocaleString()}`}</span><span>{percent}%</span></div></>}{error&&<p className="errorText" role="alert">{error}</p>}</section>
+    {project&&<section className="panel" aria-label="คำแปล">
+      <div className="panelHead"><h2>คำแปล</h2><div className="chips"><span className="chip ok">แปลแล้ว {project.done.toLocaleString()}</span>{project.failed.length>0&&<span className="chip bad">ต้องตรวจ {project.failed.length.toLocaleString()}</span>}{project.skipped>0&&<span className="chip">คงต้นฉบับ {project.skipped.toLocaleString()}</span>}</div></div>
+      {!project.failed.length&&!project.untranslated.length&&!project.samples.length&&<p className="muted">ยังไม่มีคำแปล กด “แปล” ด้านบนเพื่อเริ่ม</p>}
+      {project.failed.length>0&&<details className="fold" open><summary>ต้องตรวจ ({project.failed.length.toLocaleString()}) <small>แก้แล้วกดบันทึกทีละข้อความ</small></summary>
+        {project.failed.map(entry=><form className="translationRow" key={entry.id} onSubmit={event=>{event.preventDefault();void save(entry.id,String(new FormData(event.currentTarget).get("text")));}}><p>{readable(entry.source)}</p><textarea aria-label={`แก้คำแปล ${entry.id}`} name="text" defaultValue={entry.translation}/><p className="errorText">{rowError?.id===entry.id?rowError.message:entry.error}</p><button disabled={!!busy} type="submit"><Check size={16}/>บันทึก</button></form>)}
+      </details>}
+      {project.samples.length>0&&<details className="fold" open><summary>แปลล่าสุด ({project.samples.length})</summary>
+        {project.samples.map(entry=><div className="translationRow" key={entry.id}><p className="muted">{readable(entry.source)}</p><p>{readable(entry.translation)}</p></div>)}
+      </details>}
+      {project.untranslated.length>0&&<details className="fold"><summary>ยังไม่มีคำแปล — เพิ่มเองได้ ({project.untranslated.length.toLocaleString()}{project.skipped>project.untranslated.length?`+`:""}) <small>ถ้าไม่เพิ่ม ข้อความจะคงต้นฉบับ</small></summary>
+        {project.untranslated.map(entry=><form className="translationRow" key={entry.id} onSubmit={event=>{event.preventDefault();void save(entry.id,String(new FormData(event.currentTarget).get("text")));}}><p>{readable(entry.source)}</p><textarea aria-label={`เพิ่มคำแปล ${entry.id}`} name="text" defaultValue=""/>{rowError?.id===entry.id?<p className="errorText" role="alert">{rowError.message}</p>:<p className="muted">ยังไม่มีคำแปล ข้อความนี้จะคงต้นฉบับ</p>}<button disabled={!!busy} type="submit"><Check size={16}/>บันทึก</button></form>)}
+      </details>}
+    </section>}
     {analysis&&<section className="analysisPanel" aria-label="Game analysis">
       <div className="analysisHeader"><span className={`badge ${analysis.compatibility}`}>{analysis.compatibility.toUpperCase()}</span><span>{analysis.adapter?.name??(analysis.isoScan?"PS2 ISO Explorer":"Generic GBA Analysis")}</span></div>
       <div className="analysisGrid">
@@ -189,8 +227,8 @@ export default function Home() {
         <span>Boot</span><strong>{analysis.isoScan.bootFile||"Unknown"}</strong>
         <span>Files</span><strong>{analysis.isoScan.fileCount.toLocaleString()} files / {analysis.isoScan.directoryCount.toLocaleString()} dirs</strong></>}
       </div>
-      {analysis.isoScan&&<div className="isoExplorer">
-        <h3>Extracted strings ({isoStrings.length.toLocaleString()})</h3>
+      {analysis.isoScan&&<details className="isoExplorer fold" open>
+        <summary>Extracted strings ({isoStrings.length.toLocaleString()}) <small>กดเพื่อดู/ย่อ</small></summary>
         {isoStrings.map(entry=><div className="dialogRow" key={`${entry.path}-${entry.offset}-${entry.encoding}`}>
           <div><strong>{entry.path}</strong><p>{entry.text}</p></div>
           <span>{entry.encoding}<br/>0x{entry.offset.toString(16).toUpperCase()}<br/>{Math.round(entry.confidence*100)}%</span>
@@ -203,24 +241,19 @@ export default function Home() {
         </div>)}
         {!analysis.isoScan.candidates.length&&analysis.isoScan.largestFiles.length===0&&<p className="muted">ไม่พบไฟล์ใน ISO</p>}
         {analysis.isoScan.issues.map(issue=><p className="errorText" key={issue}>{issue}</p>)}
-      </div>}
-      {analysis.textPreview&&<div className="textExplorer">
-        <h3>{analysis.textPreview.source==="adapter"?"Extracted dialog":"Text candidates"} ({analysis.textPreview.total.toLocaleString()})</h3>
+      </details>}
+      {analysis.textPreview&&<details className="textExplorer fold">
+        <summary>{analysis.textPreview.source==="adapter"?"ข้อความที่ถอดออกมา":"ข้อความที่อาจเป็นบทสนทนา"} ({analysis.textPreview.total.toLocaleString()}) <small>กดเพื่อดู/ย่อ</small></summary>
         {textRows.map(entry=><div className="dialogRow" key={entry.id}>
           <div><strong>{entry.context||entry.id}</strong><p>{readable(entry.sourceText)}</p></div>
           <span>{entry.category}{entry.offset!==undefined?<><br/>0x{entry.offset.toString(16).toUpperCase()}</>:null}{entry.confidence!==undefined?<><br/>{Math.round(entry.confidence*100)}%</>:null}</span>
         </div>)}
         {!textRows.length&&<p className="muted">ไม่พบข้อความที่ถอดได้</p>}
-      </div>}
+      </details>}
       {!analysis.isoScan&&<div className="capabilities">{Object.entries(analysis.capabilities).map(([key,value])=><span key={key}>{key}: {value}</span>)}</div>}
       {analysis.issues.map(issue=><p key={issue.code} className={issue.level==="error"?"errorText":"muted"}>{issue.message}</p>)}
     </section>}
     <p className="scope">GBA รองรับ .gba · PS2 ISO Explorer อ่านไฟล์ในแผ่นและโชว์ string candidates · ขั้นถัดไปคือเลือกไฟล์แล้วแตก dialog เป็นรายการแก้ไข</p>
-    {project&&<details className="details"><summary>คำแปล {project.failed.length>0&&`/ ต้องตรวจ ${project.failed.length} ข้อความ`}</summary>
-      {project.failed.map(entry=><form className="translationRow" key={entry.id} onSubmit={event=>{event.preventDefault();void save(entry.id,String(new FormData(event.currentTarget).get("text")));}}><p>{readable(entry.source)}</p><textarea aria-label={`แก้คำแปล ${entry.id}`} name="text" defaultValue={entry.translation}/><p className="errorText">{entry.error}</p><button disabled={!!busy} type="submit"><Check size={16}/>บันทึก</button></form>)}
-      {project.samples.map(entry=><div className="translationRow" key={entry.id}><p className="muted">{readable(entry.source)}</p><p>{readable(entry.translation)}</p></div>)}
-      {!project.samples.length&&!project.failed.length&&<p className="muted">ยังไม่มีคำแปล</p>}
-    </details>}
     <button className={`toTop ${showTop?"visible":""}`} type="button" aria-label="Scroll to top" title="Scroll to top" onClick={()=>window.scrollTo({top:0,behavior:"smooth"})}><ArrowUp size={19}/></button>
   </main>;
 }

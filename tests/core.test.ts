@@ -104,7 +104,7 @@ test("Pokemon Emerald adapter matches exact v0 identity and extracts pointer tex
   assert.equal(extraction.issues[0].code, "emerald-experimental-extraction");
 });
 
-test("Zelda Minish Cap adapter matches exact USA identity and extracts text candidates", async () => {
+test("Zelda Minish Cap adapter matches exact USA identity and reports a missing message table", async () => {
   assert.equal(
     await zeldaMinishCapAdapter.matches({
       platform: "gba",
@@ -134,8 +134,8 @@ test("Zelda Minish Cap adapter matches exact USA identity and extracts text cand
       details: {}
     }
   });
-  assert.ok(extraction.entries.some((entry) => entry.sourceText.includes("Zelda")));
-  assert.equal(extraction.issues[0].code, "minish-cap-candidate-extraction");
+  assert.equal(extraction.entries.length, 0);
+  assert.equal(extraction.issues[0].code, "minish-cap-no-table");
 });
 
 test("Pokemon Gen III text decoder preserves control tokens", () => {

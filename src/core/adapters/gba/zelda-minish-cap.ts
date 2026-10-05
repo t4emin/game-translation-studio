@@ -1,5 +1,6 @@
 import type { GameAdapter } from "../../contracts.ts";
-import { scanGbaResources } from "../../platforms/gba/generic-scanner.ts";
+import { buildMinishRom, createMinishAtlas, digest, encodeMessage, extractMinishEntries, validateMinishTranslation } from "../../platforms/gba/minish-cap-rom.ts";
+import { validateProtectedNames } from "../../platforms/gba/pokemon-gen3-resources.ts";
 import type {
   BuildResult,
   BuildValidation,
@@ -18,12 +19,8 @@ import type {
 
 export const zeldaMinishCapChecksum = "bedc74df62755f705398273de8ed3bc59be610cf55760d0b9aa277f1f5035e73";
 
-const unsupportedIssue: ValidationIssue = {
-  level: "error",
-  code: "minish-cap-adapter-not-mapped",
-  message:
-    "The Minish Cap pack/export path is not implemented yet."
-};
+// Character and place names stay in English, as in the Pokemon adapters.
+const protectedNames = ["Zelda", "Ezlo", "Vaati", "Hyrule", "Link"];
 
 export const zeldaMinishCapMetadata: GameAdapterMetadata = {
   id: "gba-zelda-minish-cap-bzme-v0",
@@ -37,20 +34,24 @@ export const zeldaMinishCapMetadata: GameAdapterMetadata = {
   supportedTargets: ["thai", "english"],
   capabilities: {
     extraction: true,
-    fontAnalysis: false,
-    thaiBuild: false,
-    englishBuild: false,
-    safeInjection: false,
-    rebuild: false,
+    fontAnalysis: true,
+    thaiBuild: true,
+    englishBuild: true,
+    safeInjection: true,
+    rebuild: true,
     emulatorVerified: false
   },
   notes: [
     "Exact ROM identity is recognized from GBA header and SHA-256.",
-    "Header title/game code are GBAZELDA MC / BZME. Extraction surfaces ranked ASCII dialog/text candidates for review.",
-    "Export needs a Minish Cap packer and text writer before rebuilt ROM output is available.",
-    "No ROM bytes are bundled in this project."
+    "Extraction reads the game's own message table (80 groups, 3,699 messages); NPC names and staff credits are skipped.",
+    "Rebuild writes a new message table and Thai glyph banks into the free end of the ROM and repoints the language and font tables. No game code is patched.",
+    "Not yet verified in an emulator. No ROM bytes are bundled in this project."
   ]
 };
+
+function sourceMap(bytes: Uint8Array) {
+  return new Map(extractMinishEntries(bytes).map((entry) => [entry.id, entry]));
+}
 
 export const zeldaMinishCapAdapter: GameAdapter = {
   id: zeldaMinishCapMetadata.id,
@@ -67,57 +68,95 @@ export const zeldaMinishCapAdapter: GameAdapter = {
   },
 
   async extract(context: GameContext): Promise<ExtractionResult> {
-    const candidates = scanGbaResources(context.file.bytes).ascii.examples
-      .filter((entry) => entry.text.length >= 12)
-      .slice(0, 600)
-      .map((entry, index): TranslationEntry => ({
-        id: `minish-ascii-${entry.offset.toString(16)}`,
-        sourceText: entry.text,
-        translatedText: "",
-        sourceLanguage: "english",
-        targetLanguage: "thai",
-        category: "dialog",
-        context: `ASCII text candidate #${index + 1}`,
-        resource: { offset: entry.offset, index },
-        constraints: { maxBytes: entry.length, fixedLength: true },
-        protectedTokens: [],
-        status: "untranslated",
-        warnings: [`Candidate confidence ${Math.round(entry.confidence * 100)}%; writer/export is not implemented yet.`]
-      }));
+    let found: ReturnType<typeof extractMinishEntries>;
+    try {
+      found = extractMinishEntries(context.file.bytes);
+    } catch (error) {
+      return { entries: [], issues: [{ level: "error", code: "minish-cap-no-table", message: error instanceof Error ? error.message : "Minish Cap message table could not be read." }] };
+    }
+    const entries = found.map((entry): TranslationEntry => ({
+      id: entry.id,
+      sourceText: entry.text,
+      translatedText: "",
+      sourceLanguage: "english",
+      targetLanguage: "thai",
+      category: entry.category,
+      context: `Text group ${entry.group} #${entry.index}`,
+      resource: { path: `group-${entry.group}`, offset: entry.offset, index: entry.index },
+      constraints: { fixedLength: false },
+      protectedTokens: entry.text.match(/\[[^\]]+\]/g) ?? [],
+      status: "untranslated",
+      warnings: []
+    }));
     return {
-      entries: candidates,
-      issues: candidates.length
-        ? [{ level: "info", code: "minish-cap-candidate-extraction", message: "Minish Cap text candidates were extracted for review." }]
-        : [{ level: "warning", code: "minish-cap-no-candidates", message: "No Minish Cap text candidates were found." }]
+      entries,
+      issues: [{ level: "info", code: "minish-cap-message-table", message: `Read ${entries.length.toLocaleString()} Minish Cap messages from the game's message table.` }]
     };
   },
 
   async analyzeFont(): Promise<FontAnalysis> {
     return {
-      canRenderThai: false,
-      canRenderEnglish: false,
-      notes: [],
-      blockers: ["Needs Minish Cap font mapping."]
+      canRenderThai: true,
+      canRenderEnglish: true,
+      notes: ["Thai glyphs use font groups 4, 5 and 6 (768 slots), which English text never uses."],
+      blockers: []
     };
   },
 
-  async prepareTargetLanguage(_context: unknown, _language: TargetLanguage): Promise<LanguagePreparationResult> {
-    return { ok: false, issues: [unsupportedIssue] };
+  async prepareTargetLanguage(_context: unknown, language: TargetLanguage): Promise<LanguagePreparationResult> {
+    return language === "thai" || language === "english"
+      ? { ok: true, issues: [] }
+      : { ok: false, issues: [{ level: "error", code: "minish-cap-target-unsupported", message: "Unsupported Minish Cap target language." }] };
   },
 
-  async validateTranslations(_context: unknown, _entries: TranslationEntry[]): Promise<ValidationResult> {
-    return { ok: false, issues: [unsupportedIssue] };
+  async validateTranslations(context: GameContext, entries: TranslationEntry[]): Promise<ValidationResult> {
+    const issues: ValidationIssue[] = [];
+    const sources = context?.file?.bytes ? sourceMap(context.file.bytes) : undefined;
+    let atlas: ReturnType<typeof createMinishAtlas> | undefined;
+    try {
+      if (context?.file?.bytes) atlas = createMinishAtlas(entries.map((entry) => entry.translatedText));
+    } catch (error) {
+      return { ok: false, issues: [{ level: "error", code: "minish-cap-font-validation", message: error instanceof Error ? error.message : "Minish Cap font validation failed" }] };
+    }
+    for (const entry of entries) {
+      try {
+        if (!entry.translatedText.trim()) throw new Error("Empty translation");
+        validateMinishTranslation(entry.sourceText, entry.translatedText);
+        validateProtectedNames(entry.sourceText, entry.translatedText, protectedNames);
+        if (sources && atlas) {
+          const source = sources.get(entry.id);
+          if (!source || source.text !== entry.sourceText) throw new Error(`Source text mismatch: ${entry.id}`);
+          encodeMessage(entry.translatedText, context.file.bytes, atlas);
+        }
+      } catch (error) {
+        issues.push({ level: "error", code: "translation-validation", entryId: entry.id, message: error instanceof Error ? error.message : "Invalid translation" });
+      }
+    }
+    return { ok: issues.length === 0, issues };
   },
 
-  async inject(): Promise<InjectionResult> {
-    return { ok: false, issues: [unsupportedIssue] };
+  async inject(context: GameContext, entries: TranslationEntry[]): Promise<InjectionResult> {
+    try {
+      const translations = new Map(entries.filter((entry) => entry.translatedText).map((entry) => [entry.id, entry.translatedText]));
+      context.outputBytes = buildMinishRom(context.file.bytes, translations).bytes;
+      return { ok: true, issues: [] };
+    } catch (error) {
+      return { ok: false, issues: [{ level: "error", code: "minish-cap-injection-failed", message: error instanceof Error ? error.message : "Minish Cap injection failed" }] };
+    }
   },
 
-  async rebuild(): Promise<BuildResult> {
-    return { ok: false, issues: [unsupportedIssue] };
+  async rebuild(context: GameContext): Promise<BuildResult> {
+    if (!context.outputBytes) return { ok: false, issues: [{ level: "error", code: "minish-cap-rebuild-missing", message: "No injected Minish Cap ROM is available." }] };
+    return { ok: true, issues: [], outputBytes: context.outputBytes, checksum: digest(context.outputBytes) };
   },
 
-  async validateBuild(): Promise<BuildValidation> {
-    return { ok: false, issues: [unsupportedIssue] };
+  async validateBuild(context: GameContext): Promise<BuildValidation> {
+    const output = context.outputBytes;
+    if (!output) return { ok: false, issues: [{ level: "error", code: "minish-cap-build-missing", message: "No rebuilt Minish Cap ROM is available." }] };
+    if (output.length !== context.file.bytes.length) return { ok: false, issues: [{ level: "error", code: "minish-cap-size-changed", message: "Output ROM size changed unexpectedly." }] };
+    if (!Buffer.from(output.subarray(0, 0xc0)).equals(Buffer.from(context.file.bytes.subarray(0, 0xc0)))) {
+      return { ok: false, issues: [{ level: "error", code: "minish-cap-header-changed", message: "Output ROM header changed unexpectedly." }] };
+    }
+    return { ok: true, issues: [] };
   }
 };

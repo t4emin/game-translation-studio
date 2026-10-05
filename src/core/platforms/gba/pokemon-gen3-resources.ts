@@ -19,7 +19,7 @@ export const pokemonGen3NameTables: FixedTable[] = [
 ];
 
 export function protectedPokemonNames(bytes: Uint8Array, extra: string[] = []): string[] {
-  const names = new Set(["POKéMON", "POKEMON", "TRAINER", ...extra]);
+  const names = new Set(["POKéMON", "POKEMON", ...extra]);
   for (const table of pokemonGen3NameTables) {
     const base = readGbaPointer(bytes, table.pointerOffset);
     if (base === undefined) continue;
@@ -30,6 +30,31 @@ export function protectedPokemonNames(bytes: Uint8Array, extra: string[] = []): 
     }
   }
   return [...names];
+}
+
+const namePatterns = new WeakMap<string[], RegExp>();
+
+// Names must stay in the source script: every protected name in the source has to appear as often in the translation.
+export function missingProtectedNames(source: string, translated: string, names: string[]): string[] {
+  if (!names.length) return [];
+  let pattern = namePatterns.get(names);
+  if (!pattern) {
+    const alternatives = [...names].sort((a, b) => b.length - a.length).map((name) => name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+    pattern = new RegExp(`(?<![A-Za-zé0-9])(?:${alternatives.join("|")})(?![A-Za-zé0-9])`, "g");
+    namePatterns.set(names, pattern);
+  }
+  const count = (text: string) => {
+    const counts = new Map<string, number>();
+    for (const match of text.replace(/\[[^\]]+\]/g, " ").matchAll(pattern)) counts.set(match[0], (counts.get(match[0]) ?? 0) + 1);
+    return counts;
+  };
+  const kept = count(translated);
+  return [...count(source)].filter(([name, expected]) => (kept.get(name) ?? 0) < expected).map(([name]) => name);
+}
+
+export function validateProtectedNames(source: string, translated: string, names: string[]) {
+  const missing = missingProtectedNames(source, translated, names);
+  if (missing.length) throw new Error(`Translation must keep these names in English: ${missing.join(", ")}.`);
 }
 
 export function extractPointerTextCandidates(bytes: Uint8Array, options: { adapterId: string; limit: number }): TranslationEntry[] {

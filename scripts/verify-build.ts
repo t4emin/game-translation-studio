@@ -6,10 +6,10 @@ import { createThaiAtlas, encodeDialog, dialogLayout } from "../src/core/platfor
 
 const id=process.argv[2];
 const project=await loadProject(id);
-assert.ok(project.entries.every(entry=>entry.status==="translated"),"Complete translation required");
+assert.ok(project.entries.every(entry=>entry.status==="translated"||entry.status==="warning"),"Finished translation required");
 const original=await readFile(`.local/projects/${id}/original.gba`);
 const result=await exportProject(id);
-const entries=project.entries.filter(entry=>entry.translatedText!==entry.sourceText);
+const entries=project.entries.filter(entry=>entry.status==="translated"&&entry.translatedText!==entry.sourceText);
 const atlas=createThaiAtlas(entries.map(entry=>entry.translatedText));
 const allowed=new Uint8Array(original.length);
 let references=0;

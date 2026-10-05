@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import { join } from "node:path";
 import type { TargetLanguage, TranslationEntry } from "../types.ts";
 
@@ -15,7 +15,8 @@ type LocalTranslationFile = {
   }[];
 };
 
-const cache = new Map<string, Promise<Map<string, string>>>();
+// Keyed by the files' modification times, so edits to a translation file are picked up without a restart.
+const cache = new Map<string, { signature: string; promise: Promise<Map<string, string>> }>();
 
 export async function findLocalTranslation(entry: TranslationEntry, target: TargetLanguage, adapterId = "pokemon-firered-rev1"): Promise<string | undefined> {
   const memory = await loadLocalTranslations(target, adapterId);
@@ -25,21 +26,32 @@ export async function findLocalTranslation(entry: TranslationEntry, target: Targ
 async function loadLocalTranslations(target: TargetLanguage, adapterId: string): Promise<Map<string, string>> {
   if (target !== "thai") return new Map();
   const cacheKey = `${adapterId}:${target}`;
+  const signature = await translationSignature(target, adapterId);
   const existing = cache.get(cacheKey);
-  if (existing) return existing;
+  if (existing && existing.signature === signature) return existing.promise;
   const promise = readLocalTranslationFiles(target, adapterId)
     .catch((error: NodeJS.ErrnoException) => {
       if (error.code === "ENOENT") return new Map<string, string>();
       throw error;
     });
-  cache.set(cacheKey, promise);
+  cache.set(cacheKey, { signature, promise });
   return promise;
 }
 
-async function readLocalTranslationFiles(target: TargetLanguage, adapterId: string): Promise<Map<string, string>> {
-  const files = adapterId === "gba-pokemon-firered-bpre-rev1"
+async function translationSignature(target: TargetLanguage, adapterId: string): Promise<string> {
+  const times = await Promise.all(translationFileNames(target, adapterId).map((file) =>
+    stat(join(process.cwd(), "translations", file)).then((info) => String(info.mtimeMs), () => "missing")));
+  return times.join("|");
+}
+
+function translationFileNames(target: TargetLanguage, adapterId: string): string[] {
+  return adapterId === "gba-pokemon-firered-bpre-rev1"
     ? ["pokemon-firered-rev1.thai.json"]
     : [`${adapterId}.${target}.json`, "pokemon-firered-rev1.thai.json"];
+}
+
+async function readLocalTranslationFiles(target: TargetLanguage, adapterId: string): Promise<Map<string, string>> {
+  const files = translationFileNames(target, adapterId);
   const merged = new Map<string, string>();
   for (const file of files) {
     try {

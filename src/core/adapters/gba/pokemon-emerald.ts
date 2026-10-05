@@ -1,5 +1,5 @@
 import type { GameAdapter } from "../../contracts.ts";
-import { digest, protectedPokemonNames, extractPointerTextCandidates } from "../../platforms/gba/pokemon-gen3-resources.ts";
+import { digest, protectedPokemonNames, extractPointerTextCandidates, validateProtectedNames } from "../../platforms/gba/pokemon-gen3-resources.ts";
 import { latinByte, tokenBytes, validateTranslation } from "../../platforms/gba/firered-rom.ts";
 import { createThaiAtlasForFonts, encodeDialogWithFonts, patchThaiFontsForFonts, type GbaFontSpec } from "../../platforms/gba/thai-font.ts";
 import type {
@@ -20,9 +20,16 @@ import type {
 
 export const pokemonEmeraldChecksum = "a9dec84dfe7f62ab2220bafaef7479da0929d066ece16a6885f6226db19085af";
 
+// Emerald prints dialogue in FONT_NORMAL (1). Fonts 7 (narrow) and 2 (short) have their own glyph banks and the same
+// 0x120 range free, so they extend the Thai capacity; fonts 3-5 reuse the short bank. Slots 0x1D0-0x1DF hold game symbols.
+// Glyphs sit one row lower than FireRed's because the Emerald baseline is on row 11.
+// High enough to keep every pointer-referenced message the scorer accepts (about 4,450 in the USA ROM).
+const emeraldCandidateLimit = 6000;
+
 const emeraldFonts: GbaFontSpec[] = [
-  { id: 2, pixels: 0x6440e4, widths: 0x64c0e4, length: 32768, hash: "d3de13b611cdc84929a2eb1057ecc662e2cc065a78634c498e098991c9d9ad26" },
-  { id: 3, pixels: 0x64c2e4, widths: 0x6542e4, length: 32768, hash: "9df725adb5e41ab40cde0bddc88e00f5014157aad2d8030662b934ad155f287d" }
+  { id: 1, pixels: 0x64c2e4, widths: 0x6542e4, length: 32768, hash: "9df725adb5e41ab40cde0bddc88e00f5014157aad2d8030662b934ad155f287d", slots: 176, dy: 1 },
+  { id: 7, pixels: 0x63bee4, widths: 0x643ee4, length: 32768, hash: "3e1f45e425ebd58e870840e468bd4af5ef427b8dfa928dccf4909a83d39b41a9", slots: 176, dy: 1 },
+  { id: 2, pixels: 0x6440e4, widths: 0x64c0e4, length: 32768, hash: "d3de13b611cdc84929a2eb1057ecc662e2cc065a78634c498e098991c9d9ad26", slots: 176, dy: 1 }
 ];
 
 export const pokemonEmeraldMetadata: GameAdapterMetadata = {
@@ -67,7 +74,7 @@ export const pokemonEmeraldAdapter: GameAdapter = {
   },
 
   async extract(context: GameContext): Promise<ExtractionResult> {
-    const entries = extractPointerTextCandidates(context.file.bytes, { adapterId: "emerald", limit: 600 });
+    const entries = extractPointerTextCandidates(context.file.bytes, { adapterId: "emerald", limit: emeraldCandidateLimit });
     return {
       entries,
       issues: entries.length
@@ -95,15 +102,17 @@ export const pokemonEmeraldAdapter: GameAdapter = {
     let atlas: ReturnType<typeof createThaiAtlasForFonts> | undefined;
     let fontRom: Uint8Array = context.file.bytes;
     try {
-      atlas = createThaiAtlasForFonts(entries.map((entry) => entry.translatedText), emeraldFonts);
+      atlas = createThaiAtlasForFonts(entries.map((entry) => entry.translatedText), emeraldFonts, { degrade: true });
       if (atlas.size) fontRom = patchThaiFontsForFonts(context.file.bytes, atlas, emeraldFonts);
     } catch (error) {
       return { ok: false, issues: [{ level: "error", code: "emerald-font-validation", message: error instanceof Error ? error.message : "Emerald font validation failed" }] };
     }
+    const names = emeraldProtectedNames(context.file.bytes);
     for (const entry of entries) {
       try {
         validateTranslation(entry.sourceText, entry.translatedText);
-        if (entry.translatedText) encodeEmeraldText(entry.translatedText, fontRom, atlas);
+        validateProtectedNames(entry.sourceText, entry.translatedText, names);
+        if (entry.translatedText) encodeEmeraldText(entry.translatedText, fontRom, atlas, sources.get(entry.id));
         const source = sources.get(entry.id);
         if (!source || source.sourceText !== entry.sourceText) throw new Error(`Source text mismatch: ${entry.id}`);
       }
@@ -136,18 +145,30 @@ export const pokemonEmeraldAdapter: GameAdapter = {
   }
 };
 
+const emeraldNameCache = new WeakMap<Uint8Array, string[]>();
+
 export function emeraldProtectedNames(bytes: Uint8Array): string[] {
-  return protectedPokemonNames(bytes, ["BIRCH", "ROXANNE", "BRAWLY", "WATTSON", "FLANNERY", "NORMAN", "WINONA", "TATE", "LIZA", "JUAN", "SIDNEY", "PHOEBE", "GLACIA", "DRAKE", "WALLACE"]);
+  let names = emeraldNameCache.get(bytes);
+  if (!names) emeraldNameCache.set(bytes, names = protectedPokemonNames(bytes, ["BIRCH", "ROXANNE", "BRAWLY", "WATTSON", "FLANNERY", "NORMAN", "WINONA", "TATE", "LIZA", "JUAN", "SIDNEY", "PHOEBE", "GLACIA", "DRAKE", "WALLACE"]));
+  return names;
 }
 
 function candidateMap(bytes: Uint8Array): Map<string, TranslationEntry> {
-  return new Map(extractPointerTextCandidates(bytes, { adapterId: "emerald", limit: 600 }).map((entry) => [entry.id, entry]));
+  return new Map(extractPointerTextCandidates(bytes, { adapterId: "emerald", limit: emeraldCandidateLimit }).map((entry) => [entry.id, entry]));
 }
 
-function encodeEmeraldText(text: string, rom?: Uint8Array, atlas?: ReturnType<typeof createThaiAtlasForFonts>): Uint8Array {
+// Description boxes are narrower than dialogue boxes: hold Thai lines to the widest English line and its line count.
+function descriptionLayout(entry: { sourceText: string; category: string } | undefined, rom: Uint8Array) {
+  if (!entry || entry.category !== "description") return undefined;
+  const lines = entry.sourceText.split(/\[NEW_LINE\]|\[PROMPT_\w+\]/);
+  const widest = Math.max(...lines.map((line) => [...line.replace(/\[[^\]]+\]/g, "")].reduce((sum, char) => sum + rom[emeraldFonts[0].widths + latinByte(char)], 0)));
+  return { maxWidth: widest + 6, maxLines: lines.length, scroll: false, lineFont: true };
+}
+
+function encodeEmeraldText(text: string, rom?: Uint8Array, atlas?: ReturnType<typeof createThaiAtlasForFonts>, entry?: { sourceText: string; category: string }): Uint8Array {
   if (/[\u0e00-\u0e7f]/.test(text)) {
     if (!rom || !atlas) throw new Error("Thai text requires a prepared Emerald font atlas.");
-    return encodeDialogWithFonts(text, rom, atlas, emeraldFonts);
+    return encodeDialogWithFonts(text, rom, atlas, emeraldFonts, descriptionLayout(entry, rom) ?? { lineFont: true });
   }
   const bytes: number[] = [];
   for (const part of text.split(/(\[[^\]]+\])/g).filter(Boolean)) {
@@ -167,13 +188,13 @@ function buildEmeraldRom(original: Uint8Array, entries: TranslationEntry[]): Buf
   const translated = entries.filter((entry) => entry.translatedText && entry.translatedText !== entry.sourceText);
   if (!translated.length) return Buffer.from(original);
   const sources = candidateMap(original);
-  const atlas = createThaiAtlasForFonts(translated.map((entry) => entry.translatedText), emeraldFonts);
+  const atlas = createThaiAtlasForFonts(translated.map((entry) => entry.translatedText), emeraldFonts, { degrade: true });
   const baseRom = atlas.size ? patchThaiFontsForFonts(original, atlas, emeraldFonts) : original;
   const encoded = translated.map((entry) => {
     const source = sources.get(entry.id);
     if (!source || source.sourceText !== entry.sourceText) throw new Error(`Source text mismatch: ${entry.id}`);
     validateTranslation(source.sourceText, entry.translatedText);
-    return { source, bytes: /[\u0e00-\u0e7f]/.test(entry.translatedText) ? encodeDialogWithFonts(entry.translatedText, baseRom, atlas, emeraldFonts) : encodeEmeraldText(entry.translatedText) };
+    return { source, bytes: /[\u0e00-\u0e7f]/.test(entry.translatedText) ? encodeDialogWithFonts(entry.translatedText, baseRom, atlas, emeraldFonts, descriptionLayout(source, baseRom) ?? { lineFont: true }) : encodeEmeraldText(entry.translatedText) };
   });
   const total = encoded.reduce((sum, item) => sum + item.bytes.length + 3, 0);
   if (original.length + total > 0x2000000) throw new Error("Translated ROM exceeds the GBA 32 MiB limit.");

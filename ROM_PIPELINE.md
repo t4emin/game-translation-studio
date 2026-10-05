@@ -7,8 +7,12 @@ The exact USA/Europe Rev 1 ROM (SHA-256
 supports extraction, AI translation, Thai font generation, pointer relocation,
 and download of a new `.gba` file. The original file is not overwritten.
 
-The current manifest yields 2,389 supported dialogue entries. This is NOT a
-complete translation of every string in the game. Battle UI, menus, help screens,
+The manifest yields 3,881 buildable entries: 3,481 dialogue entries and 400 battle
+messages, all with bundled Thai translations; an entry without one keeps the original
+text. `scripts/extend-firered-manifest.mjs` appends the C-source strings, trainer
+battle text and short lines that `prepare-firered.mjs` misses, and leaves out
+strings the game copies into small RAM buffers. This is NOT a
+complete translation of every string in the game. Battle menus, menus, help screens,
 specialized layouts, ambiguous source matches and undecoded resources remain
 original. Names are retained; known Pokemon, move, ability and item names and
 game control tokens are reconstructed locally outside model output.
@@ -20,7 +24,9 @@ game control tokens are reconstructed locally outside model output.
   The generated manifest contains offsets, hashes and labels, not ROM data.
 - Strings are decoded with control parameter lengths; translation uses separate
   prose fragments and restores original tokens in their original order.
-- Shaped Thai grapheme clusters are rasterized with Noto Sans Thai and encoded
+- Shaped Thai grapheme clusters are composed from a hand-drawn pixel font
+  (`thai-pixel-font.ts`, with the same baseline and shadow as the Latin fonts; clusters it
+  cannot draw fall back to rasterizing Noto Sans Thai) and encoded
   into unused extended glyph slots `0x120..0x1df` in four Latin font banks. The
   existing engine's `FC 06` font selection and `F9` glyph escape are used.
   English glyphs remain intact. The current limit is 768 unique Thai clusters.
@@ -70,3 +76,20 @@ been translated, but only selected screens have been visually reviewed. Machine
 translations can still need editorial review, and unusual layouts can need fixes.
 
 Font license: `assets/fonts/OFL.txt`. Emulator test harness: `scripts/verify-rom.c`.
+
+## The Minish Cap (BZME)
+
+Layout from the zeldaret/tmc decompilation, checked against the USA ROM.
+
+- Messages: `0x9B1D90` holds a group -> message table (80 groups, 3,699 messages) of zero-terminated
+  strings. A zero byte can be a control parameter (white is `02 00`), so readers must step over control
+  sequences. Seven language pointers (`0x109214`-`0x10922C`) all point at it in the USA ROM.
+- Fonts: nine glyph-bank pointers at `0x109248`. A glyph is 8x16, 4bpp, 64 bytes, low nibble first;
+  `0xF` in row 0 marks unused columns and sets the glyph's width. Groups 5-8 use two glyphs per character.
+- Thai: bytes `0B`/`0D`/`0E` plus an index select groups 4/5/6, which English text never uses
+  (768 slots). Narrow clusters go to group 4, wide ones to groups 5 and 6.
+- Build: the whole message table and the three glyph banks are written to the free tail of the ROM and the
+  seven language pointers and three font pointers are repointed. Nothing is overwritten in place and the
+  ROM size does not change.
+- Limits: lines must fit 208 px, and a translation must keep the control tokens of the source in order.
+  Layout of menus and credits is not checked yet.

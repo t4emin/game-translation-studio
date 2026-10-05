@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { getGameAdapter, findGameAdapter } from "./adapters/registry.ts";
 import { detectPlatform } from "./platforms/index.ts";
-import { restoreTrailingControlTokens, validateTranslation } from "./platforms/gba/firered-rom.ts";
+import { restoreLineBreakTokens, restoreTrailingControlTokens, validateTranslation } from "./platforms/gba/firered-rom.ts";
 import { findLocalTranslation } from "./storage/local-translation-file.ts";
 import type { GameAdapterMetadata, GameContext, PlatformId, TargetLanguage, TranslationEntry } from "./types.ts";
 
@@ -21,19 +21,30 @@ async function save(project:Project) {
   await rename(temp,join(path(project.id),"project.json"));
 }
 export async function loadProject(id:string):Promise<Project> {
-  return hydrateProject(JSON.parse(await readFile(join(path(id),"project.json"),"utf8")));
+  const project=hydrateProject(JSON.parse(await readFile(join(path(id),"project.json"),"utf8")));
+  // Messages skipped for lack of a translation are queued again once a translation file has one for them.
+  // This stays in memory; the next translate batch saves it.
+  if(project.target==="thai") for(const entry of project.entries) {
+    if(entry.status==="warning" && await findLocalTranslation(entry,project.target,project.adapterId)!==undefined) { entry.status="untranslated"; entry.warnings=[]; }
+  }
+  return project;
 }
 export interface Project { id:string; name:string; target:TargetLanguage; created:string; adapterId:string; adapterName:string; adapterCapabilities:StoredMetadata["capabilities"]; entries:TranslationEntry[]; error?:string }
 export interface ProjectExport { bytes:Buffer; checksum:string; name:string; translated:number; glyphs:number }
 export function projectView(project:Project) {
   const done=project.entries.filter(e=>e.status==="translated");
+  const pending=project.entries.filter(e=>e.status==="untranslated").length;
+  const failed=project.entries.filter(e=>e.status==="error");
+  // Messages without a local translation are skipped: they keep the original text in the exported ROM.
+  const skipped=project.entries.filter(e=>e.status==="warning");
   const exportBlocked=!canExport(project.adapterCapabilities,project.target);
   const exportBlockReason=exportBlocked?blockedReason(project.adapterCapabilities,project.target):null;
-  return {id:project.id,name:project.name,target:project.target,total:project.entries.length,done:done.length,
-    complete:done.length===project.entries.length, error:project.error??null, adapterId:project.adapterId, adapterName:project.adapterName, exportBlocked, exportBlockReason,
+  return {id:project.id,name:project.name,target:project.target,total:project.entries.length,done:done.length,skipped:skipped.length,processed:project.entries.length-pending,
+    complete:pending===0&&failed.length===0, error:project.error??null, adapterId:project.adapterId, adapterName:project.adapterName, exportBlocked, exportBlockReason,
     samples:done.slice(-5).map(e=>({id:e.id,source:e.sourceText,translation:e.translatedText})),
-    failed:project.entries.filter(e=>e.status==="error").map(e=>({id:e.id,source:e.sourceText,translation:e.translatedText,error:e.warnings.join(" ")})),
-    scope:exportBlocked?`Review/translation project only. Export is disabled: ${exportBlockReason}`:"Map dialogue, story events and the opening scene. Names, battle UI, menus and help screens remain original."};
+    failed:failed.map(e=>({id:e.id,source:e.sourceText,translation:e.translatedText,error:e.warnings.join(" ")})),
+    untranslated:skipped.slice(0,50).map(e=>({id:e.id,source:e.sourceText})),
+    scope:exportBlocked?`Review/translation project only. Export is disabled: ${exportBlockReason}`:"Map dialogue, story events, the opening scene and battle messages. Names, menus, help screens and messages without a local translation remain original."};
 }
 export async function createProject(name:string,bytes:Uint8Array,target:TargetLanguage,platform:PlatformId="gba"):Promise<Project> {
   const file={name,size:bytes.byteLength,extension:name.slice(name.lastIndexOf(".")).toLowerCase(),bytes};
@@ -64,20 +75,21 @@ export async function translateProjectBatch(id:string):Promise<Project> {
     }
     const original=await readFile(join(path(id),"original.gba"));
     const context=await projectContext(project,new Uint8Array(original));
-    const batch=project.entries.filter(e=>e.status!=="translated").slice(0,64);
+    // Work through new messages first; once none are left, retry the ones that failed validation.
+    const untried=project.entries.filter(e=>e.status==="untranslated");
+    const batch=(untried.length?untried:project.entries.filter(e=>e.status==="error")).slice(0,64);
     const verify=async(entry:TranslationEntry,text:string)=>{
       validateTranslation(entry.sourceText,text);
       if(project.target==="thai" && !/[\u0e00-\u0e7f]/.test(text)) throw new Error("The response did not contain a Thai translation.");
       const result=await projectAdapter(project).adapter.validateTranslations(context,[{...entry,translatedText:text,status:"translated"}]);
       if(!result.ok) throw new Error(result.issues.map(issue=>issue.message).join(" "));
     };
-    let localMissing=0,localInvalid=0;
+    let localInvalid=0;
     for(const entry of batch) {
       const local=await findLocalTranslation(entry,project.target,project.adapterId);
       if(local===undefined) {
-        localMissing++;
-        entry.status="error";
-        entry.warnings=[`Missing local translation. Add this entry to translations/${project.adapterId}.${project.target}.json or edit it here.`];
+        entry.status="warning";
+        entry.warnings=[`No local translation; this message stays in the original language. Add it to translations/${project.adapterId}.${project.target}.json to translate it.`];
         continue;
       }
       try {
@@ -89,10 +101,9 @@ export async function translateProjectBatch(id:string):Promise<Project> {
         entry.translatedText=local; entry.status="error"; entry.warnings=[error instanceof Error?error.message:"Invalid local translation"];
       }
     }
-    const pending=batch.filter(e=>e.status!=="translated");
     const controlOrLengthErrors=batch.some(e=>e.status==="error" && e.warnings.some(w=>/control tokens|too long|shorten|message limit/i.test(w)));
-    project.error=pending.length
-      ? `Local-only mode stopped: ${localMissing.toLocaleString()} missing and ${localInvalid.toLocaleString()} invalid local translation(s) in this batch. Add or fix local translation JSON files; no external API fallback is configured.`
+    project.error=localInvalid
+      ? `${localInvalid.toLocaleString()} local translation(s) in this batch failed validation. Fix them in the translation JSON file or edit them below; no external API fallback is configured.`
       : undefined;
     if(controlOrLengthErrors) project.error="Some messages need a shorter translation or restored control tokens. Review the failed messages below, then save each fixed message.";
     await save(project);
@@ -105,7 +116,7 @@ export async function editTranslation(id:string,entryId:string,text:string):Prom
   try {
     const project=await loadProject(id),entry=project.entries.find(e=>e.id===entryId);
     if(!entry) throw new Error("Message not found");
-    const prepared=restoreTrailingControlTokens(entry.sourceText,text);
+    const prepared=restoreTrailingControlTokens(entry.sourceText,restoreLineBreakTokens(entry.sourceText,text));
     validateTranslation(entry.sourceText,prepared);
     const original=await readFile(join(path(id),"original.gba"));
     const context=await projectContext(project,new Uint8Array(original));
@@ -134,21 +145,26 @@ export async function exportProject(id:string):Promise<ProjectExport> {
   const project=await loadProject(id);
   const adapter=projectAdapter(project);
   if(!canExport(project.adapterCapabilities,project.target)) throw new Error(`${project.adapterName} can be translated/reviewed, but export is blocked until safe injection and rebuild are implemented.`);
-  if(project.entries.some(e=>e.status!=="translated")) throw new Error("Translation is not complete yet.");
+  if(project.entries.some(e=>e.status==="untranslated")) throw new Error("Translation is not complete yet.");
+  const failed=project.entries.filter(e=>e.status==="error").length;
+  if(failed) throw new Error(`${failed.toLocaleString()} message(s) failed validation. Fix them before export.`);
+  // Skipped messages are left out, so the build keeps their original text and pointers.
+  const entries=project.entries.filter(e=>e.status==="translated");
+  if(!entries.length) throw new Error("No translated messages to export.");
   const original=await readFile(join(path(id),"original.gba"));
   const context=await projectContext(project,new Uint8Array(original));
   const prepared=await adapter.adapter.prepareTargetLanguage(context,project.target);
   if(!prepared.ok) throw new Error(prepared.issues.map(issue=>issue.message).join(" "));
-  const validated=await adapter.adapter.validateTranslations(context,project.entries);
+  const validated=await adapter.adapter.validateTranslations(context,entries);
   if(!validated.ok) throw new Error(validated.issues.map(issue=>issue.message).join(" "));
-  const injected=await adapter.adapter.inject(context,project.entries);
+  const injected=await adapter.adapter.inject(context,entries);
   if(!injected.ok) throw new Error(injected.issues.map(issue=>issue.message).join(" "));
   const rebuilt=await adapter.adapter.rebuild(context);
   if(!rebuilt.ok || !rebuilt.outputBytes || !rebuilt.checksum) throw new Error(rebuilt.issues.map(issue=>issue.message).join(" ") || "Rebuild failed.");
   const checked=await adapter.adapter.validateBuild(context);
   if(!checked.ok) throw new Error(checked.issues.map(issue=>issue.message).join(" "));
   const bytes=Buffer.from(rebuilt.outputBytes);
-  const translated=project.entries.filter(e=>e.translatedText && e.translatedText!==e.sourceText).length;
+  const translated=entries.filter(e=>e.translatedText!==e.sourceText).length;
   await writeFile(join(path(id),`translated-${project.target}.gba`),bytes,{mode:0o600});
   await writeFile(join(path(id),"build.json"),JSON.stringify({checksum:rebuilt.checksum,translated,glyphs:0,scope:projectView(project).scope},null,2));
   return {bytes,checksum:rebuilt.checksum,name:`${project.adapterName.replace(/[^A-Za-z0-9]+/g,"-")}-${project.target}.gba`,translated,glyphs:0};
