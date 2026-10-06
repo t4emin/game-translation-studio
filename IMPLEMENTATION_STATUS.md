@@ -14,7 +14,7 @@
   English; played in an emulator by the maintainer with no problems found.
 - Yu-Gi-Oh! WCT 2004 (BYWP): card description reader, Thai glyphs in unused Latin-1 codes of the 16 px font, text relocation to the ROM tail and export. all 1,087 descriptions translated; names, menus and duel messages are not covered. Experimental, not emulator-verified.
 - Emerald: Thai glyphs now go in the Normal (1), Narrow (7) and Short (2) banks with a baseline one row lower, and
-  dialogue starts in font 1 as the game does; 4,491 of 4,492 extracted messages translated (one credit line remains in English).
+  dialogue starts in font 1 as the game does; 6,191 of 6,329 extracted messages translated (staff credits and a few names remain in English).
 - Entries without a local translation are skipped and keep the original text on export.
 - Translations must keep protected names (Pokemon, moves, items, places, characters) in English.
 - Names and control tokens restored locally outside model output.

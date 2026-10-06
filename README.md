@@ -49,8 +49,8 @@ Pokemon Emerald Version (USA/Europe), BPEE, is supported as an experimental
 project. It extracts high-confidence Gen 3 text candidates and can export
 rebuilt ROMs by relocating changed text, patching verified pointer references
 and generating Thai glyphs into the verified Normal, Narrow and Short font banks
-(528 glyph slots; slots 0x1D0-0x1DF hold game symbols and are left alone). 4,491 of
-the 4,492 extracted messages have Thai translations (one credit line stays English) (NPC dialogue, Battle Frontier,
+(528 glyph slots; slots 0x1D0-0x1DF hold game symbols and are left alone). 6,191 of
+the 6,329 extracted messages have Thai translations (staff credits and a few names stay English) (NPC dialogue, Battle Frontier,
 item, move and Pokedex descriptions, Match Call and menu text). Emulator verification
 is still pending.
 

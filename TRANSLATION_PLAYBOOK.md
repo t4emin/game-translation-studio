@@ -42,7 +42,7 @@ Rejected entries are not saved. Fix only the ones listed, re-run with a small JS
 
 ## Emerald specifics (learned while translating)
 - `show.ts` hides *fragments* (entries that do not start right after a `0xFF` terminator; they are pointers into the middle
-  of another string, or junk). Translate whole strings first. `FRAGMENTS=1` shows them. About 269 of the 4,492 are fragments. Messages up to 900 bytes are extracted (the intro speeches are over 400).
+  of another string, or junk). Translate whole strings first. `FRAGMENTS=1` shows them. Many entries are fragments. Messages up to 900 bytes are extracted (the intro speeches are over 400).
 - `merge.ts` prints `want:` / `got:` token skeletons for rejected entries (`↵` newline, `¶` page clear, `⇣` scroll). Compare them
   and fix only the entries listed. Most rejections are a missing/extra `↵`, or `[VAR:*]` in a different order.
 - `[VAR:STRING1/2/3]` order must match the source even when Thai word order would prefer otherwise. Rewrite the sentence so the
@@ -73,7 +73,7 @@ Copy it to `.local/translate-work/lines_th.json` first, then:
 Keep short lines short: 2- and 3-line boxes (item and move descriptions) fit about 18 Thai characters per line; battle lines with
 `[VAR:*]` names need far fewer. A short English fragment such as `POKéMON.` is shared by many entries, so give it a neutral Thai
 rendering that works everywhere.
-Emerald status when this was written: 4,491 of 4,492 extracted entries translated (the long ones, over 240 bytes, were added to extraction later) (one credit line, a proper name, stays English because the project requires Thai text in every saved entry). Battle messages with `[VAR:*]` use the full battle-box width
+Emerald status when this was written: 6,191 of 6,329 extracted entries translated (staff credits and a few names stay English). Extraction was widened twice: messages over 240 bytes, then short messages (4+ bytes) once references were verified (one credit line, a proper name, stays English because the project requires Thai text in every saved entry). Battle messages with `[VAR:*]` use the full battle-box width
 (not the narrow description width), and `ʳᵉ` (byte 0xA0) is treated as one glyph.
 
 ## Surveying a new ROM (no model needed)

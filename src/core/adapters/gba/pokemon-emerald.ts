@@ -24,7 +24,7 @@ export const pokemonEmeraldChecksum = "a9dec84dfe7f62ab2220bafaef7479da0929d066e
 // 0x120 range free, so they extend the Thai capacity; fonts 3-5 reuse the short bank. Slots 0x1D0-0x1DF hold game symbols.
 // Glyphs sit one row lower than FireRed's because the Emerald baseline is on row 11.
 // High enough to keep every pointer-referenced message the scorer accepts (about 4,450 in the USA ROM).
-const emeraldCandidateLimit = 6000;
+const emeraldCandidateLimit = 20000;
 // Emerald's code ends where the map scripts begin; the script region is where text pointers sit inside bytecode.
 const emeraldReferenceRegions = { codeEnd: 0x1dc000, scriptStart: 0x1dc000, scriptEnd: 0x2b0000 };
 

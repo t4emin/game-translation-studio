@@ -76,26 +76,27 @@ function literalPoolTargets(bytes: Uint8Array, codeEnd: number): Set<number> {
   return targets;
 }
 
-export function isRealReference(bytes: Uint8Array, offset: number, regions: ReferenceRegions, textTargets?: Set<number>): boolean {
+export type ReferenceKind = "code" | "script" | "table" | "records";
+export function referenceKind(bytes: Uint8Array, offset: number, regions: ReferenceRegions, textTargets?: Set<number>): ReferenceKind | undefined {
   const word = (at: number) => at >= 0 && at + 4 <= bytes.length ? (bytes[at] | (bytes[at + 1] << 8) | (bytes[at + 2] << 16) | (bytes[at + 3] << 24)) >>> 0 : 0;
   const isPointer = (at: number) => { const value = word(at); return value >= 0x08000000 && value < 0x08000000 + bytes.length; };
-  if (offset < regions.codeEnd) return literalPoolTargets(bytes, regions.codeEnd).has(offset) || (isPointer(offset - 4) && isPointer(offset + 4));
+  if (offset < regions.codeEnd) return literalPoolTargets(bytes, regions.codeEnd).has(offset) ? "code" : isPointer(offset - 4) && isPointer(offset + 4) ? "table" : undefined;
   // Event scripts keep text pointers inline: loadword (0x0F, buffer) and message (0x67) followed by waitmessage (0x66).
-  if (offset >= regions.scriptStart && offset < regions.scriptEnd) return true;
-  if (bytes[offset - 2] === 0x0f && bytes[offset - 1] <= 3) return true;
-  if (bytes[offset - 1] === 0x67 && bytes[offset + 4] === 0x66) return true;
+  if (offset >= regions.scriptStart && offset < regions.scriptEnd) return "script";
+  if (bytes[offset - 2] === 0x0f && bytes[offset - 1] <= 3) return "script";
+  if (bytes[offset - 1] === 0x67 && bytes[offset + 4] === 0x66) return "script";
   // Pointer tables: neighbours on both sides, two in a row on one side, or a neighbour that itself points at text.
   const textNeighbour = (at: number) => isPointer(at) && !!textTargets?.has(word(at) - 0x08000000);
-  if (textNeighbour(offset - 4) || textNeighbour(offset + 4)) return true;
+  if (textNeighbour(offset - 4) || textNeighbour(offset + 4)) return "table";
   const before = isPointer(offset - 4), after = isPointer(offset + 4);
-  if ((before && after) || (after && isPointer(offset + 8)) || (before && isPointer(offset - 8))) return true;
+  if ((before && after) || (after && isPointer(offset + 8)) || (before && isPointer(offset - 8))) return "table";
   // Arrays of records: the same field holds a ROM pointer in the records around it.
   for (let stride = 8; stride <= 64; stride += 4) {
     let hits = 0;
     for (const k of [-2, -1, 1, 2]) if (isPointer(offset + k * stride)) hits++;
-    if (hits >= 2) return true;
+    if (hits >= 2) return "records";
   }
-  return false;
+  return undefined;
 }
 
 export function extractPointerTextCandidates(bytes: Uint8Array, options: { adapterId: string; limit: number; regions?: ReferenceRegions }): TranslationEntry[] {
@@ -107,7 +108,7 @@ export function extractPointerTextCandidates(bytes: Uint8Array, options: { adapt
     try {
       const decoded = decodePokemonText(bytes, target, maxTextBytes);
       if (bytes[target + decoded.rawLength - 1] !== 0xff) continue;
-      const score = scorePokemonText(decoded.text, decoded.unknownBytes, decoded.rawLength);
+      const score = scorePokemonText(decoded.text, decoded.unknownBytes, decoded.rawLength, !options.regions);
       if (score < (options.regions ? minVerifiedScore : 1.4)) continue;
       const existing = candidates.get(target) ?? { decoded, references: [], score };
       existing.references.push(offset);
@@ -117,9 +118,15 @@ export function extractPointerTextCandidates(bytes: Uint8Array, options: { adapt
   }
 
   if (options.regions) {
-    const textTargets = new Set(candidates.keys());
+    // Only a string that starts right after a terminator vouches for its neighbours; a pointer into the middle of text does not.
+    const isStart = (target: number) => target === 0 || bytes[target - 1] === 0xff;
+    const textTargets = new Set([...candidates.keys()].filter(isStart));
     for (const [target, candidate] of candidates) {
-      candidate.references = candidate.references.filter((reference) => isRealReference(bytes, reference, options.regions!, textTargets));
+      // A pointer into the middle of a string needs a reference that cannot be a coincidence: code or script.
+      candidate.references = candidate.references.filter((reference) => {
+        const kind = referenceKind(bytes, reference, options.regions!, textTargets);
+        return kind !== undefined && (isStart(target) || kind === "code" || kind === "script");
+      });
       if (!candidate.references.length) candidates.delete(target);
     }
   }
@@ -152,13 +159,13 @@ export function extractPointerTextCandidates(bytes: Uint8Array, options: { adapt
     }));
 }
 
-const minRaw = Number(process.env.MIN_RAW ?? 8), minLetters = Number(process.env.MIN_LETTERS ?? 5);
-const minVerifiedScore = Number(process.env.MIN_SCORE ?? 1.4);
-function scorePokemonText(text: string, unknownBytes: number[], rawLength: number): number {
+// With verified references the text filter can be loose: short lines such as "Here you go!" and "And you are?" are real messages.
+const minRaw = 4, minLetters = 3, minVerifiedScore = 0.9;
+function scorePokemonText(text: string, unknownBytes: number[], rawLength: number, strict = false): number {
   const clean = text.replace(/\[[^\]]+\]/g, " ");
   const letters = clean.match(/[A-Za-z]/g)?.length ?? 0;
   const spaces = clean.match(/ /g)?.length ?? 0;
-  if (unknownBytes.length || rawLength < minRaw || rawLength > maxTextBytes || letters < minLetters || !/[a-z]/.test(clean)) return 0;
+  if (unknownBytes.length || rawLength < (strict ? 8 : minRaw) || rawLength > maxTextBytes || letters < (strict ? 5 : minLetters) || !/[a-z]/.test(clean)) return 0;
   let score = letters / rawLength + Math.min(spaces, 6) * 0.05;
   if (/[.!?]/.test(clean)) score += 0.2;
   if (/\b(the|you|and|Pokemon|POK|TRAINER|BATTLE|What|This|that|your|with)\b/i.test(clean)) score += 0.3;
