@@ -83,7 +83,8 @@ test("Pokemon Emerald adapter matches exact v0 identity and extracts pointer tex
   );
 
   const bytes = new Uint8Array(0x1000).fill(0xff);
-  Buffer.from(bytes.buffer).writeUInt32LE(0x08000300, 0x200);
+  // A lone pointer-looking word is not enough; real references sit in tables, so the fixture has a short pointer table.
+  for (const at of [0x1f8, 0x1fc, 0x200, 0x204, 0x208]) Buffer.from(bytes.buffer).writeUInt32LE(0x08000300, at);
   const text = [..."The BATTLE starts now."].map(latinByte);
   bytes.set([...text, 0xff], 0x300);
   const extraction = await pokemonEmeraldAdapter.extract({

@@ -11,12 +11,12 @@
   descriptions are in the manifest (6,155 entries) but not buildable yet.
 - Minish Cap (BZME): message table reader, Thai font banks 4/5/6, table rebuild and export. all 2,460
   translatable messages (menus and dialogue; 100%) have Thai translations, while 445 names and staff credits stay in
-  English; not verified in an emulator.
+  English; played in an emulator by the maintainer with no problems found.
+- Yu-Gi-Oh! WCT 2004 (BYWP): card description reader, Thai glyphs in unused Latin-1 codes of the 16 px font, text relocation to the ROM tail and export. all 1,087 descriptions translated; names, menus and duel messages are not covered. Experimental, not emulator-verified.
 - Emerald: Thai glyphs now go in the Normal (1), Narrow (7) and Short (2) banks with a baseline one row lower, and
-  dialogue starts in font 1 as the game does; 795 of 4,454 extracted messages translated.
+  dialogue starts in font 1 as the game does; 4,491 of 4,492 extracted messages translated (one credit line remains in English).
 - Entries without a local translation are skipped and keep the original text on export.
 - Translations must keep protected names (Pokemon, moves, items, places, characters) in English.
-- OpenAI translation wired to persistent local projects and cache.
 - Names and control tokens restored locally outside model output.
 - Pause/resume, progress, failed-message editing and original-language export.
 - Thai grapheme shaping, rasterization and four extended font banks.

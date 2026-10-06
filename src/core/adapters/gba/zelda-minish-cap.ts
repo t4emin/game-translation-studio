@@ -26,7 +26,7 @@ export const zeldaMinishCapMetadata: GameAdapterMetadata = {
   id: "gba-zelda-minish-cap-bzme-v0",
   name: "The Legend of Zelda: The Minish Cap (USA)",
   platform: "gba",
-  status: "experimental",
+  status: "supported",
   gameId: "BZME",
   region: "USA",
   revision: "v0",
@@ -39,13 +39,13 @@ export const zeldaMinishCapMetadata: GameAdapterMetadata = {
     englishBuild: true,
     safeInjection: true,
     rebuild: true,
-    emulatorVerified: false
+    emulatorVerified: true
   },
   notes: [
     "Exact ROM identity is recognized from GBA header and SHA-256.",
     "Extraction reads the game's own message table (80 groups, 3,699 messages); NPC names and staff credits are skipped.",
     "Rebuild writes a new message table and Thai glyph banks into the free end of the ROM and repoints the language and font tables. No game code is patched.",
-    "Not yet verified in an emulator. No ROM bytes are bundled in this project."
+    "Played in an emulator by the maintainer with the full Thai translation applied; no problems found. No ROM bytes are bundled in this project."
   ]
 };
 

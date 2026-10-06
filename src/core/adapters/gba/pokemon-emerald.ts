@@ -25,6 +25,8 @@ export const pokemonEmeraldChecksum = "a9dec84dfe7f62ab2220bafaef7479da0929d066e
 // Glyphs sit one row lower than FireRed's because the Emerald baseline is on row 11.
 // High enough to keep every pointer-referenced message the scorer accepts (about 4,450 in the USA ROM).
 const emeraldCandidateLimit = 6000;
+// Emerald's code ends where the map scripts begin; the script region is where text pointers sit inside bytecode.
+const emeraldReferenceRegions = { codeEnd: 0x1dc000, scriptStart: 0x1dc000, scriptEnd: 0x2b0000 };
 
 const emeraldFonts: GbaFontSpec[] = [
   { id: 1, pixels: 0x64c2e4, widths: 0x6542e4, length: 32768, hash: "9df725adb5e41ab40cde0bddc88e00f5014157aad2d8030662b934ad155f287d", slots: 176, dy: 1 },
@@ -74,7 +76,7 @@ export const pokemonEmeraldAdapter: GameAdapter = {
   },
 
   async extract(context: GameContext): Promise<ExtractionResult> {
-    const entries = extractPointerTextCandidates(context.file.bytes, { adapterId: "emerald", limit: emeraldCandidateLimit });
+    const entries = extractPointerTextCandidates(context.file.bytes, { adapterId: "emerald", limit: emeraldCandidateLimit, regions: emeraldReferenceRegions });
     return {
       entries,
       issues: entries.length
@@ -153,14 +155,20 @@ export function emeraldProtectedNames(bytes: Uint8Array): string[] {
   return names;
 }
 
+// Extraction scans the whole ROM, so validating one entry at a time must not repeat it.
+const candidateCache = new WeakMap<Uint8Array, Map<string, TranslationEntry>>();
 function candidateMap(bytes: Uint8Array): Map<string, TranslationEntry> {
-  return new Map(extractPointerTextCandidates(bytes, { adapterId: "emerald", limit: emeraldCandidateLimit }).map((entry) => [entry.id, entry]));
+  let map = candidateCache.get(bytes);
+  if (!map) candidateCache.set(bytes, map = new Map(extractPointerTextCandidates(bytes, { adapterId: "emerald", limit: emeraldCandidateLimit, regions: emeraldReferenceRegions }).map((entry) => [entry.id, entry])));
+  return map;
 }
 
 // Description boxes are narrower than dialogue boxes: hold Thai lines to the widest English line and its line count.
 function descriptionLayout(entry: { sourceText: string; category: string } | undefined, rom: Uint8Array) {
   if (!entry || entry.category !== "description") return undefined;
   const lines = entry.sourceText.split(/\[NEW_LINE\]|\[PROMPT_\w+\]/);
+  // Battle messages with placeholders sit in the full-width battle box; the placeholder text is not part of the measured width.
+  if (/\[VAR:/.test(entry.sourceText)) return { maxWidth: 204, maxLines: lines.length, varWidth: 90, scroll: false, lineFont: true };
   const widest = Math.max(...lines.map((line) => [...line.replace(/\[[^\]]+\]/g, "")].reduce((sum, char) => sum + rom[emeraldFonts[0].widths + latinByte(char)], 0)));
   return { maxWidth: widest + 6, maxLines: lines.length, scroll: false, lineFont: true };
 }
@@ -198,7 +206,8 @@ function buildEmeraldRom(original: Uint8Array, entries: TranslationEntry[]): Buf
   });
   const total = encoded.reduce((sum, item) => sum + item.bytes.length + 3, 0);
   if (original.length + total > 0x2000000) throw new Error("Translated ROM exceeds the GBA 32 MiB limit.");
-  const output = Buffer.alloc(Math.ceil((original.length + total) / 0x100000) * 0x100000, 0xff);
+  // A ROM that grows past 16 MiB is padded to the full 32 MiB cartridge size; emulators handle power-of-two sizes most reliably.
+  const output = Buffer.alloc(original.length + total > 0x1000000 ? 0x2000000 : original.length, 0xff);
   output.set(baseRom);
   let cursor = original.length;
   const seen = new Set<string>();

@@ -49,17 +49,18 @@ Pokemon Emerald Version (USA/Europe), BPEE, is supported as an experimental
 project. It extracts high-confidence Gen 3 text candidates and can export
 rebuilt ROMs by relocating changed text, patching verified pointer references
 and generating Thai glyphs into the verified Normal, Narrow and Short font banks
-(528 glyph slots; slots 0x1D0-0x1DF hold game symbols and are left alone). 795 of
-the 4,454 extracted messages have Thai translations (NPC dialogue, Battle Frontier,
-item and move descriptions, part of the Pokedex pages and the early story). Emulator verification
+(528 glyph slots; slots 0x1D0-0x1DF hold game symbols and are left alone). 4,491 of
+the 4,492 extracted messages have Thai translations (one credit line stays English) (NPC dialogue, Battle Frontier,
+item, move and Pokedex descriptions, Match Call and menu text). Emulator verification
 is still pending.
 
-The Legend of Zelda: The Minish Cap (USA), BZME, is supported as an experimental
+The Legend of Zelda: The Minish Cap (USA), BZME, is a supported
 project. It reads the game's own message table (2,460 translatable messages; names (NPCs, items, places, characters) and
 staff credits stay in English), writes a new table and Thai glyph banks into the free end of
 the ROM, and repoints the language and font tables without patching game code. All 2,460
 translatable messages (menus and dialogue, 100%) have Thai translations; names and staff credits stay in English.
-Not yet verified in an emulator.
+Played in an emulator by the maintainer with the full translation applied, with no problems
+found (not a frame-by-frame audit of every message).
 
 Other `.gba` files can be analyzed in Generic / Experimental mode, but safe
 injection and export are blocked unless a FULL adapter exists. PSP, PS2, ISO,

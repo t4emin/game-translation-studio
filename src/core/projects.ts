@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile, rename } from "node:fs/promises";
+import { mkdir, readFile, writeFile, rename, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { getGameAdapter, findGameAdapter } from "./adapters/registry.ts";
@@ -45,6 +45,10 @@ export function projectView(project:Project) {
     failed:failed.map(e=>({id:e.id,source:e.sourceText,translation:e.translatedText,error:e.warnings.join(" ")})),
     untranslated:skipped.slice(0,50).map(e=>({id:e.id,source:e.sourceText})),
     scope:exportBlocked?`Review/translation project only. Export is disabled: ${exportBlockReason}`:"Map dialogue, story events, the opening scene and battle messages. Names, menus, help screens and messages without a local translation remain original."};
+}
+// Removes the uploaded ROM copy and the saved project (including manual edits) from disk.
+export async function deleteProject(id:string):Promise<void> {
+  await rm(path(id),{recursive:true,force:true});
 }
 export async function createProject(name:string,bytes:Uint8Array,target:TargetLanguage,platform:PlatformId="gba"):Promise<Project> {
   const file={name,size:bytes.byteLength,extension:name.slice(name.lastIndexOf(".")).toLowerCase(),bytes};

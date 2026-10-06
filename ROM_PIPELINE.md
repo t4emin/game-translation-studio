@@ -42,15 +42,11 @@ game control tokens are reconstructed locally outside model output.
 Projects and immutable input copies live under `.local/projects/<uuid>/`.
 Validated translation cache entries live under `.local/translations/`. These
 directories and `artifacts/` are ignored by git. Translation can resume after
-reloading the page. API keys stay server-side in `.env`.
+reloading the page. Translation is local only; no external API is called.
 
 `POST /api/projects` uploads the ROM. `POST /api/projects/<id>/translate` advances
 one batch. `GET /api/projects/<id>/export` returns the actual ROM once the selected
 dialogue scope is translated. English-to-English export preserves the original.
-
-Only extracted text/context is sent to OpenAI, never the ROM binary. API use is
-billable. Requests use `store: false` and structured outputs following the
-[official API documentation](https://developers.openai.com/api/docs/guides/structured-outputs).
 
 ## Verification
 
@@ -93,3 +89,23 @@ Layout from the zeldaret/tmc decompilation, checked against the USA ROM.
   ROM size does not change.
 - Limits: lines must fit 208 px, and a translation must keep the control tokens of the source in order.
   Layout of menus and credits is not checked yet.
+
+## Yu-Gi-Oh! WCT 2004 (BYWP)
+
+Code: `src/core/platforms/gba/ygo-wct-rom.ts` (layout), `ygo-wct-thai.ts` (validation, glyphs, build), adapter `yugioh-wct-2004.ts`.
+Status: experimental, card descriptions only, not verified in an emulator.
+
+- Card names (table `0x58ACDC`, base `0x56E00C`) and descriptions (table `0x65CF38`, base `0x5917A4`) are zero-terminated strings
+  with a u32 offset per (card, language); entry = card * 6 + language, in the order JP (Shift-JIS), EN, DE, FR, IT, ES.
+  1,138 real cards (card 0 is a dummy). Lists of fusion-material names (`"A" + "B"`) are skipped, leaving 1,087 descriptions.
+- The language is a byte at `0x02010014`; Thai replaces the English column.
+- Text is printed one byte at a time from a fixed-width 1-bpp bitmap font indexed by byte value: four sizes (8, 10, 12, 16 px tall) at
+  `0x6F69A8`, `0x6F71A8`, `0x6F7BA8`, `0x6F87A8`, 256 glyphs each (advance = height / 2). Descriptions use the 10 px font (style word
+  `0x0A87` at `0x95858`). Special bytes: `0x09`, `0x0A`, `0x0D`, `0x20`, `@` + digit, `\n`. The game wraps only at spaces and
+  paginates a description by itself.
+- Build: Thai strings go into the free ROM tail, the English offsets in the description table are repointed (a u32, so the tail is
+  reachable), glyph bitmaps replace the unused Latin-1 codes `0x80-0xFF` (except `0x92`, 127 slots) in the 16 px font, and the style
+  word becomes `0x1087` so descriptions use that font. Clusters are allocated by frequency; one without a slot loses its marks.
+  Long Thai runs get spaces at real word boundaries (ICU) so the game can wrap. The other languages' text shares the 16 px font, so their accented letters would
+  show Thai glyphs in a Thai build.
+- Not done: names, menus and duel messages (block at `0x681480`, referenced from code), box size per screen, the JP printer.
