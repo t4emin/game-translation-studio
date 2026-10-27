@@ -7,8 +7,7 @@ The exact USA/Europe Rev 1 ROM (SHA-256
 supports extraction, AI translation, Thai font generation, pointer relocation,
 and download of a new `.gba` file. The original file is not overwritten.
 
-The manifest yields 3,881 buildable entries: 3,481 dialogue entries and 400 battle
-messages, all with bundled Thai translations; an entry without one keeps the original
+The manifest yields 6,079 buildable entries: 3,481 dialogue entries, 400 battle messages, the quest-log, main/Start menu, strings.c menu messages, descriptions, Pokedex pages and HELP/FAME CHECKER text, all with bundled Thai translations; an entry without one keeps the original
 text. `scripts/extend-firered-manifest.mjs` appends the C-source strings, trainer
 battle text and short lines that `prepare-firered.mjs` misses, and leaves out
 strings the game copies into small RAM buffers. This is NOT a

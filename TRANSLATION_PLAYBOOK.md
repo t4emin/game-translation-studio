@@ -103,3 +103,17 @@ Yu-Gi-Oh! WCT 2004 (`BYWP`): the survey finds the card-name offset table at 0x58
 Keep game keywords in English: Normal/Flip/Special Summon, Tribute, Graveyard, Deck, Life Points, Spell/Trap Card, Attack/Defense Position,
 Direct Damage, Battle Phase, FLIP:, monster types (Dragon, Fiend...). Thai needs spaces between phrases but the build also adds them at word boundaries.
 The font holds only 127 clusters, so prefer common clusters and avoid rare marks.
+
+## FireRed specifics (menus, descriptions, Pokedex, HELP)
+- Ids are `f:<hex offset>`; run `show.ts firered 0 2000 > list.txt` and write `{"f:id": "thai"}` JSON, then `merge.ts firered file.json`.
+  FireRed validates by building the whole ROM, so merge.ts checks each new entry alone first; a GLOBAL error means an older entry
+  broke (for example a message now over its `maxBytes` because the glyph atlas shifted): shorten that entry and re-run.
+- Width/lines come from `thai-font.ts`: `stringsLayout` (src/strings.c, union room, Teachy TV, Mystery Event) and `descriptionLayout`
+  (moves, abilities, decorations, Pokedex, HELP, FAME CHECKER). Both mirror the English original: same line count per page and
+  about the same pixel width (x1.1). A reject "N-line limit" means a Thai line is too wide; shorten it, do not add lines.
+- Mirror every `↵ ¶ ⇣` exactly (move descriptions are always 3-4 lines, Pokedex pages 3 lines, HELP pages one line per `⇣`).
+  `.local/translate-work/seg.py list.txt segs.json out.json` joins per-page Thai segments with the source separators, re-adds
+  leading `[CTRL:..]` groups and checks the `↵` count per page.
+- Every occurrence of POKéMON must stay in English, and `[VAR]`/`[DYN]` tokens keep the source order. `maxBytes` 250 entries (manifest)
+  are tight: a Thai cluster costs 2 bytes plus font switches.
+- Short labels in fixed windows may not be wider than the English text (floor 64 px; sentences 96 px).

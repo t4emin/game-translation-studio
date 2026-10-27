@@ -124,13 +124,21 @@ export function patchThaiFontsForFonts(original: Uint8Array, atlas: Map<string,G
 
 // `lineFont` returns to the base font before each line break, for banks whose line height differs.
 type DialogLayout = { scroll?: boolean; maxWidth?: number; maxLines?: number; varWidth?: number; maxBytes?: number; lineFont?: boolean };
-export function dialogLayout(entry:TranslationEntry): DialogLayout {
+export function dialogLayout(entry:TranslationEntry, rom?:Uint8Array): DialogLayout {
   const maxBytes=entry.constraints.maxBytes;
   if(entry.context?.includes("ControlsGuide")) return {scroll:false,maxWidth:entry.context.includes("Intro")?232:188,maxLines:/DPad|LRButtons/.test(entry.context)?3:2,maxBytes};
   if(entry.context?.includes("PikachuIntro")) return {scroll:false,maxWidth:216,maxLines:8,maxBytes};
   // The action prompt window is 14 tiles wide and never scrolls.
   if(/^gText_WhatWill(PkmnDo|PlayerThrow|OldManDo)$/.test(entry.context??"")) return {scroll:false,maxWidth:108,maxLines:2,varWidth:60,maxBytes};
   // Battle placeholders expand to "Wild/Foe" + nickname, move or item names.
+  // Quest log text sits in a fixed three-line window and never scrolls; inserted names and numbers are estimated at 60 px.
+  // Main menu labels sit in a one-line window about as wide as "MYSTERY GIFT".
+  if(/^gText_MainMenu_Start/.test(entry.context??"")) return {scroll:false,maxWidth:56,maxLines:1,maxBytes};
+  if(/^gStartMenuDesc_/.test(entry.context??"")) return {scroll:false,maxWidth:224,maxLines:2,maxBytes};
+  if(/^gText_MainMenu_/.test(entry.context??"")) return {scroll:false,maxWidth:88,maxLines:1,maxBytes};
+  if(/^gText_QuestLog_/.test(entry.context??"")) return {scroll:false,maxWidth:208,maxLines:3,varWidth:60,maxBytes};
+  if(rom && /^src\/data\/(decoration\/description|text\/abilities|pokemon\/pokedex_text_fr|items)\.h$|^src\/move_descriptions\.c$|^data\/text\/(help_system|fame_checker)\.inc$/.test(entry.resource?.path??"")) return descriptionLayout(entry,rom,maxBytes);
+  if(rom && /^src\/(strings|union_room_message|mystery_event_msg)\.c$|^src\/data\/text\/teachy_tv\.h$/.test(entry.resource?.path??"")) return stringsLayout(entry,rom,maxBytes);
   if(entry.category==="system") return {scroll:true,maxWidth:204,varWidth:90,maxBytes};
   return {scroll:true,maxWidth:204,maxBytes};
 }
@@ -160,8 +168,11 @@ export function encodeDialogWithFonts(text: string, rom: Uint8Array, atlas: Map<
     if(part.startsWith("[")) {
       if(part==="[NEW_LINE]"){newline();continue;}
       if(part==="[PROMPT_CLEAR]" || part==="[PROMPT_SCROLL]") {result.push(...tokenBytes(part));x=0;line=part==="[PROMPT_CLEAR]"?0:1;continue;}
+      // The source selects a font itself (FC 06 xx): follow it so the next glyph re-selects its own bank when needed.
+      const fontSelect=part.match(/^\[CTRL:06([0-9A-F]{2})\]$/);
+      if(fontSelect) {result.push(...tokenBytes(part));bank=parseInt(fontSelect[1],16);continue;}
       font(fonts[0]?.id??2);
-      if(part.startsWith("[VAR:")) {
+      if(part.startsWith("[VAR:") || part.startsWith("[DYN:")) {
         const reserved=options.varWidth??(part==="[VAR:PLAYER]"||part==="[VAR:RIVAL]"?48:78);
         if(x+reserved>maxWidth) newline();
         x+=reserved;
@@ -204,9 +215,49 @@ export function buildTranslatedRom(original: Uint8Array, entries: TranslationEnt
   const atlas=createThaiAtlas(translatedTexts);
   const fonts=patchThaiFonts(original,atlas);
   const encoded=translated.map(e=>{
-    try{return {id:e.id,bytes:encodeDialog(e.translatedText,original,atlas,dialogLayout(sources.get(e.id)!))};}
+    try{return {id:e.id,bytes:encodeDialog(e.translatedText,original,atlas,dialogLayout(sources.get(e.id)!,original))};}
     catch(error){throw new Error(`${e.id}: ${error instanceof Error?error.message:"Encoding failed"}`);}
   });
   const bytes=relocateDialogs(original,encoded,fonts);
   return {bytes,glyphs:atlas.size,translated:translated.length,checksum:digest(bytes),thaiFont};
+}
+
+// src/strings.c mixes overworld text-box messages with small fixed windows (prompts, labels).
+// Short single-line texts without a button wait must fit the width of the English original; longer ones use the normal text box.
+function stringsLayout(entry:TranslationEntry, rom:Uint8Array, maxBytes?:number): DialogLayout {
+  const widths=fireRedFontOrder[0]!.widths;
+  const plain=entry.sourceText.replace(/\[(?:VAR|DYN):[^\]]+\]/g,"\u0001");
+  const lines=plain.split(/\[(?:NEW_LINE|PROMPT_CLEAR|PROMPT_SCROLL)\]/);
+  const lineWidth=(line:string)=>{
+    let w=0;
+    for(const char of line.replace(/\[[^\]]+\]/g,"")) w+=char==="\u0001"?48:rom[widths+latinByte(char)]??6;
+    return w;
+  };
+  const widest=Math.max(...lines.map(lineWidth));
+  // Text boxes wait for a button or page; other multi-line texts sit in fixed windows that never scroll.
+  if(/\[(?:CTRL:09|PROMPT_\w+)\]/.test(entry.sourceText)) return {scroll:true,maxWidth:204,varWidth:60,maxBytes};
+  if(lines.length>1) return {scroll:false,maxWidth:Math.min(204,Math.max(Math.round(widest*1.2),150)),maxLines:lines.length,varWidth:48,maxBytes};
+  if(widest>110) return {scroll:true,maxWidth:204,varWidth:60,maxBytes};
+  // Sentences are shown in prompt/message boxes that are wider than the English text itself.
+  const floor=/[.!?]$/.test(plain.trim())?96:64;
+  // Labels with explicit x positions (FC 13 xx) or button hints get some slack: Thai words are wider than short English ones.
+  const slack=/\[(?:KEY|CTRL:13)/.test(entry.sourceText)?1.3:1.1;
+  return {scroll:false,maxWidth:Math.max(Math.round(widest*slack),floor),maxLines:1,varWidth:48,maxBytes};
+}
+
+// Description boxes (moves, abilities, decorations, Pokedex pages) never scroll: each page keeps the line count and width of the English original.
+function descriptionLayout(entry:TranslationEntry, rom:Uint8Array, maxBytes?:number): DialogLayout {
+  const widths=fireRedFontOrder[0]!.widths;
+  const pages=entry.sourceText.split(/\[PROMPT_\w+\]/);
+  let widest=0,maxLines=1;
+  for(const page of pages) {
+    const lines=page.split("[NEW_LINE]");
+    maxLines=Math.max(maxLines,lines.length);
+    for(const line of lines) {
+      let w=0;
+      for(const char of line.replace(/\[(?:VAR|DYN):[^\]]+\]/g,"\u0001").replace(/\[[^\]]+\]/g,"")) w+=char==="\u0001"?48:rom[widths+latinByte(char)]??6;
+      widest=Math.max(widest,w);
+    }
+  }
+  return {scroll:false,maxWidth:Math.min(208,Math.round(widest*1.1)),maxLines,varWidth:48,maxBytes};
 }

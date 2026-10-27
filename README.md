@@ -38,8 +38,8 @@ export flow needs, and do not offer exported ROMs as public downloads.
 Pokemon FireRed Version (USA/Europe), Rev 1, BPRE.
 SHA-256: `729041b940afe031302d630fdbe57c0c145f3f7b6d9b8eca5e98678d0ca4d059`.
 
-Currently translates 3,881 messages: 3,481 dialogue/story entries (including the
-opening scene and trainer battle text) and 400 battle messages. An entry without a
+Currently translates 6,079 messages: 3,481 dialogue/story entries (including the
+opening scene and trainer battle text), 400 battle messages, and the menus, descriptions, Pokedex, HELP system and quest-log recap. An entry without a
 local translation stays in English in the export. Names and the
 naming keyboard stay unchanged, and translations must keep protected names in
 English. Menus, Pokedex pages, descriptions and help screens remain original;

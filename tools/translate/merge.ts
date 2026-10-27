@@ -1,21 +1,24 @@
-// usage: node --experimental-strip-types tools/translate/merge.ts <emerald|minish|ygo> map1.json [map2.json ...]
+// usage: node --experimental-strip-types tools/translate/merge.ts <emerald|minish|ygo|firered> map1.json [map2.json ...]
 // Map files live in .local/translate-work/ (gitignored).
 // Map files: {"shortId": "compact thai"}; compact markers ↵ ¶ ⇣ expand to game tokens.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { pokemonEmeraldAdapter } from "../../src/core/adapters/gba/pokemon-emerald.ts";
 import { zeldaMinishCapAdapter } from "../../src/core/adapters/gba/zelda-minish-cap.ts";
+import { pokemonFireRedRev1Adapter } from "../../src/core/adapters/gba/pokemon-firered-rev1.ts";
 import { yugiohWctAdapter } from "../../src/core/adapters/gba/yugioh-wct-2004.ts";
 import { splitTextClusters, isThaiCluster } from "../../src/core/platforms/gba/thai-font-pipeline.ts";
 const root = new URL("../../", import.meta.url).pathname;
 const dir = root + ".local/translate-work";
 const game = process.argv[2];
-const cfg = game === "emerald"
+const cfg = game === "firered"
+  ? { adapter: pokemonFireRedRev1Adapter, rom: "Pokemon - FireRed Version (USA, Europe) (Rev 1).gba", prefix: "dialog-", short: "f:", file: "pokemon-firered-rev1.thai.json" }
+  : game === "emerald"
   ? { adapter: pokemonEmeraldAdapter, rom: "Pokemon - Emerald Version (USA, Europe).gba", prefix: "emerald-candidate-", short: "e:", file: "gba-pokemon-emerald-bpee-v0.thai.json" }
   : game === "ygo"
   ? { adapter: yugiohWctAdapter, rom: "1435 - Yu-Gi-Oh! - World Championship Tournament 2004 (E)(GBA).gba", prefix: "ygo-desc-", short: "y:", file: "gba-yugioh-wct-2004-bywp-v0.thai.json" }
   : { adapter: zeldaMinishCapAdapter, rom: "Legend of Zelda, The - The Minish Cap (USA).gba", prefix: "minish-", short: "z:", file: "gba-zelda-minish-cap-bzme-v0.thai.json" };
-const bytes = new Uint8Array(readFileSync(`${root}reference-roms/${cfg.rom}`));
+const bytes = new Uint8Array(readFileSync(`${existsSync(`${root}roms/${cfg.rom}`) ? `${root}roms/` : `${root}reference-roms/`}${cfg.rom}`));
 const context: any = { file: { name: "x.gba", size: bytes.length, extension: ".gba", bytes }, metadata: {}, adapterId: cfg.adapter.id };
 const sources = new Map((await cfg.adapter.extract(context)).entries.map((e) => [e.id, e]));
 const outPath = `${root}translations/${cfg.file}`;
@@ -34,6 +37,15 @@ for (const f of process.argv.slice(3)) for (const [k, v] of Object.entries(JSON.
 }
 const all = new Map([...existing, ...incoming]);
 const toEntries = (m: Map<string, string>) => [...m].map(([id, t]) => ({ ...sources.get(id)!, translatedText: t, status: "translated" as const }));
+// FireRed validates by building the whole ROM and cannot say which entry failed, so each new entry is checked alone first.
+if (game === "firered") {
+  const rejected = new Set<string>();
+  for (const [id, text] of incoming) {
+    const one = await cfg.adapter.validateTranslations(context, toEntries(new Map([[id, text]])));
+    if (!one.ok) { console.log(id.replace(cfg.prefix, cfg.short), "|", one.issues.map((i) => i.message).join(" ").slice(0, 200)); rejected.add(id); }
+  }
+  for (const id of rejected) { incoming.delete(id); all.delete(id); if (existing.has(id)) all.set(id, existing.get(id)!); }
+}
 let result = await cfg.adapter.validateTranslations(context, toEntries(all));
 if (result.issues.some((i) => !i.entryId)) { for (const i of result.issues) console.log("GLOBAL |", i.message); console.log("ABORTED: nothing saved"); process.exit(1); }
 const bad = new Set(result.issues.filter((i) => i.entryId && incoming.has(i.entryId)).map((i) => i.entryId!));

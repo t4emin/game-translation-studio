@@ -66118,6 +66118,4359 @@
         4757276
       ],
       "category": "dialog"
+    },
+    {
+      "offset": 4283102,
+      "length": 9,
+      "hash": "680ef8d7c283dc816ec4bbbc83f1fd1c343e24533c8e5fdb80c9a841faae9d27",
+      "label": "gText_MainMenu_NewGame",
+      "path": "src/main_menu.c",
+      "references": [
+        51324,
+        51452,
+        51660
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4283111,
+      "length": 9,
+      "hash": "d91049841416fcb2177d99abb6f98d86c54282d9eaf0715aa3c65fec1daf0db7",
+      "label": "gText_MainMenu_Continue",
+      "path": "src/main_menu.c",
+      "references": [
+        51448,
+        51656
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4283143,
+      "length": 13,
+      "hash": "8aed9b0a7b0886a25ba165e350b01d23e07e440534e5741ae1c0eba4fe8ae587",
+      "label": "gText_MainMenu_MysteryGift",
+      "path": "src/main_menu.c",
+      "references": [
+        51664
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300348,
+      "length": 7,
+      "hash": "91a037dbe93a0858cc66105a6b34006b7c0ed844d77dcceb1a4b56380464c77d",
+      "label": "gText_MainMenu_Option",
+      "path": "src/main_menu.c",
+      "references": [
+        560156
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4285190,
+      "length": 7,
+      "hash": "91a037dbe93a0858cc66105a6b34006b7c0ed844d77dcceb1a4b56380464c77d",
+      "label": "gText_MainMenu_OptionStart",
+      "path": "src/main_menu.c",
+      "references": [
+        3830748
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4285173,
+      "length": 4,
+      "hash": "bbbde559defd1534e6a382feb518dbe0dc48477d780c80a24e4a931bb57ba8ca",
+      "label": "gText_MainMenu_StartBag",
+      "path": "src/main_menu.c",
+      "references": [
+        3830724
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4285185,
+      "length": 5,
+      "hash": "7624177aa200439a10a7995426f74dce7fa365e2259b8aa17063779d577a3425",
+      "label": "gText_MainMenu_StartSave",
+      "path": "src/main_menu.c",
+      "references": [
+        3830740
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4285197,
+      "length": 5,
+      "hash": "132f2e3e8a22a90561d6a78dc04d00dcee585b885f1506f1bb9357a744e78738",
+      "label": "gText_MainMenu_StartExit",
+      "path": "src/main_menu.c",
+      "references": [
+        3830756
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4285202,
+      "length": 7,
+      "hash": "896d84faedeec3bea5198c12d9b1ca1c8cf026bcdf9d180bed779b44955c6689",
+      "label": "gText_MainMenu_StartRetire",
+      "path": "src/main_menu.c",
+      "references": [
+        3830764
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4017980,
+      "length": 90,
+      "hash": "244f791b76ad96b0a7cbd7a121e44499f679788f023b74c34a898eea20027548",
+      "label": "ItemDesc_3d4f3c",
+      "path": "src/data/items.h",
+      "references": [
+        4042968
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4018070,
+      "length": 82,
+      "hash": "e73af2e5dc0e689e386f86bdc2ed809c8bca1cf55584e94beaf330a613c43fe2",
+      "label": "ItemDesc_3d4f96",
+      "path": "src/data/items.h",
+      "references": [
+        4043012
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4018152,
+      "length": 88,
+      "hash": "a8f674bc193ed080c5a12602c58bf302e50bf27ce04fcb0bb7e08061411444f3",
+      "label": "ItemDesc_3d4fe8",
+      "path": "src/data/items.h",
+      "references": [
+        4043056
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4018240,
+      "length": 74,
+      "hash": "50e68e80e57a7be69b65598dadaa9bbaa1a05c045e9856fe8495c8a162de7fdf",
+      "label": "ItemDesc_3d5040",
+      "path": "src/data/items.h",
+      "references": [
+        4043100
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4018314,
+      "length": 93,
+      "hash": "36a62ec561b7b043f769e0b57ceb187dee98d58ac826c68439a77b4e64eac668",
+      "label": "ItemDesc_3d508a",
+      "path": "src/data/items.h",
+      "references": [
+        4043144
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4018407,
+      "length": 85,
+      "hash": "ada49f2728b846a85dd7d95246e9df511b72e1ce41c8aa4163126bf1c4e61990",
+      "label": "ItemDesc_3d50e7",
+      "path": "src/data/items.h",
+      "references": [
+        4043188
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4018492,
+      "length": 81,
+      "hash": "6e7da38047cc22e06b47b98c76539aa1dcc03393fee1df0ff9566fcc9e041622",
+      "label": "ItemDesc_3d513c",
+      "path": "src/data/items.h",
+      "references": [
+        4043232
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4018573,
+      "length": 72,
+      "hash": "5ded4e40e1bc464f9581d2f869719adee493d2ed21f4cb8cfb0c92be9f3cc5bd",
+      "label": "ItemDesc_3d518d",
+      "path": "src/data/items.h",
+      "references": [
+        4043276
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4018645,
+      "length": 79,
+      "hash": "b310bc306bcfdbcef298683e135e4112008bc962421464eb1ffb4ae722738c98",
+      "label": "ItemDesc_3d51d5",
+      "path": "src/data/items.h",
+      "references": [
+        4043320
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4018724,
+      "length": 98,
+      "hash": "8394462f830503a316959457aab7d50562b545e7769f452f44d7b352d593f450",
+      "label": "ItemDesc_3d5224",
+      "path": "src/data/items.h",
+      "references": [
+        4043364
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4018822,
+      "length": 77,
+      "hash": "4988ce5bceeb6b7593e076777d0855dd10f1614dcfb823a62e82658c0f3c7e1a",
+      "label": "ItemDesc_3d5286",
+      "path": "src/data/items.h",
+      "references": [
+        4043408
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4018899,
+      "length": 79,
+      "hash": "f1859d5f9133486d319b26af6c688b7a8fa5194a49e93f0957be0362a0e47fe8",
+      "label": "ItemDesc_3d52d3",
+      "path": "src/data/items.h",
+      "references": [
+        4043452
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4018978,
+      "length": 77,
+      "hash": "e7fa2c53507b498f7fac6994a979ee6254a9e527b7b7d54d84d864077961c3cb",
+      "label": "ItemDesc_3d5322",
+      "path": "src/data/items.h",
+      "references": [
+        4043496
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019055,
+      "length": 62,
+      "hash": "bea56d55d675328f80e4e6aa1a4a22bf8a137ae5a988537808e1e154daae78b1",
+      "label": "ItemDesc_3d536f",
+      "path": "src/data/items.h",
+      "references": [
+        4043540
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019117,
+      "length": 55,
+      "hash": "0d33a9f7bd151c4a38834d13676c19ad53c8c516f603ba4a0b15ad311b376f7b",
+      "label": "ItemDesc_3d53ad",
+      "path": "src/data/items.h",
+      "references": [
+        4043584
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019172,
+      "length": 53,
+      "hash": "f9564c5a3dd00ec203aec01f6f4371ed392321deb39bb4ace892a62738ccd1fe",
+      "label": "ItemDesc_3d53e4",
+      "path": "src/data/items.h",
+      "references": [
+        4043628
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019225,
+      "length": 54,
+      "hash": "151c1c693377119d0fb1c087abf42d0d0c0ba2e4e7cf9c4257c5d148b5df3457",
+      "label": "ItemDesc_3d5419",
+      "path": "src/data/items.h",
+      "references": [
+        4043672
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019279,
+      "length": 60,
+      "hash": "8e804ff6b0371c8cfe8ad3e98d530c06d333948b3ab35ad9383cbc6f28456d1a",
+      "label": "ItemDesc_3d544f",
+      "path": "src/data/items.h",
+      "references": [
+        4043716
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019339,
+      "length": 84,
+      "hash": "84655b8713024bc5ece9cfa6101d34be72bf8d1b64b657783b0e268b59418595",
+      "label": "ItemDesc_3d548b",
+      "path": "src/data/items.h",
+      "references": [
+        4043760
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019423,
+      "length": 70,
+      "hash": "e60a2fed25f6d089a4541f9135a16bb185968d5f7f854377a7fffe7827a3616f",
+      "label": "ItemDesc_3d54df",
+      "path": "src/data/items.h",
+      "references": [
+        4043804
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019493,
+      "length": 78,
+      "hash": "459a4e32f98ef211be10fb6285752a18812412c3bb17acdef171779d35e243e6",
+      "label": "ItemDesc_3d5525",
+      "path": "src/data/items.h",
+      "references": [
+        4043848
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019571,
+      "length": 77,
+      "hash": "a09da59eebb1f6a0800127218848a2f34d71108d55bfba9c70eb577c5cf5f2d6",
+      "label": "ItemDesc_3d5573",
+      "path": "src/data/items.h",
+      "references": [
+        4043892
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019648,
+      "length": 72,
+      "hash": "09096ee3e64a96cead7169ec137a78e5ccc4ec8c2e3db602f018ed7a5924cecb",
+      "label": "ItemDesc_3d55c0",
+      "path": "src/data/items.h",
+      "references": [
+        4043936
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019720,
+      "length": 84,
+      "hash": "b7685cb0905209209e8ad99bb884e564c42114c4f27be5f036d8cd0a391f2eca",
+      "label": "ItemDesc_3d5608",
+      "path": "src/data/items.h",
+      "references": [
+        4043980
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019804,
+      "length": 63,
+      "hash": "5df0f1a2b7b92f36987aceeeebde308a5bf0cf5b2a0197acfc85e9adc3dd23b6",
+      "label": "ItemDesc_3d565c",
+      "path": "src/data/items.h",
+      "references": [
+        4044024
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019867,
+      "length": 83,
+      "hash": "82a9ef62ddb9afcc4ed6cb1cab0e025dcc2f176cf6b5f81949d00ffff3059720",
+      "label": "ItemDesc_3d569b",
+      "path": "src/data/items.h",
+      "references": [
+        4044068
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4019950,
+      "length": 68,
+      "hash": "aab7c7e653048e18f7b8bb052c4617703fc19e0d2ac76ee578d791c43683fade",
+      "label": "ItemDesc_3d56ee",
+      "path": "src/data/items.h",
+      "references": [
+        4044112
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020018,
+      "length": 68,
+      "hash": "9f8e42e9b495df4cca04dd50746e092b422ce49fc38a74e585eb656514432fb5",
+      "label": "ItemDesc_3d5732",
+      "path": "src/data/items.h",
+      "references": [
+        4044156
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020086,
+      "length": 73,
+      "hash": "0f2bfa9fe4df5c242c47efb90461d53161fc50c0fcd89b216f3556ae88852b1d",
+      "label": "ItemDesc_3d5776",
+      "path": "src/data/items.h",
+      "references": [
+        4044200
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020159,
+      "length": 79,
+      "hash": "677c1363194624e62bfb6085a8bdf72e4132284b019369442ac0b5879250a0d5",
+      "label": "ItemDesc_3d57bf",
+      "path": "src/data/items.h",
+      "references": [
+        4044244
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020238,
+      "length": 69,
+      "hash": "a432bf16a32e26842602fe0ed06c878c8e6866e6f8145fe1b706c1bd875dbf77",
+      "label": "ItemDesc_3d580e",
+      "path": "src/data/items.h",
+      "references": [
+        4044288
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020307,
+      "length": 80,
+      "hash": "a11078287ce821f750ff07f93fd2339ca5489c044e89f568add73fbc34c50cdd",
+      "label": "ItemDesc_3d5853",
+      "path": "src/data/items.h",
+      "references": [
+        4044332
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020387,
+      "length": 80,
+      "hash": "4998c02d5b6e1d6cffa4b89ec531b7f4d1ed74261a733b85452e393913be71a7",
+      "label": "ItemDesc_3d58a3",
+      "path": "src/data/items.h",
+      "references": [
+        4044376
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020467,
+      "length": 60,
+      "hash": "d72619920cdf6cdf28e7b9f22a4469d8252d25608ebb9ffc2bf239809f796c08",
+      "label": "ItemDesc_3d58f3",
+      "path": "src/data/items.h",
+      "references": [
+        4044420
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020527,
+      "length": 53,
+      "hash": "6281e0de27c4ea1007194c4c15544e77fea5ad4a8900a1032931e26bf937097c",
+      "label": "ItemDesc_3d592f",
+      "path": "src/data/items.h",
+      "references": [
+        4044464
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020580,
+      "length": 64,
+      "hash": "332873fbce095b9ef541a1b717ec192fdbab576cf0b529db1615304a27ecd558",
+      "label": "ItemDesc_3d5964",
+      "path": "src/data/items.h",
+      "references": [
+        4044508
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020644,
+      "length": 52,
+      "hash": "a1adc367383dfdb4723cc9fa3a18fdc959c46d5d281ca69546e1dbc5f37b396f",
+      "label": "ItemDesc_3d59a4",
+      "path": "src/data/items.h",
+      "references": [
+        4044552
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020696,
+      "length": 83,
+      "hash": "2857339f5ec5f892b619de180484d3a28ce7a1d1a372c6807123fdfbca999340",
+      "label": "ItemDesc_3d59d8",
+      "path": "src/data/items.h",
+      "references": [
+        4044596
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020779,
+      "length": 52,
+      "hash": "97927374e1d5250fe094ef91b9c576d09deefe37d2d61b00de0a761f35018844",
+      "label": "ItemDesc_3d5a2b",
+      "path": "src/data/items.h",
+      "references": [
+        4044640
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020831,
+      "length": 62,
+      "hash": "18f5ea0c857ab2ef1a00875d0be5cacbf58ec7284253e6861cb5323a6b7613d7",
+      "label": "ItemDesc_3d5a5f",
+      "path": "src/data/items.h",
+      "references": [
+        4044684
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020893,
+      "length": 61,
+      "hash": "bb719a30c8c7766eeb7947bf573a87630762a90def2d9d19aef874c59e9b474b",
+      "label": "ItemDesc_3d5a9d",
+      "path": "src/data/items.h",
+      "references": [
+        4044728
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4020954,
+      "length": 78,
+      "hash": "05d531889211edcb8abe5e6ff2bf1034368f4a27d7cdb0ea41c6da31fe598391",
+      "label": "ItemDesc_3d5ada",
+      "path": "src/data/items.h",
+      "references": [
+        4044772
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4021032,
+      "length": 78,
+      "hash": "555aafbf629fe14cf49d1aaf65154f68e8d04329c5a7c7bb77294736409f538a",
+      "label": "ItemDesc_3d5b28",
+      "path": "src/data/items.h",
+      "references": [
+        4044816
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4021110,
+      "length": 67,
+      "hash": "ce380ef8934fe305437952bae145a5e7a9ce12ca19dfec949e2d69e5565b1b30",
+      "label": "ItemDesc_3d5b76",
+      "path": "src/data/items.h",
+      "references": [
+        4044860
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4021177,
+      "length": 49,
+      "hash": "5445523eb0a555d6d0da8cba852377e2651c16a388781a3967ecfb2f32bd8851",
+      "label": "ItemDesc_3d5bb9",
+      "path": "src/data/items.h",
+      "references": [
+        4044904
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4021226,
+      "length": 75,
+      "hash": "5b96a4d4eca3ee8e370a247adea2ff801532d9fb4191f0dc385e4b21e37b0a74",
+      "label": "ItemDesc_3d5bea",
+      "path": "src/data/items.h",
+      "references": [
+        4044948
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4021301,
+      "length": 85,
+      "hash": "0534fd0aa7851a99d7c458f9c5f35530a7b7e9908f043426fd76e6505e254ad6",
+      "label": "ItemDesc_3d5c35",
+      "path": "src/data/items.h",
+      "references": [
+        4044992
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4021386,
+      "length": 76,
+      "hash": "f9f24f71d96cbb2ab7b38a4bbe989ae96f256ff74321f5554d5e96711557e0c8",
+      "label": "ItemDesc_3d5c8a",
+      "path": "src/data/items.h",
+      "references": [
+        4045036
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4021462,
+      "length": 77,
+      "hash": "fa45ba6fe00b8b94496418cec24a5a68aad36c17dde4ca195cc7180a5b643368",
+      "label": "ItemDesc_3d5cd6",
+      "path": "src/data/items.h",
+      "references": [
+        4045080
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4021539,
+      "length": 79,
+      "hash": "ef17453b3778fdb5a40f49f0d2fe80e634a7c5ab7a154a4d4ed02b6238b1c2bb",
+      "label": "ItemDesc_3d5d23",
+      "path": "src/data/items.h",
+      "references": [
+        4045124
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4021618,
+      "length": 78,
+      "hash": "3c109d3f3dfdee10f3f8ea5364abe410bb77228b5ab71057fa392344a0f52545",
+      "label": "ItemDesc_3d5d72",
+      "path": "src/data/items.h",
+      "references": [
+        4045168
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4021696,
+      "length": 70,
+      "hash": "f0e38cdacd3fba52a9790d96620909de2ac9ec1a17cccc317821b15a978038ac",
+      "label": "ItemDesc_3d5dc0",
+      "path": "src/data/items.h",
+      "references": [
+        4045696
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4021766,
+      "length": 79,
+      "hash": "3d2e663aea6020f59802b2793f202a387a0163b54ad7a7889262b6d437e901a7",
+      "label": "ItemDesc_3d5e06",
+      "path": "src/data/items.h",
+      "references": [
+        4045740
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4021845,
+      "length": 80,
+      "hash": "a6c186a178e3dd88a7af2657f4383c33922d9d184b502949abff8345eca51015",
+      "label": "ItemDesc_3d5e55",
+      "path": "src/data/items.h",
+      "references": [
+        4045784
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4021925,
+      "length": 78,
+      "hash": "54d71268bb0da84637c8c570cb5a948072de708b8bc259bd78cdf3b8ead2379a",
+      "label": "ItemDesc_3d5ea5",
+      "path": "src/data/items.h",
+      "references": [
+        4045828
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4022003,
+      "length": 80,
+      "hash": "cd5f99573fad2bd160214ed868094f3841202e028360653933b6189cc98c5668",
+      "label": "ItemDesc_3d5ef3",
+      "path": "src/data/items.h",
+      "references": [
+        4045872
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4022083,
+      "length": 77,
+      "hash": "dea9df39ab887b8b1b2bfeac1bc41a8e600800d27be4e9fa55ae61244ebadeec",
+      "label": "ItemDesc_3d5f43",
+      "path": "src/data/items.h",
+      "references": [
+        4045916
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4022160,
+      "length": 67,
+      "hash": "421bd218c9ae2ecea0587251fd12587155c3f55cefe0620f438263974df73395",
+      "label": "ItemDesc_3d5f90",
+      "path": "src/data/items.h",
+      "references": [
+        4045960
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4022227,
+      "length": 80,
+      "hash": "d528e8ce7d9a643e18f0b964c7b253ddf725cc543916a535cf1905da6e0a9744",
+      "label": "ItemDesc_3d5fd3",
+      "path": "src/data/items.h",
+      "references": [
+        4046004
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4022307,
+      "length": 71,
+      "hash": "226d51f870c2019d99f52da0ec92c29311284a9bb859881f6b0d676c245ac9f1",
+      "label": "ItemDesc_3d6023",
+      "path": "src/data/items.h",
+      "references": [
+        4046048
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4022378,
+      "length": 83,
+      "hash": "c9e41e050eef378f1accf8432e503627cbc2e34d7bf0d9c3bffe3b5bc2643b17",
+      "label": "ItemDesc_3d606a",
+      "path": "src/data/items.h",
+      "references": [
+        4046136
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4022461,
+      "length": 91,
+      "hash": "58d2a2cc74f92b7d30a9655491fb94139fa266a91cd3941e21c03cde77ed1c4f",
+      "label": "ItemDesc_3d60bd",
+      "path": "src/data/items.h",
+      "references": [
+        4046180
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4022552,
+      "length": 84,
+      "hash": "a61bacccec96add2ba59d51239006b62a32104977b64663dc45dad3247763c5b",
+      "label": "ItemDesc_3d6118",
+      "path": "src/data/items.h",
+      "references": [
+        4046224
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4022636,
+      "length": 85,
+      "hash": "28aec98091ab42e98a05ad2ed1e4c5ea4d747c40cec14eb4a0b3396f75d2804e",
+      "label": "ItemDesc_3d616c",
+      "path": "src/data/items.h",
+      "references": [
+        4046268
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4022721,
+      "length": 83,
+      "hash": "d6451024e5be09866f31df8cbe39ef101acf73961d65361f26f01893dfb186bf",
+      "label": "ItemDesc_3d61c1",
+      "path": "src/data/items.h",
+      "references": [
+        4046312
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4022804,
+      "length": 86,
+      "hash": "3176bc3e895ceb07ee470d6c252213783ae743b66bb7866939e077c1dcc13c25",
+      "label": "ItemDesc_3d6214",
+      "path": "src/data/items.h",
+      "references": [
+        4046356
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4022890,
+      "length": 85,
+      "hash": "3d83dab13041ad2f3df7ef35a6b464b6e0e64dee6f2df91c57f14eb1f71c4f01",
+      "label": "ItemDesc_3d626a",
+      "path": "src/data/items.h",
+      "references": [
+        4046400
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4022975,
+      "length": 72,
+      "hash": "506371fd8d1f9d057f518ae491e18f9d23e507598b34435ba3bf99d418307347",
+      "label": "ItemDesc_3d62bf",
+      "path": "src/data/items.h",
+      "references": [
+        4046444
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4023047,
+      "length": 72,
+      "hash": "749c52395e8aaf2b8034d47d11bf38088765d460650942b8340726b41aa8d139",
+      "label": "ItemDesc_3d6307",
+      "path": "src/data/items.h",
+      "references": [
+        4046488
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4023119,
+      "length": 57,
+      "hash": "8a7a8170cd0d76b485280cb4c8d1d86d1577dfc51a5b43d8681ed1fa23531171",
+      "label": "ItemDesc_3d634f",
+      "path": "src/data/items.h",
+      "references": [
+        4046576
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4023176,
+      "length": 57,
+      "hash": "4d07495f04bac7854da52de0b237163cf2fa8d15bc9ebc3227809464e485d0e6",
+      "label": "ItemDesc_3d6388",
+      "path": "src/data/items.h",
+      "references": [
+        4046620
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4023233,
+      "length": 75,
+      "hash": "2b42f55fdc83c43eef963db6624b00b79368bff582935864931c384c998aee59",
+      "label": "ItemDesc_3d63c1",
+      "path": "src/data/items.h",
+      "references": [
+        4046664
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4023308,
+      "length": 57,
+      "hash": "9c297d04880eb81e7d0e452dd745c882c2195205dc289c7812604ff2a9c92eee",
+      "label": "ItemDesc_3d640c",
+      "path": "src/data/items.h",
+      "references": [
+        4046708
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4023365,
+      "length": 88,
+      "hash": "10273b193697c4145a43795928413bb9d6a8dabd1b4904c6719e7208187b56f4",
+      "label": "ItemDesc_3d6445",
+      "path": "src/data/items.h",
+      "references": [
+        4047016
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4023453,
+      "length": 96,
+      "hash": "7be65c34f0cf4055b67010463d35a69fc306c066fa5bc00e8386004121399267",
+      "label": "ItemDesc_3d649d",
+      "path": "src/data/items.h",
+      "references": [
+        4047060
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4023549,
+      "length": 85,
+      "hash": "60f0fc64180aca6252dfe6f01cb07b138fc6a7258949474b619edf9dfe6ba2db",
+      "label": "ItemDesc_3d64fd",
+      "path": "src/data/items.h",
+      "references": [
+        4047104
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4023634,
+      "length": 93,
+      "hash": "161ebad72e97b5487877ffbbc2c95580a01f779ae95b7f8ba19a12de9aa8313c",
+      "label": "ItemDesc_3d6552",
+      "path": "src/data/items.h",
+      "references": [
+        4047148
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4023727,
+      "length": 89,
+      "hash": "156334d97ba055a48a0881a4856aa4bcee8f82996d54aa7dbfb15117f01e77d7",
+      "label": "ItemDesc_3d65af",
+      "path": "src/data/items.h",
+      "references": [
+        4047192
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4023816,
+      "length": 86,
+      "hash": "b175f6651d3461e5af6e31942985ab676f8284734c9a491464af48218ca8d53b",
+      "label": "ItemDesc_3d6608",
+      "path": "src/data/items.h",
+      "references": [
+        4047236
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4023902,
+      "length": 69,
+      "hash": "dbcf29ceea1d09233fb307bb76d1bf9deaab70d335833f9ebcf931fe24ee5c2f",
+      "label": "ItemDesc_3d665e",
+      "path": "src/data/items.h",
+      "references": [
+        4047456
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4023971,
+      "length": 68,
+      "hash": "e8c5b247aae60e6995e42bdf8c5a556cd7d6a32b1c3c16cd438f0bfaf842c380",
+      "label": "ItemDesc_3d66a3",
+      "path": "src/data/items.h",
+      "references": [
+        4047500
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4024039,
+      "length": 89,
+      "hash": "96e1ecd624b58e8db0dc63a23f2599e34734c4f13b4c43f18c15471f921dafc1",
+      "label": "ItemDesc_3d66e7",
+      "path": "src/data/items.h",
+      "references": [
+        4047588
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4024128,
+      "length": 92,
+      "hash": "29f568e74731e788fa11d690ddee06efb54f9e8182ef250d65c8f1dcdfc8bccf",
+      "label": "ItemDesc_3d6740",
+      "path": "src/data/items.h",
+      "references": [
+        4047632
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4024220,
+      "length": 76,
+      "hash": "8df038b0e753d99584624bd82ecd5cf87ecb8bd4e7311931938698a4892735ac",
+      "label": "ItemDesc_3d679c",
+      "path": "src/data/items.h",
+      "references": [
+        4047676
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4024296,
+      "length": 86,
+      "hash": "032a89dc818d4b603d21c24877698e2549b97d323d6228fed28fd377feb4df35",
+      "label": "ItemDesc_3d67e8",
+      "path": "src/data/items.h",
+      "references": [
+        4047720
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4024382,
+      "length": 87,
+      "hash": "d383ced08807d7fa0aa8eaff4c0c69984302026be84ef0d1c05a3715f0af7049",
+      "label": "ItemDesc_3d683e",
+      "path": "src/data/items.h",
+      "references": [
+        4047764
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4024469,
+      "length": 98,
+      "hash": "cc05ec210665f090bb6f85d5e59c252bd103bc0f1361940cfdb1cdfcf2983060",
+      "label": "ItemDesc_3d6895",
+      "path": "src/data/items.h",
+      "references": [
+        4047808
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4024567,
+      "length": 81,
+      "hash": "7c53e1622ad2c72aeddfbb21e0f3449b10b4572bfcbe6f9f2a2d6550135d99a8",
+      "label": "ItemDesc_3d68f7",
+      "path": "src/data/items.h",
+      "references": [
+        4048248
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4024648,
+      "length": 79,
+      "hash": "9447e30434d4ee6e460bafd82dd040c70861fbac26c4de6454ecfccfb0dcfdaf",
+      "label": "ItemDesc_3d6948",
+      "path": "src/data/items.h",
+      "references": [
+        4048292
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4024727,
+      "length": 79,
+      "hash": "a123a2b9c70c6d33e05fe94fd6f638aa6f4d69ff24295bbb70815d8862bdcc9e",
+      "label": "ItemDesc_3d6997",
+      "path": "src/data/items.h",
+      "references": [
+        4048336
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4024806,
+      "length": 81,
+      "hash": "1a35508689e40c5be9499b172e6f767916d81f9e371ad7692640aca1bd0f6c43",
+      "label": "ItemDesc_3d69e6",
+      "path": "src/data/items.h",
+      "references": [
+        4048380
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4024887,
+      "length": 79,
+      "hash": "2153c8fb851d6655e0a4e74b068b189a8434c70eb2cb03605eddf0e2a6d47ff7",
+      "label": "ItemDesc_3d6a37",
+      "path": "src/data/items.h",
+      "references": [
+        4048424
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4024966,
+      "length": 79,
+      "hash": "5ac6dc94d500d72fbd5d22c8d1cec915afd631248981d6b40dcaff8afd99b18a",
+      "label": "ItemDesc_3d6a86",
+      "path": "src/data/items.h",
+      "references": [
+        4048468
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4025045,
+      "length": 91,
+      "hash": "bc48202797fd44c244eb801a59fa85d6ac07c7d3072197a765b6aa778c360128",
+      "label": "ItemDesc_3d6ad5",
+      "path": "src/data/items.h",
+      "references": [
+        4048512
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4025136,
+      "length": 79,
+      "hash": "9a66270bd6bed382972fe62231045f29ef0478402434f242ce5af63bdb7daf93",
+      "label": "ItemDesc_3d6b30",
+      "path": "src/data/items.h",
+      "references": [
+        4048556
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4025215,
+      "length": 81,
+      "hash": "7bbb252514455159a528d90169ed2b6481e1f76126ec6d51be7af93e2578fed6",
+      "label": "ItemDesc_3d6b7f",
+      "path": "src/data/items.h",
+      "references": [
+        4048600
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4025296,
+      "length": 91,
+      "hash": "bc48202797fd44c244eb801a59fa85d6ac07c7d3072197a765b6aa778c360128",
+      "label": "ItemDesc_3d6bd0",
+      "path": "src/data/items.h",
+      "references": [
+        4048644
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4025387,
+      "length": 88,
+      "hash": "e985df1b0454b4140d88975629bd3d28c77bf88fff3b2605bc52bb10d66ffb18",
+      "label": "ItemDesc_3d6c2b",
+      "path": "src/data/items.h",
+      "references": [
+        4048688
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4025475,
+      "length": 88,
+      "hash": "851f745f7c8f25cf8761a9ab3c80acfe396bb3c9100d9d81b9cb36c732334732",
+      "label": "ItemDesc_3d6c83",
+      "path": "src/data/items.h",
+      "references": [
+        4048732
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4025563,
+      "length": 69,
+      "hash": "532b2f6f518dd4d4519ff427e5fd4df26a04861035e29ed352daa6006a927398",
+      "label": "ItemDesc_3d6cdb",
+      "path": "src/data/items.h",
+      "references": [
+        4048776
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4025632,
+      "length": 62,
+      "hash": "518d5f3ad329bb468cf348b316758a2b5740f629b355ef879ffcf4184baab1fe",
+      "label": "ItemDesc_3d6d20",
+      "path": "src/data/items.h",
+      "references": [
+        4048820
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4025694,
+      "length": 66,
+      "hash": "f9b98423303bd6b9f1695965efad230c1c4946d9f9505f11c47d9bd064737324",
+      "label": "ItemDesc_3d6d5e",
+      "path": "src/data/items.h",
+      "references": [
+        4048864
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4025760,
+      "length": 66,
+      "hash": "1d773c984a44cca764c8e30b6d0224b5b0c5b4747572d7228782efd7c2516c46",
+      "label": "ItemDesc_3d6da0",
+      "path": "src/data/items.h",
+      "references": [
+        4048908
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4025826,
+      "length": 66,
+      "hash": "8c2bf871437143074a78e403d3083599825f37ec398003e8f11dc0b8553054a8",
+      "label": "ItemDesc_3d6de2",
+      "path": "src/data/items.h",
+      "references": [
+        4048952
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4025892,
+      "length": 68,
+      "hash": "08d8983a00eeab692360023aacc7004c684f5501c74f8211371d82a8a6ff4d82",
+      "label": "ItemDesc_3d6e24",
+      "path": "src/data/items.h",
+      "references": [
+        4048996
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4025960,
+      "length": 68,
+      "hash": "4aec265684a2eab032c53efee93275e1f9e8ca2976a6dd2aaacc20823a569673",
+      "label": "ItemDesc_3d6e68",
+      "path": "src/data/items.h",
+      "references": [
+        4049040
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026028,
+      "length": 69,
+      "hash": "24dac4f0d7059bea31f77aeef2069b712b28736d91572c3597dc24e8a69007f7",
+      "label": "ItemDesc_3d6eac",
+      "path": "src/data/items.h",
+      "references": [
+        4049084
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026097,
+      "length": 71,
+      "hash": "1ac81c9ab059a359fde30d5360aa865ba59a36820d8562e38e3288cdd4fd1904",
+      "label": "ItemDesc_3d6ef1",
+      "path": "src/data/items.h",
+      "references": [
+        4049128
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026168,
+      "length": 68,
+      "hash": "3526879f0affe924298c2a610c8f6008ce71b6bdd4a0d9d3e75661045892c816",
+      "label": "ItemDesc_3d6f38",
+      "path": "src/data/items.h",
+      "references": [
+        4049172
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026236,
+      "length": 64,
+      "hash": "706c91a70c7b636c28abcadea21003f5d3f1c68240bc8380a4a8670e4407b343",
+      "label": "ItemDesc_3d6f7c",
+      "path": "src/data/items.h",
+      "references": [
+        4049216
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026300,
+      "length": 64,
+      "hash": "706c91a70c7b636c28abcadea21003f5d3f1c68240bc8380a4a8670e4407b343",
+      "label": "ItemDesc_3d6fbc",
+      "path": "src/data/items.h",
+      "references": [
+        4049260
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026364,
+      "length": 64,
+      "hash": "706c91a70c7b636c28abcadea21003f5d3f1c68240bc8380a4a8670e4407b343",
+      "label": "ItemDesc_3d6ffc",
+      "path": "src/data/items.h",
+      "references": [
+        4049304
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026428,
+      "length": 64,
+      "hash": "706c91a70c7b636c28abcadea21003f5d3f1c68240bc8380a4a8670e4407b343",
+      "label": "ItemDesc_3d703c",
+      "path": "src/data/items.h",
+      "references": [
+        4049348
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026492,
+      "length": 64,
+      "hash": "706c91a70c7b636c28abcadea21003f5d3f1c68240bc8380a4a8670e4407b343",
+      "label": "ItemDesc_3d707c",
+      "path": "src/data/items.h",
+      "references": [
+        4049392
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026556,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d70bc",
+      "path": "src/data/items.h",
+      "references": [
+        4049436
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026618,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d70fa",
+      "path": "src/data/items.h",
+      "references": [
+        4049480
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026680,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d7138",
+      "path": "src/data/items.h",
+      "references": [
+        4049524
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026742,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d7176",
+      "path": "src/data/items.h",
+      "references": [
+        4049568
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026804,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d71b4",
+      "path": "src/data/items.h",
+      "references": [
+        4049612
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026866,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d71f2",
+      "path": "src/data/items.h",
+      "references": [
+        4049656
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026928,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d7230",
+      "path": "src/data/items.h",
+      "references": [
+        4049700
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4026990,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d726e",
+      "path": "src/data/items.h",
+      "references": [
+        4049744
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027052,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d72ac",
+      "path": "src/data/items.h",
+      "references": [
+        4049788
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027114,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d72ea",
+      "path": "src/data/items.h",
+      "references": [
+        4049832
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027176,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d7328",
+      "path": "src/data/items.h",
+      "references": [
+        4049876
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027238,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d7366",
+      "path": "src/data/items.h",
+      "references": [
+        4049920
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027300,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d73a4",
+      "path": "src/data/items.h",
+      "references": [
+        4049964
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027362,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d73e2",
+      "path": "src/data/items.h",
+      "references": [
+        4050008
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027424,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d7420",
+      "path": "src/data/items.h",
+      "references": [
+        4050052
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027486,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d745e",
+      "path": "src/data/items.h",
+      "references": [
+        4050096
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027548,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d749c",
+      "path": "src/data/items.h",
+      "references": [
+        4050140
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027610,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d74da",
+      "path": "src/data/items.h",
+      "references": [
+        4050184
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027672,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d7518",
+      "path": "src/data/items.h",
+      "references": [
+        4050228
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027734,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d7556",
+      "path": "src/data/items.h",
+      "references": [
+        4050272
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027796,
+      "length": 62,
+      "hash": "2dd1a2b93ada94221306d2fa36d7ff8c8cc848bdc2b236f94e914db5ce1eee4b",
+      "label": "ItemDesc_3d7594",
+      "path": "src/data/items.h",
+      "references": [
+        4050316
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027858,
+      "length": 63,
+      "hash": "4d93368c902d843e2140672e27c4b26d67688843716bc304c0723a8e35849c0a",
+      "label": "ItemDesc_3d75d2",
+      "path": "src/data/items.h",
+      "references": [
+        4050360
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027921,
+      "length": 61,
+      "hash": "f4fb11102b7354d240bd8ce9f177a3f59bd4572ae86f10131a92e2a926deb70b",
+      "label": "ItemDesc_3d7611",
+      "path": "src/data/items.h",
+      "references": [
+        4050404
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4027982,
+      "length": 63,
+      "hash": "b1aba614656d09d202ab8b90c098eef334b458229b085c0f9f40ce70dccdee5c",
+      "label": "ItemDesc_3d764e",
+      "path": "src/data/items.h",
+      "references": [
+        4050448
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4028045,
+      "length": 63,
+      "hash": "59046857a751422926033e12051159bac5acad8f8719f9dee2fad1cd8cd261a0",
+      "label": "ItemDesc_3d768d",
+      "path": "src/data/items.h",
+      "references": [
+        4050492
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4028108,
+      "length": 69,
+      "hash": "717ef95bce1a69d8fe86846600a311b27c1daf6a8fb7a5c864c9b39871dd9934",
+      "label": "ItemDesc_3d76cc",
+      "path": "src/data/items.h",
+      "references": [
+        4050536
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4028177,
+      "length": 63,
+      "hash": "ea16fd2f714a4793cec7476b2441fff2867bca414a7f8a62eb46f029485be2ae",
+      "label": "ItemDesc_3d7711",
+      "path": "src/data/items.h",
+      "references": [
+        4050580
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4028240,
+      "length": 62,
+      "hash": "036d36861f8b61d0eceb5e57802a0dd4f0243d1b59ed21ec3711a49cc5df1764",
+      "label": "ItemDesc_3d7750",
+      "path": "src/data/items.h",
+      "references": [
+        4050624
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4028302,
+      "length": 94,
+      "hash": "e28c41b2cb1fe2ccffb32782a14274dd0906a155bd6a65f88e8128ae0817b23a",
+      "label": "ItemDesc_3d778e",
+      "path": "src/data/items.h",
+      "references": [
+        4050800
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4028396,
+      "length": 99,
+      "hash": "d7af0d79b5c5ffcab4c190d3f987e34f9f4c72ba47bf8beb9d66a61ca1ad4a58",
+      "label": "ItemDesc_3d77ec",
+      "path": "src/data/items.h",
+      "references": [
+        4050844
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4028495,
+      "length": 94,
+      "hash": "f5a72ff64ab15e872d3074227ec1da250912c09a178a048d2d62d166d58509e8",
+      "label": "ItemDesc_3d784f",
+      "path": "src/data/items.h",
+      "references": [
+        4050888
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4028589,
+      "length": 98,
+      "hash": "15f96452ef61f0d38d84ef7446565efde242c402f855f5b26af446fece6ef196",
+      "label": "ItemDesc_3d78ad",
+      "path": "src/data/items.h",
+      "references": [
+        4050932
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4028687,
+      "length": 97,
+      "hash": "796e56318fe7f3b2c5002e8a64f40a97baab31330870fc8c53b86c421817b570",
+      "label": "ItemDesc_3d790f",
+      "path": "src/data/items.h",
+      "references": [
+        4050976
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4028784,
+      "length": 105,
+      "hash": "9aea1f52f6d38749e75f2f3a5107420c7e305c5ba6319c46e6815d50ae10a76d",
+      "label": "ItemDesc_3d7970",
+      "path": "src/data/items.h",
+      "references": [
+        4051020
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4028889,
+      "length": 94,
+      "hash": "d690dd224491a64a4493daf251fa92b68151a3d78df84e2a726a816f24152932",
+      "label": "ItemDesc_3d79d9",
+      "path": "src/data/items.h",
+      "references": [
+        4051064
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4028983,
+      "length": 91,
+      "hash": "b870145f960a51e2543034217c874c1ee7e7b183f18367984553abeb1bded997",
+      "label": "ItemDesc_3d7a37",
+      "path": "src/data/items.h",
+      "references": [
+        4051108
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4029074,
+      "length": 84,
+      "hash": "38ce5c292ff6bafb0f8d3f692f8351eb648792ede58a9cf638d699d9df4e483a",
+      "label": "ItemDesc_3d7a92",
+      "path": "src/data/items.h",
+      "references": [
+        4051152
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4029158,
+      "length": 96,
+      "hash": "ee3fa80594434b2240234c6dede900bc3b9a3e9795192badb37658a9845f6ab7",
+      "label": "ItemDesc_3d7ae6",
+      "path": "src/data/items.h",
+      "references": [
+        4051196
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4029254,
+      "length": 96,
+      "hash": "0e3660b334d1dafe633d65cf379d2d8b7c4ce6fd62dd7750cd12ace8f7fc4501",
+      "label": "ItemDesc_3d7b46",
+      "path": "src/data/items.h",
+      "references": [
+        4051240
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4029350,
+      "length": 93,
+      "hash": "07655572101ebffe437ee7340ec69cd8dd126d84ee93c86db1ae7209bbec3bcd",
+      "label": "ItemDesc_3d7ba6",
+      "path": "src/data/items.h",
+      "references": [
+        4051284
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4029443,
+      "length": 82,
+      "hash": "06cc83b47ff194865c20c52553871a351fe1a69b8ae8078c8c6ef47741ff35a8",
+      "label": "ItemDesc_3d7c03",
+      "path": "src/data/items.h",
+      "references": [
+        4051328
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4029525,
+      "length": 96,
+      "hash": "1aed6c78668ce65a5bca44b20d53dc57663907417818defec9609b67bead247b",
+      "label": "ItemDesc_3d7c55",
+      "path": "src/data/items.h",
+      "references": [
+        4051372
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4029621,
+      "length": 95,
+      "hash": "c322c62757a81c01f11b9346b99a3ac6059855a7e2117d979000355eadc18886",
+      "label": "ItemDesc_3d7cb5",
+      "path": "src/data/items.h",
+      "references": [
+        4051416
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4029716,
+      "length": 94,
+      "hash": "ad7f2f435fbd986e5b1c3ae7cd81c9ffc1f922e58adb3c539eb29405c8227cf0",
+      "label": "ItemDesc_3d7d14",
+      "path": "src/data/items.h",
+      "references": [
+        4051460
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4029810,
+      "length": 81,
+      "hash": "467ef64725fa4c1acfc5ffea64300c82ee81a74bbf8ba6268de628c524e9c757",
+      "label": "ItemDesc_3d7d72",
+      "path": "src/data/items.h",
+      "references": [
+        4051504
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4029891,
+      "length": 94,
+      "hash": "9df44d6088729940f8e07a2b13acba61156905b8d279e8da298f5fe4f15b778f",
+      "label": "ItemDesc_3d7dc3",
+      "path": "src/data/items.h",
+      "references": [
+        4051548
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4029985,
+      "length": 102,
+      "hash": "01e759b0f23d3b8e209d856a4bb066163117ff9a05864f2f570c45b2f741f107",
+      "label": "ItemDesc_3d7e21",
+      "path": "src/data/items.h",
+      "references": [
+        4051592
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4030087,
+      "length": 99,
+      "hash": "b3d1e14fde1c403820a84443b25268a6d774b0a48d16c1e94abfb8c6b62edd1a",
+      "label": "ItemDesc_3d7e87",
+      "path": "src/data/items.h",
+      "references": [
+        4051636
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4030186,
+      "length": 100,
+      "hash": "e36433dff36c53c40203ed9a213afc1485af2d9987da6f0d7ed64aa52da1938f",
+      "label": "ItemDesc_3d7eea",
+      "path": "src/data/items.h",
+      "references": [
+        4051680
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4030286,
+      "length": 89,
+      "hash": "144185a0cc2143134bff8514bcff0f0d3a6615f9a224f9f21008da7798015874",
+      "label": "ItemDesc_3d7f4e",
+      "path": "src/data/items.h",
+      "references": [
+        4051724
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4030375,
+      "length": 66,
+      "hash": "1e68b3e367f2ecfb2cdb6330d6a2425d7489f0ff6d16b0c34b493e5a601707f7",
+      "label": "ItemDesc_3d7fa7",
+      "path": "src/data/items.h",
+      "references": [
+        4051768
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4030441,
+      "length": 92,
+      "hash": "3dee20ab0cbc485d3a56c2978ffb585fe77662ceb5cf34a4268499e629dea41a",
+      "label": "ItemDesc_3d7fe9",
+      "path": "src/data/items.h",
+      "references": [
+        4051812
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4030533,
+      "length": 97,
+      "hash": "963a25fbc10a66069831b013647bd864f48cf244d3d3e9b0e19a1bd50a975a37",
+      "label": "ItemDesc_3d8045",
+      "path": "src/data/items.h",
+      "references": [
+        4051856
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4030630,
+      "length": 96,
+      "hash": "2f4de8de588a50c27ccae6efc7b2e54faf881a464332520adc1488ea1f08422c",
+      "label": "ItemDesc_3d80a6",
+      "path": "src/data/items.h",
+      "references": [
+        4051900
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4030726,
+      "length": 100,
+      "hash": "48e439171d1d6ef1cbc154e753215f86c5653edf589672ffe769a4d3fa2e223a",
+      "label": "ItemDesc_3d8106",
+      "path": "src/data/items.h",
+      "references": [
+        4051944
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4030826,
+      "length": 94,
+      "hash": "84fc88258b11732c9a71ac243eb7c83650ea3ffb11ba49255e5c0bdca729c9f3",
+      "label": "ItemDesc_3d816a",
+      "path": "src/data/items.h",
+      "references": [
+        4051988
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4030920,
+      "length": 91,
+      "hash": "5b3cc8e3a417de48d0bda76fa573714e536980975f383f39752c0a1d07483789",
+      "label": "ItemDesc_3d81c8",
+      "path": "src/data/items.h",
+      "references": [
+        4052032
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4031011,
+      "length": 97,
+      "hash": "07fb3798b24a820607223ac0fdf69854c431bda9c2865cb07be8ea69ebf1cf9d",
+      "label": "ItemDesc_3d8223",
+      "path": "src/data/items.h",
+      "references": [
+        4052076
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4031108,
+      "length": 98,
+      "hash": "5ca0e1b78cf39ea1a53a37e0a4103f06d98d192fc0eb7939d87f489baae70053",
+      "label": "ItemDesc_3d8284",
+      "path": "src/data/items.h",
+      "references": [
+        4052120
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4031206,
+      "length": 96,
+      "hash": "aa34f2ccff2669286e662122c204c59d474b8a6e6ab11807bb3def3779ffa281",
+      "label": "ItemDesc_3d82e6",
+      "path": "src/data/items.h",
+      "references": [
+        4052164
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4031302,
+      "length": 101,
+      "hash": "e05723f107b12597d82771caf1d083406ff0c80e762ca0db225e087af9c297a6",
+      "label": "ItemDesc_3d8346",
+      "path": "src/data/items.h",
+      "references": [
+        4052208
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4031403,
+      "length": 92,
+      "hash": "925ff2822384f89f027f03c5ee81527e074e979506bf518359335e282aeec490",
+      "label": "ItemDesc_3d83ab",
+      "path": "src/data/items.h",
+      "references": [
+        4052252
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4031495,
+      "length": 85,
+      "hash": "38bfd6ec41953b8a5b718f3b5f09aca0674576f11939b0fc1e706a15948790f5",
+      "label": "ItemDesc_3d8407",
+      "path": "src/data/items.h",
+      "references": [
+        4052296
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4031580,
+      "length": 98,
+      "hash": "97120ac14ece7982561562adee12257f614f82af21b5ff0195c643ff7919c5bf",
+      "label": "ItemDesc_3d845c",
+      "path": "src/data/items.h",
+      "references": [
+        4052340
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4031678,
+      "length": 94,
+      "hash": "c84293caf028df893f2f5b16d6cbedd2c5a5d82a297beadf95a612ada8758aa7",
+      "label": "ItemDesc_3d84be",
+      "path": "src/data/items.h",
+      "references": [
+        4052384
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4031772,
+      "length": 99,
+      "hash": "38d1198960515a7296a401a644cde1c59d6cc62cbd5fd55d983342cf8f85104b",
+      "label": "ItemDesc_3d851c",
+      "path": "src/data/items.h",
+      "references": [
+        4052428
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4031871,
+      "length": 95,
+      "hash": "64eb728b0c6865e47cb5efbaa9bf6ab1592a96eb017f5d28f34da98fffac6b2c",
+      "label": "ItemDesc_3d857f",
+      "path": "src/data/items.h",
+      "references": [
+        4052472
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4031966,
+      "length": 76,
+      "hash": "5fe46599624db2a56d71828f3e411648844d38343bec7d31d292624ea6fabe2c",
+      "label": "ItemDesc_3d85de",
+      "path": "src/data/items.h",
+      "references": [
+        4052516
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4032042,
+      "length": 92,
+      "hash": "2e82bcc85cd478cbd6f5a25471fdcc65e333585c0a4fa5c5b13d87f11d4598e0",
+      "label": "ItemDesc_3d862a",
+      "path": "src/data/items.h",
+      "references": [
+        4052560
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4032134,
+      "length": 83,
+      "hash": "a93428b4add1baaebf3c880a44962d84b65c39b596c25e362a7a51a8c35ccfe3",
+      "label": "ItemDesc_3d8686",
+      "path": "src/data/items.h",
+      "references": [
+        4052604
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4032217,
+      "length": 87,
+      "hash": "3b6b3b2e9b02bc5b37faca98e07527ce55b2462dd3269fee02b46c22ae0a3edc",
+      "label": "ItemDesc_3d86d9",
+      "path": "src/data/items.h",
+      "references": [
+        4052648
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4032304,
+      "length": 73,
+      "hash": "fd080ad38904fa982c3d1b52884f272b4cbef5996214e465237a9839d7f222b5",
+      "label": "ItemDesc_3d8730",
+      "path": "src/data/items.h",
+      "references": [
+        4052692
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4032377,
+      "length": 75,
+      "hash": "990cb2cc1e8695ab0d2bf21368b3f9281aef8564a6f12785a10c548d937eba61",
+      "label": "ItemDesc_3d8779",
+      "path": "src/data/items.h",
+      "references": [
+        4052736
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4032452,
+      "length": 87,
+      "hash": "d4485b294d5d3ee2bf8bf7c9ff7c73bb22ec71e49467efdb74c118c43fef4774",
+      "label": "ItemDesc_3d87c4",
+      "path": "src/data/items.h",
+      "references": [
+        4052780
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4032539,
+      "length": 87,
+      "hash": "e8f68e48c625069224ae8ef63e0abf87f9390dba522d423434ec201aa0281d4b",
+      "label": "ItemDesc_3d881b",
+      "path": "src/data/items.h",
+      "references": [
+        4052824
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4032626,
+      "length": 93,
+      "hash": "cac7c063d49d6412d183c3fc1898e341571e46f0b77b2535158079974b6920c8",
+      "label": "ItemDesc_3d8872",
+      "path": "src/data/items.h",
+      "references": [
+        4054100
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4032719,
+      "length": 95,
+      "hash": "48fa04edd5f943447f9daee091d60867f36ae9f132c40d276c8860afc84660b7",
+      "label": "ItemDesc_3d88cf",
+      "path": "src/data/items.h",
+      "references": [
+        4054144
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4032814,
+      "length": 93,
+      "hash": "ba3343dbd8c839adac271920c3b4bb76a6886f26af0eb8d9fc1e912ee7f4bf16",
+      "label": "ItemDesc_3d892e",
+      "path": "src/data/items.h",
+      "references": [
+        4054188
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4032907,
+      "length": 94,
+      "hash": "0131a2aa51e4eccef1feeeff9b4e6c1fd3ae8f6d0156a9235c42dd88fd40b5b3",
+      "label": "ItemDesc_3d898b",
+      "path": "src/data/items.h",
+      "references": [
+        4054232
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4033001,
+      "length": 94,
+      "hash": "06b90d57c670b5c34310148bcbfbd3510ba7f89aa09986880ce81daa46ccc83c",
+      "label": "ItemDesc_3d89e9",
+      "path": "src/data/items.h",
+      "references": [
+        4054276
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4033095,
+      "length": 61,
+      "hash": "335dabe20e4d7c4901794bc044b1030fdb5688eac53bca02a32f9e9c50676d3c",
+      "label": "ItemDesc_3d8a47",
+      "path": "src/data/items.h",
+      "references": [
+        4054320
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4033156,
+      "length": 82,
+      "hash": "2e4d027cf6c9ceeb4408b294668073648a2ce0c88cafcae9e8620c5fd2d4542c",
+      "label": "ItemDesc_3d8a84",
+      "path": "src/data/items.h",
+      "references": [
+        4054364
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4033238,
+      "length": 102,
+      "hash": "a51749112290348f8a6ab7e41dc82bdb68d14996aa9f8692c625888799325970",
+      "label": "ItemDesc_3d8ad6",
+      "path": "src/data/items.h",
+      "references": [
+        4054408
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4033340,
+      "length": 87,
+      "hash": "62822955f413cfa423e1ed353de1eb9548f419732d6aff797f1501b2e62d1661",
+      "label": "ItemDesc_3d8b3c",
+      "path": "src/data/items.h",
+      "references": [
+        4054452
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4033427,
+      "length": 88,
+      "hash": "c022d90e802a124bc06c41cec6830310d54ba3784a6726f0cebc3281fadf990b",
+      "label": "ItemDesc_3d8b93",
+      "path": "src/data/items.h",
+      "references": [
+        4054496
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4033515,
+      "length": 89,
+      "hash": "055542ea826c8556ed2dd384f931edde4a74900066a6771ebe6b2dcb3b628264",
+      "label": "ItemDesc_3d8beb",
+      "path": "src/data/items.h",
+      "references": [
+        4054540
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4033604,
+      "length": 90,
+      "hash": "3a3053c93c5637276e30ac976bfa1f7a9489a7d9220c44d48eb0e0058a66101e",
+      "label": "ItemDesc_3d8c44",
+      "path": "src/data/items.h",
+      "references": [
+        4054584
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4033694,
+      "length": 92,
+      "hash": "0f7ba4c3ddc6ba07b9ae5afb6cded3ea3bb4458ff4480940d9cfd7c995a49c1c",
+      "label": "ItemDesc_3d8c9e",
+      "path": "src/data/items.h",
+      "references": [
+        4054628
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4033786,
+      "length": 88,
+      "hash": "6e68376e57b1e5cf0e4146781b7c60a17a610e4015efd79833693d85c806dc7b",
+      "label": "ItemDesc_3d8cfa",
+      "path": "src/data/items.h",
+      "references": [
+        4054716
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4033874,
+      "length": 85,
+      "hash": "29f73e41cb2450f4c9e8fef084a483a5bceb7363d8be8c609c80c4f36473e2fb",
+      "label": "ItemDesc_3d8d52",
+      "path": "src/data/items.h",
+      "references": [
+        4054760
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4033959,
+      "length": 78,
+      "hash": "15cf4f0f1cc27c3419962289c2f7f5eb2ea4ed10f96eab77c94a904f2fa7911a",
+      "label": "ItemDesc_3d8da7",
+      "path": "src/data/items.h",
+      "references": [
+        4054804
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4034037,
+      "length": 70,
+      "hash": "6f468f77be6bc363baab4b0cabe1841c53b9d09b62a3dd0712b183636eed96e5",
+      "label": "ItemDesc_3d8df5",
+      "path": "src/data/items.h",
+      "references": [
+        4054848
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4034107,
+      "length": 69,
+      "hash": "098aecee7b28bbd2b9a07354bf8d40305ea0d63175123a2fd6b50e99b995dc83",
+      "label": "ItemDesc_3d8e3b",
+      "path": "src/data/items.h",
+      "references": [
+        4054892
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4034176,
+      "length": 88,
+      "hash": "c8c965afde5ab62fd0a4fb21ff58c94a646d4ce2ddd59e9e70219474b0dde39f",
+      "label": "ItemDesc_3d8e80",
+      "path": "src/data/items.h",
+      "references": [
+        4054936
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4034264,
+      "length": 85,
+      "hash": "51b1afc993482401f83b8aea841399fae46004b74e35428a8f8fe7db24d8ede0",
+      "label": "ItemDesc_3d8ed8",
+      "path": "src/data/items.h",
+      "references": [
+        4054980
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4034349,
+      "length": 109,
+      "hash": "db75b6d56b11d6bf082e3f669e84ccb9e2b343dfcfa37b38a205fbf14dec3d7e",
+      "label": "ItemDesc_3d8f2d",
+      "path": "src/data/items.h",
+      "references": [
+        4055024
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4034458,
+      "length": 85,
+      "hash": "78e65313c10bf8222d410b4a0af615fbc3400265ab44e82bd8bb55c2e810301f",
+      "label": "ItemDesc_3d8f9a",
+      "path": "src/data/items.h",
+      "references": [
+        4055068
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4034543,
+      "length": 86,
+      "hash": "fdfa872a5d149b15da195bfc600615021a3c6659a1a8ad24cc8c627fc2d427af",
+      "label": "ItemDesc_3d8fef",
+      "path": "src/data/items.h",
+      "references": [
+        4055112
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4034629,
+      "length": 80,
+      "hash": "101017926425dd2cdbb242b77f1f62c352b572d4b2b606ab9e7e3bd7f451e91f",
+      "label": "ItemDesc_3d9045",
+      "path": "src/data/items.h",
+      "references": [
+        4055156
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4034709,
+      "length": 94,
+      "hash": "5163b66ddb8de5c4ff8ce8d672841f5cbd22d3e1604988caef731f39ed770481",
+      "label": "ItemDesc_3d9095",
+      "path": "src/data/items.h",
+      "references": [
+        4055200
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4034803,
+      "length": 84,
+      "hash": "485f791c7448e7634510301c55415c8233c8bcc94b4c60b75517f07c18dc0d23",
+      "label": "ItemDesc_3d90f3",
+      "path": "src/data/items.h",
+      "references": [
+        4055244
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4034887,
+      "length": 98,
+      "hash": "24ac9a4ba6c44c2415151b25e7fa9ee4abcb84b27716d18eca63adb38bf18e03",
+      "label": "ItemDesc_3d9147",
+      "path": "src/data/items.h",
+      "references": [
+        4055288
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4034985,
+      "length": 98,
+      "hash": "d0973ef73db7e5c08809786fb8da9db9ed6f178691f3224d55329461d36d84b9",
+      "label": "ItemDesc_3d91a9",
+      "path": "src/data/items.h",
+      "references": [
+        4055332
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4035083,
+      "length": 98,
+      "hash": "11882ea0cc949087ec19ad0635d969b46ad5cd810bbb036b921347c58d5eea5b",
+      "label": "ItemDesc_3d920b",
+      "path": "src/data/items.h",
+      "references": [
+        4055376
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4035181,
+      "length": 98,
+      "hash": "0dcc1f7d611a99737788836c0e1f7495d05a0dbe1515bf2d0a900a497d47423c",
+      "label": "ItemDesc_3d926d",
+      "path": "src/data/items.h",
+      "references": [
+        4055420
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4035279,
+      "length": 96,
+      "hash": "d084468e2015398c777b0ac90e5bddf8780ce6179bae4bde51337aa29f601011",
+      "label": "ItemDesc_3d92cf",
+      "path": "src/data/items.h",
+      "references": [
+        4055464
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4035375,
+      "length": 91,
+      "hash": "9b7ca4274e1a4906ed40d8dbbfefe9e0c7ecc84b22f5c0cb0e5200e00fb63dec",
+      "label": "ItemDesc_3d932f",
+      "path": "src/data/items.h",
+      "references": [
+        4055508
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4035466,
+      "length": 85,
+      "hash": "e51116525e22c5462ccfb6453e5a14993d45c1146e677ab64ab25cb522f5b004",
+      "label": "ItemDesc_3d938a",
+      "path": "src/data/items.h",
+      "references": [
+        4055552
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4035551,
+      "length": 90,
+      "hash": "3cd32bfcace6f8f69c988eb6983a91ef2fa666a9481771c69fe6bd706514a4e7",
+      "label": "ItemDesc_3d93df",
+      "path": "src/data/items.h",
+      "references": [
+        4055596
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4040769,
+      "length": 73,
+      "hash": "1d079d2a4170ac6184b06eb68103312b90cf8da75bc4e52d596f8642b199ed09",
+      "label": "ItemDesc_3da841",
+      "path": "src/data/items.h",
+      "references": [
+        4058280
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4040842,
+      "length": 76,
+      "hash": "69c0e878171e8c28946bb3d9d035d5a65c4558430a52813c800609fa3c010ce5",
+      "label": "ItemDesc_3da88a",
+      "path": "src/data/items.h",
+      "references": [
+        4058324
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4040918,
+      "length": 78,
+      "hash": "40d89e94f3aefb339a80a98235b9ebda23a1afafbb1da6c61f7f3781e1e87361",
+      "label": "ItemDesc_3da8d6",
+      "path": "src/data/items.h",
+      "references": [
+        4058368
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4040996,
+      "length": 83,
+      "hash": "e19ab95ecd05e74c31eec55b4e5126367edf5125e0fae8ac93ec938bf06047c9",
+      "label": "ItemDesc_3da924",
+      "path": "src/data/items.h",
+      "references": [
+        4058412
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4041079,
+      "length": 83,
+      "hash": "79c354891811c1d1769c7108baa264629209d2eb3963d5f45aa2806aa2e139f2",
+      "label": "ItemDesc_3da977",
+      "path": "src/data/items.h",
+      "references": [
+        4058456
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4041162,
+      "length": 97,
+      "hash": "0b025a6dbea7b60c059feebc793702d9a804b33de25bd25436552a714e814b34",
+      "label": "ItemDesc_3da9ca",
+      "path": "src/data/items.h",
+      "references": [
+        4058500
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4041259,
+      "length": 79,
+      "hash": "7e059b2c37a3cfc90c7a528e700ec545f11901c7e455d3fdd907f6adaa56b14b",
+      "label": "ItemDesc_3daa2b",
+      "path": "src/data/items.h",
+      "references": [
+        4058544
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4041338,
+      "length": 90,
+      "hash": "9bcff3e183556dfa7598a9e2f842b468a77e4c29874f99cabf19bd99aab8fed6",
+      "label": "ItemDesc_3daa7a",
+      "path": "src/data/items.h",
+      "references": [
+        4058588
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4041428,
+      "length": 89,
+      "hash": "3c3d510f530d8540ceccfbc03376ea7f2623d02dc83efaf3476b463d443de533",
+      "label": "ItemDesc_3daad4",
+      "path": "src/data/items.h",
+      "references": [
+        4058632
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4041517,
+      "length": 86,
+      "hash": "6b0ebbd35c236ef08d64d920137f0c9b0229c96c48dc54dc2e4846ecd379dc9a",
+      "label": "ItemDesc_3dab2d",
+      "path": "src/data/items.h",
+      "references": [
+        4058676
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4041603,
+      "length": 70,
+      "hash": "0c1e55bbcf1a4456c1a941b1ef73391365ba1d0f5dd0ae4aa8fdba747eb3599a",
+      "label": "ItemDesc_3dab83",
+      "path": "src/data/items.h",
+      "references": [
+        4058720
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4041673,
+      "length": 70,
+      "hash": "d647f1fecf84c79d86aaded8d1ccea046d3496cc1b007446ef37eb036a23d145",
+      "label": "ItemDesc_3dabc9",
+      "path": "src/data/items.h",
+      "references": [
+        4058764
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4041743,
+      "length": 88,
+      "hash": "2c2780daff7c98d219b801b3e95a364bdf92ea9f276dd54c1dcdf35303bf453d",
+      "label": "ItemDesc_3dac0f",
+      "path": "src/data/items.h",
+      "references": [
+        4058808
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4041831,
+      "length": 90,
+      "hash": "3a1ac5543e6a1c366fe2c8edc1aae12b15df8cd8b291aab2a058eed3dcb6e4f6",
+      "label": "ItemDesc_3dac67",
+      "path": "src/data/items.h",
+      "references": [
+        4058852
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4041921,
+      "length": 84,
+      "hash": "cbac2bec7d3c475a8717b82129b6e842d9cb56cd1cd9f885921af8994f0de664",
+      "label": "ItemDesc_3dacc1",
+      "path": "src/data/items.h",
+      "references": [
+        4058896
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4042005,
+      "length": 92,
+      "hash": "7eec3d6d57fd127c5a48448846323f6840466fa974396da3a018fba12962ae20",
+      "label": "ItemDesc_3dad15",
+      "path": "src/data/items.h",
+      "references": [
+        4058940
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4042097,
+      "length": 91,
+      "hash": "b49361139b89cb435685d19573ec3a9f898cb1818ff6dabd05f9245ebd894e1e",
+      "label": "ItemDesc_3dad71",
+      "path": "src/data/items.h",
+      "references": [
+        4058984
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4042188,
+      "length": 82,
+      "hash": "c42a12666481dfd7cb601304b8ed14f7b212d7ceeef7f0a89b6d6dd3c7e0661b",
+      "label": "ItemDesc_3dadcc",
+      "path": "src/data/items.h",
+      "references": [
+        4059028
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4042270,
+      "length": 90,
+      "hash": "a8cf9ad7f7bf8189d05aeeedf2699061e75e51fda7b5777a9874df0a389da011",
+      "label": "ItemDesc_3dae1e",
+      "path": "src/data/items.h",
+      "references": [
+        4059072
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4042360,
+      "length": 96,
+      "hash": "3eca6eea8dbf2433389f656d726a7a79d3bd1eb699569010449e27f92d333bb4",
+      "label": "ItemDesc_3dae78",
+      "path": "src/data/items.h",
+      "references": [
+        4059116
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4042456,
+      "length": 78,
+      "hash": "84c44c3f8070700b04293380597d4271bff28404b0b57f9c7beb72d642e7dd9b",
+      "label": "ItemDesc_3daed8",
+      "path": "src/data/items.h",
+      "references": [
+        4059160
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4042534,
+      "length": 81,
+      "hash": "b9972311aa866ab20eb3fd5c25427bfe6e24c101cf94b9c30549c3ebdb9b9cfb",
+      "label": "ItemDesc_3daf26",
+      "path": "src/data/items.h",
+      "references": [
+        4059204
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4042615,
+      "length": 75,
+      "hash": "c045d6a3e4245ca5e3e1c0ef2de87c6e535c311b32e4bddd97ea33d86c1f8d28",
+      "label": "ItemDesc_3daf77",
+      "path": "src/data/items.h",
+      "references": [
+        4059248
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4042690,
+      "length": 59,
+      "hash": "ac2c6f9765d97f03f05d496b34aa650583cfd8804a99070b36d8af2d569c6404",
+      "label": "ItemDesc_3dafc2",
+      "path": "src/data/items.h",
+      "references": [
+        4059292
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4042749,
+      "length": 73,
+      "hash": "37abe2e876ebc8ac4f3d61eac149c847b98fbe140c687a2f3a7f33532d548cb3",
+      "label": "ItemDesc_3daffd",
+      "path": "src/data/items.h",
+      "references": [
+        4059336
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4042822,
+      "length": 74,
+      "hash": "32f0a83ae5e60da1a2266835e903a3b3b1b9ef86ded7634c3633cbf25fa582e3",
+      "label": "ItemDesc_3db046",
+      "path": "src/data/items.h",
+      "references": [
+        4059380
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4042896,
+      "length": 6,
+      "hash": "ec45e68444f03d689a427384f5f9405dcb6f5bab8e7f45489a8d79e0fd196dd8",
+      "label": "ItemDesc_3db090",
+      "path": "src/data/items.h",
+      "references": [
+        4042924
+      ],
+      "category": "description"
+    },
+    {
+      "offset": 4283736,
+      "length": 5,
+      "hash": "0dc36acaa27bb53e80276535e8858b9386aefced532af36872890ca810ab4a8d",
+      "label": "gText_Ui_415d58",
+      "path": "src/strings.c",
+      "references": [
+        996996
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4283804,
+      "length": 9,
+      "hash": "8e1a6c26f1e67af0132851cc0e164f7d61f69de76afd896be9d638494575a5a4",
+      "label": "gText_Ui_415d9c",
+      "path": "src/strings.c",
+      "references": [
+        1241008
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4283832,
+      "length": 7,
+      "hash": "719669b521c9ee7102a6fe26a5d76b176e0e9ed47f5a401502953e83b9a855e0",
+      "label": "gText_Ui_415db8",
+      "path": "src/strings.c",
+      "references": [
+        1241012,
+        1242364,
+        1242788
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4283840,
+      "length": 14,
+      "hash": "cec594dcf5fb0ac87d7b18c273fd239d91956c570d79716096051b6958bf2c81",
+      "label": "gText_Ui_415dc0",
+      "path": "src/strings.c",
+      "references": [
+        1241264,
+        1242808
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4283856,
+      "length": 23,
+      "hash": "363a0f58d27dfd3e3436cd8556acf444392d0c6edb975dbba9ccb1c98541f3eb",
+      "label": "gText_Ui_415dd0",
+      "path": "src/strings.c",
+      "references": [
+        994764
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4283880,
+      "length": 18,
+      "hash": "dceb184869e43cfaa81cecdc0e4f4e191bd2ca029e2577c3719c51dc6efd129e",
+      "label": "gText_Ui_415de8",
+      "path": "src/strings.c",
+      "references": [
+        994712
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4283900,
+      "length": 7,
+      "hash": "3735e258031f3c76c0615c49d2604a99ca505a30f21f927ee7505f32f45ce3b9",
+      "label": "gText_Ui_415dfc",
+      "path": "src/strings.c",
+      "references": [
+        995700
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4283916,
+      "length": 28,
+      "hash": "7cc9000a799789f5c1f7efd05ff19283e50f5d09c00b894ca0b86378c7eefc7f",
+      "label": "gText_Ui_415e0c",
+      "path": "src/strings.c",
+      "references": [
+        1060652
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4283944,
+      "length": 12,
+      "hash": "39463ed48190b9d99faed7b3bd7f4991b3b7c91ad5acf9abcf8620ba7a7f8b6a",
+      "label": "gText_Ui_415e28",
+      "path": "src/strings.c",
+      "references": [
+        1060656
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284333,
+      "length": 13,
+      "hash": "87f381ec785fc65bd78cc256106a66296899c807512cda09113bf3af64c8217c",
+      "label": "gText_Ui_415fad",
+      "path": "src/strings.c",
+      "references": [
+        1061544
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284346,
+      "length": 7,
+      "hash": "15f605354293e3ddbd1b08b43773af90ee16b9af5519481d71ef41295a9151bf",
+      "label": "gText_Ui_415fba",
+      "path": "src/strings.c",
+      "references": [
+        1062280
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284353,
+      "length": 21,
+      "hash": "db9fcc2fee3837735daf2115601aff867359c5281135e14f344f7182ef9278b1",
+      "label": "gText_Ui_415fc1",
+      "path": "src/strings.c",
+      "references": [
+        1061548,
+        1062284,
+        1319968
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284380,
+      "length": 35,
+      "hash": "3e1dd46291adcba8489dcc1fe532766bd810c17d3b6110ccfb501d10ac4cddd6",
+      "label": "gText_Ui_415fdc",
+      "path": "src/strings.c",
+      "references": [
+        1069252
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284424,
+      "length": 3,
+      "hash": "fdd657ed21dc07bb10155e3a0e43eb908238b133e2880f497f12c24c9c5c4658",
+      "label": "gText_Ui_416008",
+      "path": "src/strings.c",
+      "references": [
+        1071600
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284427,
+      "length": 3,
+      "hash": "134e5f2fb6d57017bf2853d7278fd00b72c4ec08a2ff73437dd24b306a709f19",
+      "label": "gText_Ui_41600b",
+      "path": "src/strings.c",
+      "references": [
+        1072420
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284445,
+      "length": 6,
+      "hash": "b98c08502a53ee4b43b61c6d6b69b1f74c3019d7c3a7a82dde30d50bf0a30b13",
+      "label": "gText_Ui_41601d",
+      "path": "src/strings.c",
+      "references": [
+        1073244,
+        1075248
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284451,
+      "length": 21,
+      "hash": "31a7e8631caa5bdd9ce3c91b200cca48f5bc8fc35aee59d1d4b4ba511ab173fd",
+      "label": "gText_Ui_416023",
+      "path": "src/strings.c",
+      "references": [
+        1073248
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284472,
+      "length": 7,
+      "hash": "719669b521c9ee7102a6fe26a5d76b176e0e9ed47f5a401502953e83b9a855e0",
+      "label": "gText_Ui_416038",
+      "path": "src/strings.c",
+      "references": [
+        1073288
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284479,
+      "length": 25,
+      "hash": "b5cc95dd2ebd1b8992efa6e6177b70b83148ff261b5701033e68bf55f3385ee0",
+      "label": "gText_Ui_41603f",
+      "path": "src/strings.c",
+      "references": [
+        1075252
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284504,
+      "length": 5,
+      "hash": "2d5287dc243aa02b9cc7bcf8baab01e136ebd65a30be20e6b4b200ac533ecaec",
+      "label": "gText_Ui_416058",
+      "path": "src/strings.c",
+      "references": [
+        1074412
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284509,
+      "length": 5,
+      "hash": "54613c72eaafa407f01bdd7558be05edef03dcb6676de58c1b8d22fcddd56b35",
+      "label": "gText_Ui_41605d",
+      "path": "src/strings.c",
+      "references": [
+        1074408
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284514,
+      "length": 13,
+      "hash": "86a7c11d500a603d23da005360392af9d47d39e200429c39a234d885a5f83f04",
+      "label": "gText_Ui_416062",
+      "path": "src/strings.c",
+      "references": [
+        1075244
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284530,
+      "length": 5,
+      "hash": "ce97a6b535ca8f0a1e935c850a70b580eb719db2ebd3fb70e8b1faf183ec2907",
+      "label": "gText_Ui_416072",
+      "path": "src/strings.c",
+      "references": [
+        1068928
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284728,
+      "length": 34,
+      "hash": "38f84ef174ae64bd334ce0059630e79a27d57a91ae096f3420b189d7791644e8",
+      "label": "gText_Ui_416138",
+      "path": "src/strings.c",
+      "references": [
+        993396
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284780,
+      "length": 5,
+      "hash": "9bde0f58ee339580c144ab41878e5d326c7dfb81b5a5452ba8dd53591926ab8b",
+      "label": "gText_Ui_41616c",
+      "path": "src/strings.c",
+      "references": [
+        996976
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284788,
+      "length": 6,
+      "hash": "1387e9cb7656ad79de7ab08db7b3f872c8f6f21287c898d81161da5d4c1e6fec",
+      "label": "gText_Ui_416174",
+      "path": "src/strings.c",
+      "references": [
+        996432,
+        996984
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284906,
+      "length": 7,
+      "hash": "0b90f2672f94c90ce69fd0734d96736deddd29ca414786ab3e2f3cc8d9356496",
+      "label": "gText_Ui_4161ea",
+      "path": "src/strings.c",
+      "references": [
+        458368
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284928,
+      "length": 5,
+      "hash": "0dc36acaa27bb53e80276535e8858b9386aefced532af36872890ca810ab4a8d",
+      "label": "gText_Ui_416200",
+      "path": "src/strings.c",
+      "references": [
+        458388
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284977,
+      "length": 7,
+      "hash": "03ac9986464b5a7e02ee4512f7cbea16680e91c590f5ad20978095cf9457cbcd",
+      "label": "gText_Ui_416231",
+      "path": "src/strings.c",
+      "references": [
+        635616,
+        938508,
+        1082824,
+        1104316,
+        1109452,
+        1184352,
+        1237060,
+        1274712,
+        4203144,
+        4534072,
+        4538340,
+        4564616,
+        4564672,
+        4615768,
+        4615824,
+        4615848,
+        4615872,
+        4615888
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4284984,
+      "length": 5,
+      "hash": "132f2e3e8a22a90561d6a78dc04d00dcee585b885f1506f1bb9357a744e78738",
+      "label": "gText_Ui_416238",
+      "path": "src/strings.c",
+      "references": [
+        288836,
+        645328,
+        1184440,
+        2488444,
+        4062896,
+        4062960,
+        4063008,
+        4063032,
+        4063048,
+        4063064,
+        4063080,
+        4063104,
+        4063128,
+        4063160,
+        4063280,
+        4063360,
+        4063376,
+        4063392,
+        4063416,
+        4063432,
+        4063456,
+        4063480,
+        4063512,
+        4063528,
+        4063552,
+        4063576,
+        4063608,
+        4063632,
+        4063664,
+        4063696,
+        4063736,
+        4063864,
+        4063888,
+        4063920,
+        4063976,
+        4064000,
+        4064024,
+        4064056,
+        4064080,
+        4064104,
+        4064128,
+        4064184,
+        4064216,
+        4064240,
+        4064264,
+        4064296,
+        4064328,
+        4064360,
+        4064392,
+        4064424,
+        4064440,
+        4064464,
+        4064488,
+        4064528,
+        4064536,
+        4152412,
+        4152472,
+        4152488,
+        4152544,
+        4152664,
+        4152676,
+        4203184,
+        4600256,
+        4604916
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4285023,
+      "length": 5,
+      "hash": "9056e13b278d8cf2cf6daa07c6b37c8e03c9bbc6e018e81b2905c547b93953b7",
+      "label": "gText_Ui_41625f",
+      "path": "src/strings.c",
+      "references": [
+        1270700
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4285101,
+      "length": 7,
+      "hash": "dbf60c3cec49440d108ecbe1a26aa4f31ebaded998cf87c26b66776f7ffa9fbe",
+      "label": "gText_Ui_4162ad",
+      "path": "src/strings.c",
+      "references": [
+        1114392
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4285272,
+      "length": 13,
+      "hash": "6535ff95b504168a3512f0f45d814c022102be9de2585aab9d55c9fb9920ccbc",
+      "label": "gText_Ui_416358",
+      "path": "src/strings.c",
+      "references": [
+        1096272
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4285285,
+      "length": 10,
+      "hash": "43ff5c24c7adcb0b62f6099d1c0c6fd5b9f5b7e0ac371bad6aa90423bf22c55d",
+      "label": "gText_Ui_416365",
+      "path": "src/strings.c",
+      "references": [
+        1083644
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4285295,
+      "length": 16,
+      "hash": "c3d0b244f0d8fb63a2829381addb355a1792f4777b9ada472862ce48f71b9a05",
+      "label": "gText_Ui_41636f",
+      "path": "src/strings.c",
+      "references": [
+        1088556,
+        1106888,
+        1301992
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4286132,
+      "length": 17,
+      "hash": "850351f279fe2c0631422b2d3314b274a82abdbaaecef5c29a07417e2e7f23ae",
+      "label": "gText_Ui_4166b4",
+      "path": "src/strings.c",
+      "references": [
+        660820
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4286283,
+      "length": 6,
+      "hash": "5d2a3e2735021d389937bfb3146842ba88e7cbc96f1554510835f000dc29c953",
+      "label": "gText_Ui_41674b",
+      "path": "src/strings.c",
+      "references": [
+        1252784,
+        1299208
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4286393,
+      "length": 14,
+      "hash": "68627eea743afe17d371b0d0d3b54fb0954c479df97e85672f8f6f3de2c8f176",
+      "label": "gText_Ui_4167b9",
+      "path": "src/strings.c",
+      "references": [
+        638304
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4287045,
+      "length": 3,
+      "hash": "158d14dee6b125fe810d10c4631714190155114308eebd686c6c9ec7cdaa85aa",
+      "label": "gText_Ui_416a45",
+      "path": "src/strings.c",
+      "references": [
+        1184244
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4290839,
+      "length": 14,
+      "hash": "514cc2884048d5d69715e6c23a6083b371c242e4ec5007200f4f8afc565c6add",
+      "label": "gText_Ui_417917",
+      "path": "src/strings.c",
+      "references": [
+        1104848
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4291643,
+      "length": 8,
+      "hash": "75923f0addb738610322e57c0bca712643c04471ccc7d819b448fc428ca270f0",
+      "label": "gText_Ui_417c3b",
+      "path": "src/strings.c",
+      "references": [
+        643396,
+        643564
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4292189,
+      "length": 6,
+      "hash": "4e6e05151522f79754deadccfdbb88b4f21a165c16016b10f607dc3ee8a3c16f",
+      "label": "gText_Ui_417e5d",
+      "path": "src/strings.c",
+      "references": [
+        645324
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4292837,
+      "length": 8,
+      "hash": "0d53d212b6656f17fe5cd9845ba6d2c2773bac38e74fab1efa2b37d11bb9bf05",
+      "label": "gText_Ui_4180e5",
+      "path": "src/strings.c",
+      "references": [
+        833092
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4293092,
+      "length": 20,
+      "hash": "c0a5317a56f51e5996af1bd8db054615947e33a5c79bf22467a9f4a80da79298",
+      "label": "gText_Ui_4181e4",
+      "path": "src/strings.c",
+      "references": [
+        842932
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4293112,
+      "length": 28,
+      "hash": "725a255abbb14240a040c5f79a3dd36cb72e3f7a6f53753e5eccfca452e18f3c",
+      "label": "gText_Ui_4181f8",
+      "path": "src/strings.c",
+      "references": [
+        842460
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4293140,
+      "length": 18,
+      "hash": "8ec1fed2d771c01ae42f0f12e2f87c2c472b67c8198c12835e9008e2fc1fd161",
+      "label": "gText_Ui_418214",
+      "path": "src/strings.c",
+      "references": [
+        842948
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4296423,
+      "length": 19,
+      "hash": "1d19c5e910a6dd0ba824cf5fdc7cf97daa7c79ca5857b417d9e193277f46553a",
+      "label": "gText_Ui_418ee7",
+      "path": "src/strings.c",
+      "references": [
+        654200
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4296445,
+      "length": 8,
+      "hash": "9d1f9a330dbd9699a906998a0fd54f2a0002a2100edcd7d001250e58f2511a71",
+      "label": "gText_Ui_418efd",
+      "path": "src/strings.c",
+      "references": [
+        788152,
+        794248,
+        796784
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4296453,
+      "length": 9,
+      "hash": "2f4f4545decabf54d122627edf109df577af8857f01ba91a8c1cdb48f5a6cd66",
+      "label": "gText_Ui_418f05",
+      "path": "src/strings.c",
+      "references": [
+        788240,
+        807124
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4296462,
+      "length": 9,
+      "hash": "2f4f4545decabf54d122627edf109df577af8857f01ba91a8c1cdb48f5a6cd66",
+      "label": "gText_Ui_418f0e",
+      "path": "src/strings.c",
+      "references": [
+        793404
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4296471,
+      "length": 9,
+      "hash": "49eef416b1986dd964cd0baf2564d28a6f6f639c23aa5000fcd6971e42094421",
+      "label": "gText_Ui_418f17",
+      "path": "src/strings.c",
+      "references": [
+        788204,
+        791288
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4296480,
+      "length": 5,
+      "hash": "57ccd7a12d65abf284af0d9007ab124d1ceaaefd27967f0863dd383359c26474",
+      "label": "gText_Ui_418f20",
+      "path": "src/strings.c",
+      "references": [
+        790504,
+        792236,
+        806928,
+        807164
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4296485,
+      "length": 7,
+      "hash": "2fa8c029ae585fc4cfafc8d55063f3bf6a5093c1ae012ea992a5b32ef24f22c5",
+      "label": "gText_Ui_418f25",
+      "path": "src/strings.c",
+      "references": [
+        787948,
+        791284,
+        796752,
+        806908
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4296492,
+      "length": 7,
+      "hash": "f61bf059b2ec126e3bc66acbe5bcb6520ca0f5babf8a2a081be712df19255686",
+      "label": "gText_Ui_418f2c",
+      "path": "src/strings.c",
+      "references": [
+        790820
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4299917,
+      "length": 13,
+      "hash": "67aeba3d21430c42529be040c1321902bdce309b96365b33e7847cb8482730c2",
+      "label": "gText_Ui_419c8d",
+      "path": "src/strings.c",
+      "references": [
+        1277424
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4299930,
+      "length": 15,
+      "hash": "e8efcc34c9305316b08a19c8112bd66205ea1aee719719c2cd6d41f08eb69513",
+      "label": "gText_Ui_419c9a",
+      "path": "src/strings.c",
+      "references": [
+        1277460
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4299945,
+      "length": 12,
+      "hash": "5372495ec37d75d4bc1b19d6b9bac6d8c06a68376f3e66718e0ce7cbfb72a004",
+      "label": "gText_Ui_419ca9",
+      "path": "src/strings.c",
+      "references": [
+        1265768,
+        1266584,
+        1277484,
+        1277524,
+        1277588
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4299965,
+      "length": 12,
+      "hash": "717fbbb7d635acb2f76fefdf5dce535c0e4cb57769ad6a87a94942ccff700c08",
+      "label": "gText_Ui_419cbd",
+      "path": "src/strings.c",
+      "references": [
+        1276776
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4299977,
+      "length": 9,
+      "hash": "ff146a2f9469eeb3f77dfcccfbd109ce9f40479a03509d3aba7a7bd52fcfb9ac",
+      "label": "gText_Ui_419cc9",
+      "path": "src/strings.c",
+      "references": [
+        1276780
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4299986,
+      "length": 16,
+      "hash": "7bb7496258289e0ff437d1a09aa386d49343612f25a309ebca15a4b2ce089064",
+      "label": "gText_Ui_419cd2",
+      "path": "src/strings.c",
+      "references": [
+        1277432
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300002,
+      "length": 9,
+      "hash": "2f4f4545decabf54d122627edf109df577af8857f01ba91a8c1cdb48f5a6cd66",
+      "label": "gText_Ui_419ce2",
+      "path": "src/strings.c",
+      "references": [
+        1277440
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300011,
+      "length": 7,
+      "hash": "79563999dd87367e47f933697f27cfd1710f997f282ea013800fb0756ddf3d6f",
+      "label": "gText_Ui_419ceb",
+      "path": "src/strings.c",
+      "references": [
+        1277464
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300018,
+      "length": 16,
+      "hash": "829a20cea15eebab9da20b34b70b1088ca3905b014e740a2c7c3c9ae648ae2d0",
+      "label": "gText_Ui_419cf2",
+      "path": "src/strings.c",
+      "references": [
+        1266588,
+        1277488
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300034,
+      "length": 16,
+      "hash": "927cfd433eca578606ad82574b97429f227961c2a12996225fe4ca51d087dd78",
+      "label": "gText_Ui_419d02",
+      "path": "src/strings.c",
+      "references": [
+        1265784,
+        1277536
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300050,
+      "length": 7,
+      "hash": "f61bf059b2ec126e3bc66acbe5bcb6520ca0f5babf8a2a081be712df19255686",
+      "label": "gText_Ui_419d12",
+      "path": "src/strings.c",
+      "references": [
+        1265796,
+        1277556
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300057,
+      "length": 16,
+      "hash": "f1f497df315b5bf22bdea29b3cdbaf3aeffc05a1aec6da11044334d779b5930b",
+      "label": "gText_Ui_419d19",
+      "path": "src/strings.c",
+      "references": [
+        1277592
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300106,
+      "length": 7,
+      "hash": "691136d453247a940469f51b8c4d85f3ac4dc41fa73ebe3b98c0918eb77dfe3b",
+      "label": "gText_Ui_419d4a",
+      "path": "src/strings.c",
+      "references": [
+        565096
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300113,
+      "length": 6,
+      "hash": "1387e9cb7656ad79de7ab08db7b3f872c8f6f21287c898d81161da5d4c1e6fec",
+      "label": "gText_Ui_419d51",
+      "path": "src/strings.c",
+      "references": [
+        565216
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300119,
+      "length": 6,
+      "hash": "57c09b3e0a26867f713d2f4d10a8ad44d0fd239adc7a04f114addb61f4d07ba5",
+      "label": "gText_Ui_419d57",
+      "path": "src/strings.c",
+      "references": [
+        565392,
+        565488,
+        655280
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300141,
+      "length": 5,
+      "hash": "0dc36acaa27bb53e80276535e8858b9386aefced532af36872890ca810ab4a8d",
+      "label": "gText_Ui_419d6d",
+      "path": "src/strings.c",
+      "references": [
+        565992,
+        566208
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300223,
+      "length": 8,
+      "hash": "a41c23e8edec1874d32fcf70a9a7f3b2e72eb279651ff28440fd1c33a2d75c50",
+      "label": "gText_Ui_419dbf",
+      "path": "src/strings.c",
+      "references": [
+        567140
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300231,
+      "length": 15,
+      "hash": "6dc6f97297592207cfe74084f7618d66d276b3544fbcf0747dce744247470ae1",
+      "label": "gText_Ui_419dc7",
+      "path": "src/strings.c",
+      "references": [
+        567388
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300246,
+      "length": 23,
+      "hash": "572b6163ffa4dfcd4d388fa5340061f5a24bc8d79081b32c10d018b6e332d2bc",
+      "label": "gText_Ui_419dd6",
+      "path": "src/strings.c",
+      "references": [
+        567800
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300482,
+      "length": 5,
+      "hash": "dad1571207a89fa6ab2ae3ef4524de8f599d8dd6e50e92f76852cae920c66549",
+      "label": "gText_Ui_419ec2",
+      "path": "src/strings.c",
+      "references": [
+        559884
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300487,
+      "length": 27,
+      "hash": "fd7d726ccfd10fb230d0de9707a52c5a9882f0e37adb58035e03e179a453e81a",
+      "label": "gText_Ui_419ec7",
+      "path": "src/strings.c",
+      "references": [
+        558816
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4300740,
+      "length": 34,
+      "hash": "84033f7d6c8c8faa79cb1c79b5caf28b7901154074a208451f18ee8d910b2f10",
+      "label": "gText_Ui_419fc4",
+      "path": "src/strings.c",
+      "references": [
+        344340,
+        457864,
+        991884,
+        1364416,
+        1399620
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4312242,
+      "length": 34,
+      "hash": "84033f7d6c8c8faa79cb1c79b5caf28b7901154074a208451f18ee8d910b2f10",
+      "label": "gText_Ui_41ccb2",
+      "path": "src/strings.c",
+      "references": [
+        1352260
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 1857173,
+      "length": 34,
+      "hash": "84033f7d6c8c8faa79cb1c79b5caf28b7901154074a208451f18ee8d910b2f10",
+      "label": "gText_Ui_1c5695",
+      "path": "src/strings.c",
+      "references": [
+        457036
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4306304,
+      "length": 6,
+      "hash": "f1009237972de6c3db712757f11eca3a0a6199e02043dff7ccef4ce665c13604",
+      "label": "gText_Ui_41b580",
+      "path": "src/strings.c",
+      "references": [
+        1218852
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4306318,
+      "length": 6,
+      "hash": "09691576072c3491f41cf7173b42de460e0ec26dcc616bf0a2acad3cef4dc7a7",
+      "label": "gText_Ui_41b58e",
+      "path": "src/strings.c",
+      "references": [
+        1218868
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4306324,
+      "length": 7,
+      "hash": "4f86372c08cc3bc1767d1b0278178af5a6fd9c93b782c6f153851b3100969f1e",
+      "label": "gText_Ui_41b594",
+      "path": "src/strings.c",
+      "references": [
+        1218876
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4306331,
+      "length": 6,
+      "hash": "9a4a1094048f0aa3e7a5287c128c1641c99c8028a0a1ea4696cd9e654d48ba74",
+      "label": "gText_Ui_41b59b",
+      "path": "src/strings.c",
+      "references": [
+        1218884
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4306337,
+      "length": 4,
+      "hash": "c3efe5b6f11e569121d6151f638be72da9d2706eb66a34652917496455d0ee42",
+      "label": "gText_Ui_41b5a1",
+      "path": "src/strings.c",
+      "references": [
+        1218892
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4306341,
+      "length": 6,
+      "hash": "051490c389a194d5436bc991f20bf91e5bc99b71249db93d450e133083677d47",
+      "label": "gText_Ui_41b5a5",
+      "path": "src/strings.c",
+      "references": [
+        1218900
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4306347,
+      "length": 6,
+      "hash": "de95a0d8917254115b64a38b0a1f836d55657812844526e36c6dd630e4b270ef",
+      "label": "gText_Ui_41b5ab",
+      "path": "src/strings.c",
+      "references": [
+        1218908
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4306353,
+      "length": 10,
+      "hash": "d4c923175ac9c1e62542c7398892af69355688472909fd50b72eecfe47d505ed",
+      "label": "gText_Ui_41b5b1",
+      "path": "src/strings.c",
+      "references": [
+        1218916
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4306363,
+      "length": 9,
+      "hash": "b5cf1f238d38bbc1ab16024b0aafb3a22ab61479027a0a1130e348071003877d",
+      "label": "gText_Ui_41b5bb",
+      "path": "src/strings.c",
+      "references": [
+        1218924
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4306558,
+      "length": 11,
+      "hash": "372f3526382e0e391db44231ec30ff8935c85b02a5ccb0e8414e8e2c5dfc5dd0",
+      "label": "gText_Ui_41b67e",
+      "path": "src/strings.c",
+      "references": [
+        1003868
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4306757,
+      "length": 7,
+      "hash": "0b90f2672f94c90ce69fd0734d96736deddd29ca414786ab3e2f3cc8d9356496",
+      "label": "gText_Ui_41b745",
+      "path": "src/strings.c",
+      "references": [
+        52960
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4306764,
+      "length": 5,
+      "hash": "0dc36acaa27bb53e80276535e8858b9386aefced532af36872890ca810ab4a8d",
+      "label": "gText_Ui_41b74c",
+      "path": "src/strings.c",
+      "references": [
+        53064
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4306921,
+      "length": 31,
+      "hash": "d7959056567faf7299d5c626c3dbbfb6715729c0362fdcf00600882f1f305f45",
+      "label": "gText_Ui_41b7e9",
+      "path": "src/strings.c",
+      "references": [
+        1315920
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4311985,
+      "length": 8,
+      "hash": "879b11a968eea8a5af406a527682f4f74d1caf4ea83f4059a0d3cce5771e3fc5",
+      "label": "gText_Ui_41cbb1",
+      "path": "src/strings.c",
+      "references": [
+        1294928
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4311993,
+      "length": 5,
+      "hash": "2a801fefa0735dca27f7e00f379e6267418b164701932374329b817f7db813f1",
+      "label": "gText_Ui_41cbb9",
+      "path": "src/strings.c",
+      "references": [
+        1292928
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4312019,
+      "length": 21,
+      "hash": "e4fdb4b2741bfd3f33b674a4ba280e079bb8d3401294b45c87a8be0e741b5279",
+      "label": "gText_Ui_41cbd3",
+      "path": "src/strings.c",
+      "references": [
+        1357636
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4313352,
+      "length": 11,
+      "hash": "db7462490ec7c04029ad65ce463a90dd5d77e60b381e1e1ac8634176d84b7bd6",
+      "label": "gText_Ui_41d108",
+      "path": "src/strings.c",
+      "references": [
+        1369600,
+        1370784
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4313516,
+      "length": 11,
+      "hash": "28c39fe764ff6c85220eeb7041c364061ef8ed5dfd35adcd7dbfcda09d429717",
+      "label": "gText_Ui_41d1ac",
+      "path": "src/strings.c",
+      "references": [
+        1370760
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4317205,
+      "length": 7,
+      "hash": "719669b521c9ee7102a6fe26a5d76b176e0e9ed47f5a401502953e83b9a855e0",
+      "label": "gText_Ui_41e015",
+      "path": "src/strings.c",
+      "references": [
+        1228020
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4317212,
+      "length": 18,
+      "hash": "2da68cbbbfd82c9bed0bff60f0f039273c418c55241ef7fbbb80618dd627fc9d",
+      "label": "gText_Ui_41e01c",
+      "path": "src/strings.c",
+      "references": [
+        1226128
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4317230,
+      "length": 11,
+      "hash": "fb090c3e4732a31084157e7db49e12fc28abd0f490a3e848f5f5b834fc2ac82c",
+      "label": "gText_Ui_41e02e",
+      "path": "src/strings.c",
+      "references": [
+        1228488
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4317241,
+      "length": 21,
+      "hash": "db9fcc2fee3837735daf2115601aff867359c5281135e14f344f7182ef9278b1",
+      "label": "gText_Ui_41e039",
+      "path": "src/strings.c",
+      "references": [
+        1226368
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4317481,
+      "length": 7,
+      "hash": "03ac9986464b5a7e02ee4512f7cbea16680e91c590f5ad20978095cf9457cbcd",
+      "label": "gText_Ui_41e129",
+      "path": "src/strings.c",
+      "references": [
+        2498364
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 1781479,
+      "length": 7,
+      "hash": "03ac9986464b5a7e02ee4512f7cbea16680e91c590f5ad20978095cf9457cbcd",
+      "label": "gText_Ui_1b2ee7",
+      "path": "src/strings.c",
+      "references": [
+        1226696
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 1857471,
+      "length": 9,
+      "hash": "71f22d106d259186e418f0c422c9f8ca600be781f0050dba987c80c6109ee094",
+      "label": "gText_Ui_1c57bf",
+      "path": "src/strings.c",
+      "references": [
+        1251164
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4318740,
+      "length": 21,
+      "hash": "4f5c46b5d091b593d36b38b6524293d60f8e494351b11a73c9d386af9863f350",
+      "label": "gText_Ui_41e614",
+      "path": "src/strings.c",
+      "references": [
+        1233372
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4318761,
+      "length": 25,
+      "hash": "b8ec762d4e7426d095b37985929af4db4a09439ad112168fa747cf51049d0734",
+      "label": "gText_Ui_41e629",
+      "path": "src/strings.c",
+      "references": [
+        1233380
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4318786,
+      "length": 23,
+      "hash": "e63f90a627af6f97a0d9c6d657e3cbe732ced4286451c59d0145f83793a2ff38",
+      "label": "gText_Ui_41e642",
+      "path": "src/strings.c",
+      "references": [
+        1233376
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4320826,
+      "length": 19,
+      "hash": "21f6e795885f801386f5d40cb4f9249befbeff522ffd21c9870065d12c15180f",
+      "label": "gText_Ui_41ee3a",
+      "path": "src/strings.c",
+      "references": [
+        1319964
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4320923,
+      "length": 23,
+      "hash": "63105fec0ef3422f7d7ad458b47c0ecadb5802153b372281e6bb4a533e9b8f81",
+      "label": "gText_Ui_41ee9b",
+      "path": "src/strings.c",
+      "references": [
+        1058100
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4558876,
+      "length": 10,
+      "hash": "6140fa43b1b6a4962276f8a4e640d9a7f89f9babce2fec6ca44c184ce3aed250",
+      "label": "gText_Ui_45901c",
+      "path": "src/strings.c",
+      "references": [
+        1158320
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4558888,
+      "length": 27,
+      "hash": "1a2d9ed967838cfe6f0e35d0663a6fe06cd818abe19f24cd46b6a4ebfa867aca",
+      "label": "gText_Ui_459028",
+      "path": "src/strings.c",
+      "references": [
+        1141104
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4559832,
+      "length": 28,
+      "hash": "014814479e1a7325b1d35dbe22c1a99e25ac08c09bdccd7a6fea691045f7379c",
+      "label": "gText_Ui_4593d8",
+      "path": "src/strings.c",
+      "references": [
+        1155696
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4188053,
+      "length": 34,
+      "hash": "ad905a7887b09b76a5f52ac268d8104bf4ff52b71f7b4792e219561cc7baae0e",
+      "label": "gText_Ui_3fe795",
+      "path": "src/strings.c",
+      "references": [
+        207948,
+        960372,
+        1412164
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4188087,
+      "length": 31,
+      "hash": "7e278ceb97e6c109fe2cbf229164eef580456561bc2529331c18a0d61faeb9e4",
+      "label": "gText_Ui_3fe7b7",
+      "path": "src/strings.c",
+      "references": [
+        908528
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4188161,
+      "length": 15,
+      "hash": "da7f05226d56d2728085b38144472e4d888bac61b7a5d0e74d58354846177d22",
+      "label": "gText_Ui_3fe801",
+      "path": "src/strings.c",
+      "references": [
+        152580,
+        153396,
+        155420,
+        187828,
+        848328
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4188176,
+      "length": 22,
+      "hash": "2c209a2f33592a14592d434a77f19b3132bafa23080c08533ae6ec30c4748010",
+      "label": "gText_Ui_3fe810",
+      "path": "src/strings.c",
+      "references": [
+        191968
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4188388,
+      "length": 7,
+      "hash": "27ee70936237cd91740a7f4f25a13fcc05b1ff13857c6c7752fd183c8c5bc6cf",
+      "label": "gText_Ui_3fe8e4",
+      "path": "src/strings.c",
+      "references": [
+        63152,
+        63212,
+        63240
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4188395,
+      "length": 8,
+      "hash": "ec20f644765f5c38b3ab51ab64c27f9d230bdcd7db660193a671edca52c0a7fd",
+      "label": "gText_Ui_3fe8eb",
+      "path": "src/strings.c",
+      "references": [
+        63156,
+        63216,
+        63244
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4188403,
+      "length": 8,
+      "hash": "ab2778e071625a51c7085ca9b771fff639f1cd5df803ae1eb0ce1632236ebd03",
+      "label": "gText_Ui_3fe8f3",
+      "path": "src/strings.c",
+      "references": [
+        62968
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4188300,
+      "length": 10,
+      "hash": "978e286f03f43c95e4923e4bd13529d2ab683a533f82943b78a799f3a016ba38",
+      "label": "gText_Ui_3fe88c",
+      "path": "src/strings.c",
+      "references": [
+        302488
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4283907,
+      "length": 4,
+      "hash": "95d162c42be7ac1a7c889f97a2373a07fa030e4899b253f56b07a2081d175bbb",
+      "label": "gText_Ui_415e03",
+      "path": "src/strings.c",
+      "references": [
+        1245200
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4283911,
+      "length": 5,
+      "hash": "c6fe5da4637d5cbf9f2175da6b362b30ad6ab640095a50c3a4a4fb81576d221a",
+      "label": "gText_Ui_415e07",
+      "path": "src/strings.c",
+      "references": [
+        1245204
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4296375,
+      "length": 11,
+      "hash": "2ba5743855ce24db56690f48fa9788a0b8ecd5d17569847af7418aaa2c569fe7",
+      "label": "gText_Ui_418eb7",
+      "path": "src/strings.c",
+      "references": [
+        4072660
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4296386,
+      "length": 10,
+      "hash": "cdffda94522e349793d5164300da1a3ea1c2b6e93200b01ac566c07cce3e5057",
+      "label": "gText_Ui_418ec2",
+      "path": "src/strings.c",
+      "references": [
+        4072672
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4296409,
+      "length": 14,
+      "hash": "13a74bcdf8258d79923ad97d8ae2658d77fb1978465a31774491028fe15385bc",
+      "label": "gText_Ui_418ed9",
+      "path": "src/strings.c",
+      "references": [
+        4072696
+      ],
+      "category": "menu"
+    },
+    {
+      "offset": 4293908,
+      "length": 5,
+      "hash": "9bde0f58ee339580c144ab41878e5d326c7dfb81b5a5452ba8dd53591926ab8b",
+      "label": "gText_Ui_418514",
+      "path": "src/strings.c",
+      "references": [
+        4011480
+      ],
+      "category": "menu"
     }
   ],
   "fonts": [

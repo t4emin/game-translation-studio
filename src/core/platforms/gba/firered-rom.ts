@@ -18,26 +18,28 @@ export function protectedNames(bytes:Uint8Array):string[] {
 
 type ManifestEntry = { offset:number; length:number; hash:string; label:string; path:string; references:number[]; category?:string; maxBytes?:number };
 // Menus, Pokedex pages and descriptions stay in the manifest but need per-window layout rules before they can be rebuilt.
-const buildableCategories: Record<string, TranslationEntry["category"]> = { dialog: "dialog", battle: "system" };
+// The quest log ("Previously on your quest...") is the first menu group with such a rule, selected by label.
+const buildableCategories: Record<string, TranslationEntry["category"]> = { dialog: "dialog", battle: "system", description: "dialog", pokedex: "dialog" };
+const questLogLabel = /^(gText_(QuestLog|MainMenu)_|gStartMenuDesc_)/;
+// Menu strings of src/strings.c are shown in overworld text boxes and small fixed windows; credits stay English.
+const menuStringsLabel = (record: ManifestEntry) => record.category === "menu" && /^src\/(strings|union_room_message|mystery_event_msg)\.c$|teachy_tv\.h$/.test(record.path) && !/^gCreditsString/.test(record.label);
 
 export function extractDialogs(bytes: Uint8Array): TranslationEntry[] {
   const entries: TranslationEntry[] = [];
   for (const record of manifest.entries as ManifestEntry[]) {
-    const category = buildableCategories[record.category ?? "dialog"];
+    const category = buildableCategories[record.category ?? "dialog"] ?? (questLogLabel.test(record.label) || menuStringsLabel(record) ? "dialog" : undefined);
     if (!category) continue;
-    // These screens use specialized layout/rendering rather than normal dialogue.
-    if (/help_system|trainer_card|flavor_text|fame_checker/.test(record.path)) continue;
     if (record.offset + record.length > bytes.length) continue;
     const raw = bytes.slice(record.offset, record.offset + record.length);
     if (digest(raw) !== record.hash) continue;
-    const decoded = decodePokemonText(raw, 0, raw.length);
-    if (decoded.unknownBytes.length || /\[CTRL:(06|0C|15)/.test(decoded.text)) continue;
+    const decoded = decodePokemonText(raw, 0, raw.length, { dynamic: true });
+    if (decoded.unknownBytes.length || /\[CTRL:(0C|15)/.test(decoded.text)) continue;
     entries.push({
       id: `dialog-${record.offset.toString(16)}`, sourceText: decoded.text,
       translatedText: "", sourceLanguage: "english", targetLanguage: "thai", category,
       context: record.label, resource: { offset: record.offset, path: record.path },
       // Battle text is expanded into a 300-byte buffer: allow 200 bytes, or the original length when the game already prints more.
-      constraints: { maxBytes: record.maxBytes ?? (category === "system" ? Math.max(200, record.length) : 900), fixedLength: false }, protectedTokens: decoded.protectedTokens,
+      constraints: { maxBytes: record.maxBytes ?? (menuStringsLabel(record) ? Math.min(900, Math.max(80, record.length * 4)) : category === "system" ? Math.max(200, record.length) : 900), fixedLength: false }, protectedTokens: decoded.protectedTokens,
       status: "untranslated", warnings: []
     });
   }
@@ -55,7 +57,7 @@ export function latinByte(char: string): number {
 export function tokenBytes(token: string): number[] {
   const line = reverse.get(token);
   if (line !== undefined) return [line];
-  const m = token.match(/^\[(VAR|CTRL|BYTE|SYMBOL|KEY):([^\]]+)\]$/);
+  const m = token.match(/^\[(VAR|CTRL|BYTE|SYMBOL|KEY|DYN):([^\]]+)\]$/);
   if (!m) throw new Error(`Unknown control token ${token}`);
   if (m[1] === "VAR") {
     const known = [...placeholders].find(([,text]) => text === token)?.[0];
@@ -66,7 +68,7 @@ export function tokenBytes(token: string): number[] {
   if (!/^(?:[0-9A-F]{2})+$/.test(m[2])) throw new Error(`Invalid token ${token}`);
   const bytes = [...Buffer.from(m[2],"hex")];
   if (m[1] === "CTRL" && bytes.length !== 1 + controlLengths[bytes[0]]) throw new Error(`Invalid control length ${token}`);
-  return [m[1] === "CTRL" ? 0xfc : m[1] === "SYMBOL" ? 0xf9 : m[1] === "KEY" ? 0xf8 : -1, ...bytes].filter(n=>n>=0);
+  return [m[1] === "CTRL" ? 0xfc : m[1] === "SYMBOL" ? 0xf9 : m[1] === "KEY" ? 0xf8 : m[1] === "DYN" ? 0xf7 : -1, ...bytes].filter(n=>n>=0);
 }
 
 export function validateTranslation(source: string, translated: string) {

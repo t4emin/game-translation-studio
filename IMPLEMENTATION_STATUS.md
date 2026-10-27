@@ -6,9 +6,10 @@
 - GBA-only V1 ingestion and analysis report.
 - Read-only generic GBA scanner for ASCII, Shift-JIS, pointer and LZ77 candidates.
 - Compatibility states that separate FULL adapter support from experimental analysis.
-- 3,881 buildable entries (3,481 dialogue/story, 400 battle messages) plus read-only
-  name tables, all with bundled Thai translations. Menus, Pokedex pages and
-  descriptions are in the manifest (6,155 entries) but not buildable yet.
+- 6,079 buildable entries, all with bundled Thai translations: dialogue/story, battle messages, quest-log recap, main/Start menu,
+  menu and union-room messages (src/strings.c and related), move/ability/decoration descriptions, the Pokedex pages, the HELP system,
+  FAME CHECKER and Teachy TV text. Only the credits (names), a few name tables and one stray fragment stay in English by design.
+  Everything beyond the 3,481 dialogue entries and 400 battle messages is byte-verified only, not tested in an emulator.
 - Minish Cap (BZME): message table reader, Thai font banks 4/5/6, table rebuild and export. all 2,460
   translatable messages (menus and dialogue; 100%) have Thai translations, while 445 names and staff credits stay in
   English; played in an emulator by the maintainer with no problems found.
@@ -31,7 +32,7 @@
 - Unit and real-ROM integration tests verify token preservation, name preservation,
   nonempty Thai glyphs, output limits, unchanged input and exact changed-byte ranges.
 - Desktop/mobile browser tests upload the real ROM and download patched output.
-- The 3,881-message build exports as a 17 MiB ROM using 527 Thai glyphs.
+- The 6,079-message build exports as a 17 MiB ROM using 567 Thai glyphs (limit 768). Quest-log and main-menu text has been verified at byte level only (every changed byte is a redirected reference, a font byte or appended text; the F7 quest-log placeholders are preserved), not in an emulator.
 - All 4,533 redirected text references and original-range byte changes verified.
 - Battle messages and the 1,092 dialogue entries added with them are verified at byte
   level only; they have not been run in an emulator yet.
