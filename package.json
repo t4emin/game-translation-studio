@@ -2,6 +2,7 @@
   "name": "game-translation-studio",
   "version": "0.1.0",
   "private": true,
+  "license": "AGPL-3.0-only",
   "type": "module",
   "scripts": {
     "dev": "next dev",
@@ -9,7 +10,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "node --test --experimental-strip-types tests/*.test.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "survey": "node --experimental-strip-types tools/survey/rom-survey.ts"
   },
   "dependencies": {
     "@napi-rs/canvas": "^1.0.9",

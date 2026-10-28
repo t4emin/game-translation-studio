@@ -44,8 +44,9 @@ export function normalizeThaiText(text: string): string {
 }
 
 export function splitTextClusters(text: string): string[] {
+  // "ʳᵉ" is one game glyph (byte 0xA0) but two characters.
   return normalizeThaiText(text).split(/(\[[^\]]+\])/g).filter(Boolean).flatMap((part) =>
-    part.startsWith("[") ? [part] : [...thaiSegmenter.segment(part)].map((segment) => segment.segment)
+    part.startsWith("[") ? [part] : [...thaiSegmenter.segment(part.replaceAll("ʳᵉ", "\u0001"))].map((segment) => segment.segment.replaceAll("\u0001", "ʳᵉ"))
   );
 }
 

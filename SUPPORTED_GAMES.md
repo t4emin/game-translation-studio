@@ -1,16 +1,23 @@
 # Supported Games
 
-| Game | Revision | Status |
-| --- | --- | --- |
-| Pokemon FireRed USA/Europe | Rev 1 / BPRE | FULL dialogue/story translation and .gba export |
+| Game | Revision | Export-ready | Thai translation | Emulator-verified |
+| --- | --- | --- | --- | --- |
+| Pokemon FireRed USA/Europe | Rev 1 / BPRE | Yes (FULL) | 6,079 buildable entries translated: dialogue/story, battle messages, quest-log recap, main and Start menus, menu/union-room messages, move/ability/decoration descriptions, Pokedex pages, HELP system, FAME CHECKER. Menu and description text is byte-verified only (not emulator-tested); strings outside the manifest (some labels) may remain English | Boot and opening scene only |
+| Pokemon Emerald USA/Europe | BPEE | Yes (experimental) | 6,191 of 6,329 extracted messages (about 98%); the rest are staff credits and a few names that stay English | First test showed a corrupted title logo and an untranslated intro; the cause of the logo is fixed, retest pending |
+| Yu-Gi-Oh! World Championship Tournament 2004 (Europe) | BYWP | Yes (experimental) | all 1,087 card descriptions; card names, menus and duel messages stay English | No |
+| The Legend of Zelda: The Minish Cap (USA) | BZME | Yes (FULL) | 2,460 of 2,460 translatable messages (100%); 445 names and staff credits stay in English | Yes, played by the maintainer |
+
+"Export-ready" means a rebuilt `.gba` can be downloaded and the build passes validation.
+Untranslated entries keep the original text on export.
 
 Exact input SHA-256:
 `729041b940afe031302d630fdbe57c0c145f3f7b6d9b8eca5e98678d0ca4d059`.
 
-Supported: 2,389 matched dialogue/story entries, Thai glyph generation, text
+Supported: 3,481 dialogue/story entries, 400 battle messages, 89 quest-log lines and 5 main-menu labels, Thai glyph generation, text
 relocation, new ROM export, persistent translation progress and name preservation.
 
-Unchanged: battle UI, menus, specialized help screens and unmatched resources.
+Unchanged: names, battle menus, menus, Pokedex pages, descriptions, specialized help
+screens and unmatched resources.
 No other revisions are FULL support. Other `.gba` files may enter generic
 analysis mode, but injection and rebuild are blocked until an adapter exists.
 PSP, PS2, ISO and CSO are not V1 targets.

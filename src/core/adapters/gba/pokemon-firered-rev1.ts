@@ -1,6 +1,7 @@
 import type { GameAdapter } from "../../contracts.ts";
 import { decodePokemonText, readGbaPointer } from "../../platforms/gba/pokemon-gen3-text.ts";
-import { extractDialogs, verifyRom, digest } from "../../platforms/gba/firered-rom.ts";
+import { missingProtectedNames } from "../../platforms/gba/pokemon-gen3-resources.ts";
+import { extractDialogs, verifyRom, digest, protectedNames } from "../../platforms/gba/firered-rom.ts";
 import { buildTranslatedRom } from "../../platforms/gba/thai-font.ts";
 import type {
   BuildResult,
@@ -48,7 +49,7 @@ export const pokemonFireRedRev1Metadata: GameAdapterMetadata = {
   },
   notes: [
     "Exact ROM identity is recognized from GBA header and SHA-256.",
-    "Build supports manifest-matched map/story dialogue and the opening scene. Names, battle UI, menus and help screens remain original.",
+    "Build supports manifest-matched map/story dialogue, the opening scene and battle messages. Names, menus, help screens and messages without a local translation remain original.",
     "Thai composed glyphs and relocated dialogue were smoke-tested in mGBA 0.10.5 through the opening scene. Full-game playthrough is not verified.",
     "No ROM bytes are bundled in this project."
   ]
@@ -137,6 +138,12 @@ export const pokemonFireRedRev1Adapter: GameAdapter = {
   },
 
   async validateTranslations(context: GameContext, entries: TranslationEntry[]): Promise<ValidationResult> {
+    const names = protectedNames(context.file.bytes);
+    const issues: ValidationIssue[] = entries.flatMap((entry) => {
+      const missing = entry.category !== "name" && entry.translatedText ? missingProtectedNames(entry.sourceText, entry.translatedText, names) : [];
+      return missing.length ? [{ level: "error" as const, code: "protected-name-changed", entryId: entry.id, message: `${entry.id}: Translation must keep these names in English: ${missing.join(", ")}.` }] : [];
+    });
+    if (issues.length) return { ok: false, issues };
     try { buildTranslatedRom(context.file.bytes,entries); return {ok:true,issues:[]}; }
     catch(error) { return buildFailure(error); }
   },

@@ -124,7 +124,8 @@ export const controlLengths: Record<number, number> = {
   18: 1, 19: 1, 20: 1, 21: 0, 22: 0, 23: 0, 24: 0
 };
 
-export function decodePokemonText(bytes: Uint8Array, offset: number, maxLength: number): DecodedPokemonText {
+// `dynamic` turns FireRed's quest-log byte pair 0xF7 + index into one protected token; the index selects which saved value the game inserts.
+export function decodePokemonText(bytes: Uint8Array, offset: number, maxLength: number, options: { dynamic?: boolean } = {}): DecodedPokemonText {
   const chunks: string[] = [];
   const protectedTokens: string[] = [];
   const unknownBytes: number[] = [];
@@ -157,6 +158,12 @@ export function decodePokemonText(bytes: Uint8Array, offset: number, maxLength: 
       i += 1 + count;
       rawLength += 1 + count;
       continue;
+    }
+
+    if (byte === 0xf7 && options.dynamic) {
+      if (i + 1 >= maxLength || offset + i + 1 >= bytes.length) throw new Error("Truncated dynamic placeholder");
+      const token = `[DYN:${bytes[offset+i+1].toString(16).padStart(2,"0").toUpperCase()}]`;
+      chunks.push(token); protectedTokens.push(token); i++; rawLength++; continue;
     }
 
     if (byte === 0xf9 || byte === 0xf8) {

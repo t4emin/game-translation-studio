@@ -19,3 +19,4 @@ tsconfig.tsbuildinfo
 artifacts/
 workspaces
 exports
+tools/emu/emu-run

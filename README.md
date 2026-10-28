@@ -24,21 +24,43 @@ version can show the UI but cannot run the upload/export pipeline as-is. Run the
 app locally, or deploy it to a persistent Node server that allows 16-17 MiB
 request/response bodies and writable project storage.
 
+## License and ROMs
+
+Code: AGPL-3.0-only (`LICENSE`). Thai font and translations: CC BY 4.0 (`LICENSE-ASSETS.md`).
+
+No game ROM is included. You must supply your own legally obtained ROM, and the
+project is not affiliated with Nintendo, Game Freak or Creatures. If you host
+this app, do not keep users' ROMs on the server longer than the upload > process >
+export flow needs, and do not offer exported ROMs as public downloads.
+
 ## Supported Input
 
 Pokemon FireRed Version (USA/Europe), Rev 1, BPRE.
 SHA-256: `729041b940afe031302d630fdbe57c0c145f3f7b6d9b8eca5e98678d0ca4d059`.
 
-Currently translates 2,389 matched dialogue/story entries, including the opening
-scene. Names stay unchanged. Battle UI, menus, specialized help screens and
-unmatched resources remain original; this is not a 100% translation of every
-screen.
+Currently translates 6,079 messages: 3,481 dialogue/story entries (including the
+opening scene and trainer battle text), 400 battle messages, and the menus, descriptions, Pokedex, HELP system and quest-log recap. An entry without a
+local translation stays in English in the export. Names and the
+naming keyboard stay unchanged, and translations must keep protected names in
+English. Menus, Pokedex pages, descriptions and help screens remain original;
+this is not a 100% translation of every screen.
 
 Pokemon Emerald Version (USA/Europe), BPEE, is supported as an experimental
 project. It extracts high-confidence Gen 3 text candidates and can export
 rebuilt ROMs by relocating changed text, patching verified pointer references
-and generating Thai glyphs into verified Emerald short font banks. Emulator
-verification is still pending.
+and generating Thai glyphs into the verified Normal, Narrow and Short font banks
+(528 glyph slots; slots 0x1D0-0x1DF hold game symbols and are left alone). 6,191 of
+the 6,329 extracted messages have Thai translations (staff credits and a few names stay English) (NPC dialogue, Battle Frontier,
+item, move and Pokedex descriptions, Match Call and menu text). Emulator verification
+is still pending.
+
+The Legend of Zelda: The Minish Cap (USA), BZME, is a supported
+project. It reads the game's own message table (2,460 translatable messages; names (NPCs, items, places, characters) and
+staff credits stay in English), writes a new table and Thai glyph banks into the free end of
+the ROM, and repoints the language and font tables without patching game code. All 2,460
+translatable messages (menus and dialogue, 100%) have Thai translations; names and staff credits stay in English.
+Played in an emulator by the maintainer with the full translation applied, with no problems
+found (not a frame-by-frame audit of every message).
 
 Other `.gba` files can be analyzed in Generic / Experimental mode, but safe
 injection and export are blocked unless a FULL adapter exists. PSP, PS2, ISO,

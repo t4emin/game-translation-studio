@@ -12,7 +12,7 @@ if(command==="create") {
   for(let i=0;i<limit;i++) {
     const project=await translateProjectBatch(arg),view=projectView(project);
     console.log(JSON.stringify({id:arg,done:view.done,total:view.total,error:view.error,sample:view.samples.at(-1)}));
-    stalled=view.done===previous?stalled+1:0;previous=view.done;
+    stalled=view.processed===previous?stalled+1:0;previous=view.processed;
     if(view.error && stalled>=3){process.exitCode=1;break;}
     if(view.complete){const built=await exportProject(arg);console.log(JSON.stringify({output:built.name,checksum:built.checksum,glyphs:built.glyphs}));break;}
   }
